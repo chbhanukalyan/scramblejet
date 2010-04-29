@@ -22,10 +22,12 @@ RenderingEngine::RenderingEngine(void)
 {
 	camera = new Camera;
 	skybox = new SkyBox;
+	fighterjet = new StaticModel;
 }
 
 RenderingEngine::~RenderingEngine()
 {
+	delete fighterjet;
 	delete skybox;
 	delete camera;
 }
@@ -39,11 +41,17 @@ int RenderingEngine::Initialize(void)
 
 	skybox->setSize(1000, 1000, 1000);
 
+	fighterjet->load("../data/staticmodels/fighterjet.cbk");
+
 	return 0;
 }
 
 void RenderingEngine::render(void)
 {
+	static float a = 0;
+//	camera->Rotate(a);
+//	camera->Rotate(2.5);
+	a+= 0.01;
 	// Set the projection matrix
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -52,6 +60,7 @@ void RenderingEngine::render(void)
 	// Reset the model view matrix
     glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
     glLoadIdentity();   // Reset The Modelview Matrix
+//	glOrtho(-10000, 10000, -10000, 10000, -10000, 10000);
 
 	camera->Update();
 
@@ -62,6 +71,8 @@ void RenderingEngine::render(void)
 
 	/* Render the objects in order */
 	skybox->render(camera);
+
+	fighterjet->render(camera);
 
 	glFlush();
 }
