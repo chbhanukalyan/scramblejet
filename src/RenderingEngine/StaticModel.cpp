@@ -123,7 +123,6 @@ int StaticModel::load(const char *f)
 	if (expy < expz)
 		scalefactor = expz;
 	scalefactor /= 200.0f;
-	scalefactor = 1.0f;
 	
 	fprintf(stderr,"max:%f %f %f min:%f %f %f exp:%f %f %f scf:%f\n", hdr.max[0], hdr.max[1], hdr.max[2], hdr.min[0], hdr.min[1], hdr.min[2],
 			expx, expy, expz, scalefactor);
@@ -135,13 +134,14 @@ int StaticModel::load(const char *f)
 	glNewList(list, GL_COMPILE);
 	for (i = 0; i < numMeshes; i++) {
 		int numFaces = ptr[curpos++];
-		glColor3f(1-(i/18.0),1-(i/18.0),1);
 		glBegin(GL_TRIANGLE_FAN);
 		for (j = 0; j < numFaces; j++) {
+			glColor3f(1-(j/180.0),1-(j/180.0),1-(j/180.0));
 			int numIndices = ptr[curpos++];
 			float *fp = (float*)&ptr[curpos];
 			for (k = 0; k < numIndices; k++) {
 				glVertex3f((fp[0] + transx)/scalefactor, (fp[1] + transy)/scalefactor, (fp[2] + transz)/scalefactor);
+				fprintf(stderr, "%f %f %f\n", (fp[0] + transx)/scalefactor, (fp[1] + transy)/scalefactor, (fp[2] + transz)/scalefactor);
 				fp += 3;
 			}
 			curpos += numIndices * 3;
@@ -150,6 +150,11 @@ int StaticModel::load(const char *f)
 	}
 	glEndList();
 
+	fprintf(stderr, "Info: Loaded(%s) with triangles:%d faces:%d meshes:%d "
+			"filesz:%d\n", fn, hdr.totTris, hdr.totFaces, hdr.numMeshes,
+			hdr.totFileSize);
+	fprintf(stderr,"max:%f %f %f min:%f %f %f exp:%f %f %f scf:%f\n", hdr.max[0], hdr.max[1], hdr.max[2], hdr.min[0], hdr.min[1], hdr.min[2],
+			expx, expy, expz, scalefactor);
  out:
 	close(fd);
 	if (data) {
@@ -169,13 +174,9 @@ void StaticModel::render(Camera *c)
 	glColor4f(1, 0, 0, .5);
 
 	glPushMatrix();
-	glTranslatef(c->pointx + 200, c->pointy, c->pointz - 200);
-	glRotatef(90, 0, 0, 1);
-	glRotatef(90, 1, 0, 0);
-	glRotatef(degx, 1, 0, 0);
-	glRotatef(degy, 0, 1, 0);
-	glRotatef(degz, 0, 0, 1);
-//	glRotatef(deg, 0, 0, 0);
+	glTranslatef(c->pointx + degx, c->pointy, c->pointz + degz - 300);
+	glRotatef(-90, 1, 0, 0);
+	glRotatef(180 + degy, 0, 0, 1);
 
 	glCallList(list);
 

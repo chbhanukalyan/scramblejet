@@ -32,7 +32,7 @@ void Camera::Initialize(void)
 {
 	distance = 500;
 	height = 0;
-	angle = 0;
+	angle = 0.7;
 
 	pointx = 0;
 	pointy = 0;
@@ -43,8 +43,8 @@ void Camera::Initialize(void)
 	upz = 0;
 
 	
-	camy = height;
 	camx = distance * sin(angle);
+	camy = height;
 	camz = distance * cos(angle);
 
 	Move();

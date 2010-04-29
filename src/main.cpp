@@ -53,7 +53,7 @@ unsigned int TimerCallback(unsigned int)
 	if (bigarr[SDLK_x])
 		degz -= 1;
 
-	printf("X:%f Y:%f Z:%f\n", degx, degy, degz);
+//	printf("X:%f Y:%f Z:%f\n", degx, degy, degz);
 
 	return 1;
 }
