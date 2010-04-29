@@ -29,6 +29,7 @@ OBJECTS	=			RenderingEngine.o	\
 					TTFFont.o		\
 					Camera.o		\
 					SkyBox.o		\
+					StaticModel.o	\
 
 
 $(OUTPUT): $(OBJECTS)

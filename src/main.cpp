@@ -27,7 +27,7 @@
 #include "RenderingEngine/RenderingEngine.h"
 
 int hres = 640, vres=480;
-#define	TIME_INTERVAL	10000
+#define	TIME_INTERVAL	10
 
 void Quit(int val)
 {
@@ -36,8 +36,25 @@ void Quit(int val)
 	exit(val);
 }
 
+float degx = 0, degy = 0, degz = 0;
+bool bigarr[1000];
 unsigned int TimerCallback(unsigned int)
 {
+	if (bigarr[SDLK_w])
+		degx += 1;
+	if (bigarr[SDLK_e])
+		degx -= 1;
+	if (bigarr[SDLK_a])
+		degy += 1;
+	if (bigarr[SDLK_s])
+		degy -= 1;
+	if (bigarr[SDLK_z])
+		degz += 1;
+	if (bigarr[SDLK_x])
+		degz -= 1;
+
+	printf("X:%f Y:%f Z:%f\n", degx, degy, degz);
+
 	return 1;
 }
 
@@ -88,7 +105,10 @@ int main(int argc, char **argv)
 				if (SDLK_q == event.key.keysym.sym) {
 					exit(0);
 				}
+				bigarr[event.key.keysym.sym] = true;
 			}
+			if (SDL_KEYUP == event.type)
+				bigarr[event.key.keysym.sym] = false;
 		}
 
 		re->render();

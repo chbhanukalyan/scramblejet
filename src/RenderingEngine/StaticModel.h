@@ -17,32 +17,34 @@
  */
 
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+#ifndef		__RE_STATICMODEL_H__
+#define		__RE_STATICMODEL_H__
 
 #include "Camera.h"
-#include "SkyBox.h"
-#include "StaticModel.h"
 
-class RenderingEngine {
+class StaticModel {
 	private:
-		Camera *camera;
-		SkyBox *skybox;
+		char fn[256];
+		unsigned char *data;
+		int numMeshes;
 
-		int hres;
-		int vres;
+		float scalefactor;
+		float transx;
+		float transy;
+		float transz;
 
-		StaticModel *fighterjet;
+		GLint list;
 
 	public:
-		RenderingEngine(void);
-		~RenderingEngine();
+		StaticModel(void);
+		~StaticModel();
 
-		int Initialize(void);
-		void render(void);
-		void Destroy(void);
+		int load(const char *fn);
+		int unload(void);
+
+		void render(Camera *c);
 
 };
 
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+#endif	/*	__RE_STATICMODEL_H__	*/
 
