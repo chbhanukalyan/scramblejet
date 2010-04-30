@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 	};
 	cbkModelHeader hdr;
 	memset(&hdr, 0, sizeof(hdr));
-	hdr.version = 1;
+	hdr.version = 2;
 	hdr.magic = 0xDEADBEEF;
 	hdr.numMeshes = (int)scene->mNumMeshes;
 	hdr.max[0] = hdr.max[1] = hdr.max[2] = -10000000.0f;
@@ -75,9 +75,71 @@ int main(int argc, char **argv)
 	/* Load into OpenGL */
 	for (int i = 0; i < (int)scene->mNumMeshes; i++) {
 		const aiMesh *mesh = scene->mMeshes[i];
+		const aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
 
 		unsigned int numFaces = (int)mesh->mNumFaces;
-		write(fd, &numFaces, sizeof(numFaces));
+
+#define	CBK_MODEL_MATERIAL_TYPE_INVALID			0x0
+#define	CBK_MODEL_MATERIAL_TYPE_DIFFUSE			0x1
+#define	CBK_MODEL_MATERIAL_TYPE_SPECULAR		0x2
+#define	CBK_MODEL_MATERIAL_TYPE_AMBIENT			0x3
+#define	CBK_MODEL_MATERIAL_TYPE_EMISSION		0x4
+#define	CBK_MODEL_MATERIAL_TYPE_SHININESS		0x5
+		struct material {
+			int type;
+			float c[4];
+		};
+		struct facehdr {
+			unsigned int numFaces;
+			int nummats;
+			struct material mats[16];
+		} fhdr;
+		memset(&fhdr, 0, sizeof(fhdr));
+
+		aiColor4D aic;
+		float aif;
+		int matnum = 0;
+		if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &aic) == AI_SUCCESS) {
+			fhdr.mats[matnum].type = CBK_MODEL_MATERIAL_TYPE_DIFFUSE;
+			fhdr.mats[matnum].c[0] = aic.r;
+			fhdr.mats[matnum].c[1] = aic.g;
+			fhdr.mats[matnum].c[2] = aic.b;
+			fhdr.mats[matnum].c[3] = aic.a;
+			matnum++;
+		}
+		if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_SPECULAR, &aic) == AI_SUCCESS) {
+			fhdr.mats[matnum].type = CBK_MODEL_MATERIAL_TYPE_SPECULAR;
+			fhdr.mats[matnum].c[0] = aic.r;
+			fhdr.mats[matnum].c[1] = aic.g;
+			fhdr.mats[matnum].c[2] = aic.b;
+			fhdr.mats[matnum].c[3] = aic.a;
+			matnum++;
+		}
+		if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_AMBIENT, &aic) == AI_SUCCESS) {
+			fhdr.mats[matnum].type = CBK_MODEL_MATERIAL_TYPE_AMBIENT;
+			fhdr.mats[matnum].c[0] = aic.r;
+			fhdr.mats[matnum].c[1] = aic.g;
+			fhdr.mats[matnum].c[2] = aic.b;
+			fhdr.mats[matnum].c[3] = aic.a;
+			matnum++;
+		}
+		if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_EMISSIVE, &aic) == AI_SUCCESS) {
+			fhdr.mats[matnum].type = CBK_MODEL_MATERIAL_TYPE_EMISSION;
+			fhdr.mats[matnum].c[0] = aic.r;
+			fhdr.mats[matnum].c[1] = aic.g;
+			fhdr.mats[matnum].c[2] = aic.b;
+			fhdr.mats[matnum].c[3] = aic.a;
+			matnum++;
+		}
+		if (aiGetMaterialFloat(mat, AI_MATKEY_SHININESS, &aif) == AI_SUCCESS) {
+			fhdr.mats[matnum].type = CBK_MODEL_MATERIAL_TYPE_SHININESS;
+			fhdr.mats[matnum].c[0] = aic.r;
+			matnum++;
+		}
+		fhdr.numFaces = numFaces;
+		fhdr.nummats = matnum;
+
+		write(fd, &fhdr, sizeof(fhdr));
 		hdr.totFaces += numFaces;
 
 		for (int j = 0; j < (int)mesh->mNumFaces; j++) {
