@@ -25,17 +25,33 @@
 #include <errno.h>
 
 #define CBK_FILEFORMAT_MAGIC		0xDEADBEEF
-#define CBK_FILEFORMAT_CUR_VERSION	0x1
+#define CBK_FILEFORMAT_CUR_VERSION	0x2
 
 struct cbkModelHeader {
-        unsigned int version;
-        unsigned int magic;
-        unsigned int totFileSize;
-        unsigned int totTris;
-        unsigned int totFaces;
-        unsigned int numMeshes;
-		float max[3];
-        float min[3];
+	unsigned int version;
+	unsigned int magic;
+	unsigned int totFileSize;
+	unsigned int totTris;
+	unsigned int totFaces;
+	unsigned int numMeshes;
+	float max[3];
+	float min[3];
+};
+
+#define CBK_MODEL_MATERIAL_TYPE_INVALID		0x0
+#define CBK_MODEL_MATERIAL_TYPE_DIFFUSE		0x1
+#define CBK_MODEL_MATERIAL_TYPE_SPECULAR	0x2
+#define CBK_MODEL_MATERIAL_TYPE_AMBIENT		0x3
+#define CBK_MODEL_MATERIAL_TYPE_EMISSION	0x4
+#define CBK_MODEL_MATERIAL_TYPE_SHININESS	0x5
+struct material {
+	int type;
+	float c[4];
+};
+struct facehdr {
+	unsigned int numFaces;
+	int nummats;
+	struct material mats[16];
 };
 
 StaticModel::StaticModel(void)
@@ -133,10 +149,38 @@ int StaticModel::load(const char *f)
 	list = glGenLists(1);
 	glNewList(list, GL_COMPILE);
 	for (i = 0; i < numMeshes; i++) {
-		int numFaces = ptr[curpos++];
+
+		struct facehdr *fhdr = (struct facehdr*)&ptr[curpos];
+		
+		GLint whichface = GL_FRONT;
+		for (j = 0 ; j < fhdr->nummats; j++) {
+			switch (fhdr->mats[j].type) {
+				case CBK_MODEL_MATERIAL_TYPE_DIFFUSE:
+					glMaterialfv(whichface, GL_DIFFUSE, fhdr->mats[j].c);
+					break;
+				case CBK_MODEL_MATERIAL_TYPE_SPECULAR:
+					glMaterialfv(whichface, GL_SPECULAR, fhdr->mats[j].c);
+					break;
+				case CBK_MODEL_MATERIAL_TYPE_AMBIENT:
+					glMaterialfv(whichface, GL_AMBIENT, fhdr->mats[j].c);
+					break;
+				case CBK_MODEL_MATERIAL_TYPE_EMISSION:
+					glMaterialfv(whichface, GL_EMISSION, fhdr->mats[j].c);
+					break;
+				case CBK_MODEL_MATERIAL_TYPE_SHININESS:
+					glMaterialf(whichface, GL_SHININESS, fhdr->mats[j].c[0]);
+					break;
+				case CBK_MODEL_MATERIAL_TYPE_INVALID:
+				default:
+					break;
+			}
+		}
+
+		curpos += sizeof(*fhdr)/sizeof(int);
+
 		glBegin(GL_TRIANGLE_FAN);
-		for (j = 0; j < numFaces; j++) {
-			glColor3f(1-(j/180.0),1-(j/180.0),1-(j/180.0));
+		glColor3f(1.0f, 1.0f, 1.0f);
+		for (j = 0; j < (int)fhdr->numFaces; j++) {
 			int numIndices = ptr[curpos++];
 			float *fp = (float*)&ptr[curpos];
 			for (k = 0; k < numIndices; k++) {
@@ -170,8 +214,12 @@ void StaticModel::render(Camera *c)
 //	static float x,y,z;
 
 	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
 
-	glColor4f(1, 0, 0, .5);
+	float light_pos[4] = {c->camx, c->camy, c->camz, 0};
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
 	glPushMatrix();
 	glTranslatef(c->pointx + degx, c->pointy, c->pointz + degz - 300);
@@ -181,5 +229,7 @@ void StaticModel::render(Camera *c)
 	glCallList(list);
 
 	glPopMatrix();
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
 }
 
