@@ -15,37 +15,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-OUTPUT = scRamble
+OUTPUT = gc.a
 
 CC = g++
 
 CFLAGS = -Wall -Werror -g3
 
-LD = g++
-
-LDFLAGS = -Wall -Werror -g3 -lGL -lGLU -lm -lSDL -lSDL_image -lSDL_mixer -lSDL_ttf
-
-OBJECTS	=			main.o		\
-
-LIBS	=			RenderingEngine/re.a			\
-					GamingClient/gc.a				\
-					../vendor/assimp/bin/gcc/libassimp.so	\
+AR = ar
 
 
-$(OUTPUT): $(OBJECTS) RE GC
-	$(LD) -o $(OUTPUT) $(LDFLAGS) $(OBJECTS) $(LIBS)
+OBJECTS	=			GamingClient.o		\
+					EventMap.o			\
+
+$(OUTPUT): $(OBJECTS)
+	ar rcs $(OUTPUT) $(OBJECTS)
 	
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-GC:
-	make -C GamingClient
-
-RE:
-	make -C RenderingEngine
-
 clean:
-	make -C RenderingEngine clean
-	make -C GamingClient clean
 	-rm -f $(OBJECTS) $(OUTPUT)
 

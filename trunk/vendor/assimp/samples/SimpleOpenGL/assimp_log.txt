@@ -1,7 +1,0 @@
-Info,  T0: Found a matching importer for this file format
-Info,  T0: Import root directory is '/mnt/c/projects/adrian/adrian/src/Creatures/Ripper/'
-Info,  T0: Entering post processing pipeline
-Info,  T0: Points: 0, Lines: 0, Triangles: 1, Polygons: 0 (Meshes, X = removed)
-Info,  T0: JoinVerticesProcess finished | Verts in: 1842 out: 880 | ~52.2%
-Info,  T0: Cache relevant are 1 meshes (614 faces). Average output ACMR is 1.521173
-Info,  T0: Leaving post processing pipeline

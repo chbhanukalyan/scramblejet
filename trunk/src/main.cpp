@@ -25,32 +25,36 @@
 #include <signal.h>
 
 #include "RenderingEngine/RenderingEngine.h"
+#include "GamingClient/GamingClient.h"
 
 int hres = 640, vres=480;
 #define	TIME_INTERVAL	10
 
-void Quit(int val)
+void Quit(void)
 {
 	SDL_SetTimer(TIME_INTERVAL, NULL);
 	SDL_Quit();
-	exit(val);
+	exit(0);
 }
 
+#include "GamingClient/EventMap.h"
+#include "GamingClient/funcids.h"
+EventMap *evmap = NULL;
+
 float degx = 0, degy = 0, degz = 0;
-bool bigarr[1000];
 unsigned int TimerCallback(unsigned int)
 {
-	if (bigarr[SDLK_w])
+	if (evmap->eventInProgress(FUNCID_ROTXP))
 		degx += 1;
-	if (bigarr[SDLK_e])
+	if (evmap->eventInProgress(FUNCID_ROTXM))
 		degx -= 1;
-	if (bigarr[SDLK_a])
+	if (evmap->eventInProgress(FUNCID_ROTYP))
 		degy += 1;
-	if (bigarr[SDLK_s])
+	if (evmap->eventInProgress(FUNCID_ROTYM))
 		degy -= 1;
-	if (bigarr[SDLK_z])
+	if (evmap->eventInProgress(FUNCID_ROTZP))
 		degz += 1;
-	if (bigarr[SDLK_x])
+	if (evmap->eventInProgress(FUNCID_ROTZM))
 		degz -= 1;
 
 //	printf("X:%f Y:%f Z:%f\n", degx, degy, degz);
@@ -67,7 +71,7 @@ int main(int argc, char **argv)
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)	// try to initialize SDL video module
 	{
 		printf("SDL ERROR:%s\n", SDL_GetError());	// report error if it fails
-		Quit(0);
+		Quit();
 	}
 
 	const SDL_VideoInfo *VideoInfo = SDL_GetVideoInfo();	// query SDL for information about our video hardware
@@ -75,7 +79,7 @@ int main(int argc, char **argv)
 	if (VideoInfo == NULL)	// if this query fails
 	{
 		printf("Failed getting Video Info : %s\n", SDL_GetError());	// report error
-		Quit(0);
+		Quit();
 	}
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	// tell SDL that the GL drawing is going to be double buffered
@@ -88,7 +92,7 @@ int main(int argc, char **argv)
 	if (MainWindow == NULL)	// if window creation failed
 	{
 		printf("Failed to Create Window : %s\n", SDL_GetError());	// report error
-		Quit(0);
+		Quit();
 	}
 	SDL_WM_SetCaption("scRamble", "scRamble");
 	SDL_ShowCursor( SDL_DISABLE );
@@ -96,22 +100,18 @@ int main(int argc, char **argv)
 	RenderingEngine *re = new RenderingEngine();
 	re->Initialize();
 
+	GamingClient *gc = new GamingClient();
+	gc->initialize("../data/default.eventmap");
+	evmap = gc->evmap;
+	evmap->registerFunction((int)FUNCID_QUIT, Quit);
+
 	SDL_SetTimer(TIME_INTERVAL, TimerCallback);
 
 	while (1) {
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			if (SDL_KEYDOWN == event.type) {
-				if (SDLK_q == event.key.keysym.sym) {
-					exit(0);
-				}
-				bigarr[event.key.keysym.sym] = true;
-			}
-			if (SDL_KEYUP == event.type)
-				bigarr[event.key.keysym.sym] = false;
-		}
-
+		gc->handleEvents();
+		
 		re->render();
+
 		SDL_GL_SwapBuffers();
 	}
 
