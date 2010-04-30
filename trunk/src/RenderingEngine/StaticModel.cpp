@@ -1,235 +1,374 @@
-/*
- * ScRamble - 3D Flight Racer
- * Copyright (C) 2010  Bhanu Chetlapalli
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-#include "StaticModel.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-
-#define CBK_FILEFORMAT_MAGIC		0xDEADBEEF
-#define CBK_FILEFORMAT_CUR_VERSION	0x2
-
-struct cbkModelHeader {
-	unsigned int version;
-	unsigned int magic;
-	unsigned int totFileSize;
-	unsigned int totTris;
-	unsigned int totFaces;
-	unsigned int numMeshes;
-	float max[3];
-	float min[3];
-};
-
-#define CBK_MODEL_MATERIAL_TYPE_INVALID		0x0
-#define CBK_MODEL_MATERIAL_TYPE_DIFFUSE		0x1
-#define CBK_MODEL_MATERIAL_TYPE_SPECULAR	0x2
-#define CBK_MODEL_MATERIAL_TYPE_AMBIENT		0x3
-#define CBK_MODEL_MATERIAL_TYPE_EMISSION	0x4
-#define CBK_MODEL_MATERIAL_TYPE_SHININESS	0x5
-struct material {
-	int type;
-	float c[4];
-};
-struct facehdr {
-	unsigned int numFaces;
-	int nummats;
-	struct material mats[16];
-};
+// assimp include files.
+#include "assimp.h"
+#include "aiPostProcess.h"
+#include "aiScene.h"
 
 StaticModel::StaticModel(void)
 {
-	data = NULL;
-	transx = transy = transz = 0;
-	scalefactor = 1.0f;
 }
 
 StaticModel::~StaticModel()
 {
-	if (data)
-		free(data);
 }
 
-int StaticModel::load(const char *f)
+StaticModel::StaticModel()
 {
-	int err = -1;
-	int fd;
-	int rem = 0;
-	unsigned char *filedata = NULL;
-
-	int i, j, k;
-	int *ptr = NULL;
-	int curpos = 0;
-
-	strncpy(fn, f, 256);
-
-	fd = open(fn, O_RDONLY);
-	if (fd < 0) {
-		fprintf(stderr, "Warning: Unable to load %s: %s\n", fn, strerror(errno));
-		return -1;
-	}
-
-	struct cbkModelHeader hdr;
-	read(fd, &hdr, sizeof(hdr));
-	if (hdr.version != CBK_FILEFORMAT_CUR_VERSION) {
-		fprintf(stderr, "Warning: Unable to load %s: Unknown version(%d)\n", fn, hdr.version);
-		goto out;
-	}
-	if (hdr.magic != CBK_FILEFORMAT_MAGIC) {
-		fprintf(stderr, "Warning: Unable to load %s: Unknown version(%d)\n", fn, hdr.version);
-		goto out;
-	}
-
-	fprintf(stderr, "Info: Loaded(%s) with triangles:%d faces:%d meshes:%d "
-			"filesz:%d\n", fn, hdr.totTris, hdr.totFaces, hdr.numMeshes,
-			hdr.totFileSize);
-
-	numMeshes = hdr.numMeshes;
-
-	filedata = (unsigned char *)malloc(hdr.totFileSize);
-	if (filedata == NULL) {
-		fprintf(stderr, "Warning: Unable to load %s: No Memory\n", fn);
-		goto out;
-	}
-	data = filedata;
-
-	rem = hdr.totFileSize - sizeof(hdr);
-	while (rem) {
-		int red = read(fd, filedata, rem);
-		if (red < 0) {
-			fprintf(stderr, "Warning: Unable to read(num:%d) data of %s: %s\n", rem, fn, strerror(errno));
-			goto out;
-		}
-		if (red == 0) {
-			fprintf(stderr, "Warning: EOF recieved while reading data of %s. Remaining to read:%d\n", fn, rem);
-			goto out;
-		}
-		rem -= red;
-		filedata += red;
-	}
-
-	transx = -(hdr.max[0] + hdr.min[0]) / 2;
-	transy = -(hdr.max[1] + hdr.min[1]) / 2;
-	transz = -(hdr.max[2] + hdr.min[2]) / 2;
-
-	float expx, expy, expz;
-	expx = hdr.max[0] - hdr.min[0];
-	expy = hdr.max[1] - hdr.min[1];
-	expz = hdr.max[2] - hdr.min[2];
-	scalefactor = expx;
-	if (expx < expy)
-		scalefactor = expy;
-	if (expy < expz)
-		scalefactor = expz;
-	scalefactor /= 200.0f;
-	
-	fprintf(stderr,"max:%f %f %f min:%f %f %f exp:%f %f %f scf:%f\n", hdr.max[0], hdr.max[1], hdr.max[2], hdr.min[0], hdr.min[1], hdr.min[2],
-			expx, expy, expz, scalefactor);
-	err = 0;
-
-	/* OK Create a display list */
-	ptr = (int*)data;
-	list = glGenLists(1);
-	glNewList(list, GL_COMPILE);
-	for (i = 0; i < numMeshes; i++) {
-
-		struct facehdr *fhdr = (struct facehdr*)&ptr[curpos];
-		
-		GLint whichface = GL_FRONT;
-		for (j = 0 ; j < fhdr->nummats; j++) {
-			switch (fhdr->mats[j].type) {
-				case CBK_MODEL_MATERIAL_TYPE_DIFFUSE:
-					glMaterialfv(whichface, GL_DIFFUSE, fhdr->mats[j].c);
-					break;
-				case CBK_MODEL_MATERIAL_TYPE_SPECULAR:
-					glMaterialfv(whichface, GL_SPECULAR, fhdr->mats[j].c);
-					break;
-				case CBK_MODEL_MATERIAL_TYPE_AMBIENT:
-					glMaterialfv(whichface, GL_AMBIENT, fhdr->mats[j].c);
-					break;
-				case CBK_MODEL_MATERIAL_TYPE_EMISSION:
-					glMaterialfv(whichface, GL_EMISSION, fhdr->mats[j].c);
-					break;
-				case CBK_MODEL_MATERIAL_TYPE_SHININESS:
-					glMaterialf(whichface, GL_SHININESS, fhdr->mats[j].c[0]);
-					break;
-				case CBK_MODEL_MATERIAL_TYPE_INVALID:
-				default:
-					break;
-			}
-		}
-
-		curpos += sizeof(*fhdr)/sizeof(int);
-
-		glBegin(GL_TRIANGLE_FAN);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		for (j = 0; j < (int)fhdr->numFaces; j++) {
-			int numIndices = ptr[curpos++];
-			float *fp = (float*)&ptr[curpos];
-			for (k = 0; k < numIndices; k++) {
-				glVertex3f((fp[0] + transx)/scalefactor, (fp[1] + transy)/scalefactor, (fp[2] + transz)/scalefactor);
-				fprintf(stderr, "%f %f %f\n", (fp[0] + transx)/scalefactor, (fp[1] + transy)/scalefactor, (fp[2] + transz)/scalefactor);
-				fp += 3;
-			}
-			curpos += numIndices * 3;
-		}
-		glEnd();
-	}
-	glEndList();
-
-	fprintf(stderr, "Info: Loaded(%s) with triangles:%d faces:%d meshes:%d "
-			"filesz:%d\n", fn, hdr.totTris, hdr.totFaces, hdr.numMeshes,
-			hdr.totFileSize);
-	fprintf(stderr,"max:%f %f %f min:%f %f %f exp:%f %f %f scf:%f\n", hdr.max[0], hdr.max[1], hdr.max[2], hdr.min[0], hdr.min[1], hdr.min[2],
-			expx, expy, expz, scalefactor);
- out:
-	close(fd);
-	if (data) {
-		free(data);
-		data = NULL;
-	}
-	return err;
 }
 
-extern float degx,degy,degz;
-void StaticModel::render(Camera *c)
+
+
+// the global Assimp scene object
+const struct aiScene* scene = NULL;
+GLuint scene_list = 0;
+struct aiVector3D scene_min, scene_max, scene_center;
+
+// current rotation angle
+static float angle = 0.f;
+
+#define aisgl_min(x,y) (x<y?x:y)
+#define aisgl_max(x,y) (y>x?y:x)
+
+// ----------------------------------------------------------------------------
+void reshape(int width, int height)
 {
-//	static float x,y,z;
+	const double aspectRatio = (float) width / height, fieldOfView = 45.0;
 
-	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_COLOR_MATERIAL);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(fieldOfView, aspectRatio,
+		1.0, 1000.0);  /* Znear and Zfar */
+	glViewport(0, 0, width, height);
+}
 
-	float light_pos[4] = {c->camx, c->camy, c->camz, 0};
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+// ----------------------------------------------------------------------------
+void get_bounding_box_for_node (const struct aiNode* nd, 
+	struct aiVector3D* min, 
+	struct aiVector3D* max, 
+	struct aiMatrix4x4* trafo
+){
+	struct aiMatrix4x4 prev;
+	unsigned int n = 0, t;
 
+	prev = *trafo;
+	aiMultiplyMatrix4(trafo,&nd->mTransformation);
+
+	for (; n < nd->mNumMeshes; ++n) {
+		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
+		for (t = 0; t < mesh->mNumVertices; ++t) {
+
+			struct aiVector3D tmp = mesh->mVertices[t];
+			aiTransformVecByMatrix4(&tmp,trafo);
+
+			min->x = aisgl_min(min->x,tmp.x);
+			min->y = aisgl_min(min->y,tmp.y);
+			min->z = aisgl_min(min->z,tmp.z);
+
+			max->x = aisgl_max(max->x,tmp.x);
+			max->y = aisgl_max(max->y,tmp.y);
+			max->z = aisgl_max(max->z,tmp.z);
+		}
+	}
+
+	for (n = 0; n < nd->mNumChildren; ++n) {
+		get_bounding_box_for_node(nd->mChildren[n],min,max,trafo);
+	}
+	*trafo = prev;
+}
+
+// ----------------------------------------------------------------------------
+void get_bounding_box (struct aiVector3D* min, struct aiVector3D* max)
+{
+	struct aiMatrix4x4 trafo;
+	aiIdentityMatrix4(&trafo);
+
+	min->x = min->y = min->z =  1e10f;
+	max->x = max->y = max->z = -1e10f;
+	get_bounding_box_for_node(scene->mRootNode,min,max,&trafo);
+}
+
+// ----------------------------------------------------------------------------
+
+void color4_to_float4(const struct aiColor4D *c, float f[4])
+{
+	f[0] = c->r;
+	f[1] = c->g;
+	f[2] = c->b;
+	f[3] = c->a;
+}
+
+void set_float4(float f[4], float a, float b, float c, float d)
+{
+	f[0] = a;
+	f[1] = b;
+	f[2] = c;
+	f[3] = d;
+}
+
+// ----------------------------------------------------------------------------
+void apply_material(const struct aiMaterial *mtl)
+{
+	float c[4];
+
+	GLenum fill_mode;
+	int ret1, ret2;
+	struct aiColor4D diffuse;
+	struct aiColor4D specular;
+	struct aiColor4D ambient;
+	struct aiColor4D emission;
+	float shininess, strength;
+	int two_sided;
+	int wireframe;
+	int max;
+
+	set_float4(c, 0.8f, 0.8f, 0.8f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
+		color4_to_float4(&diffuse, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+
+	set_float4(c, 0.0f, 0.0f, 0.0f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &specular))
+		color4_to_float4(&specular, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, c);
+
+	set_float4(c, 0.2f, 0.2f, 0.2f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &ambient))
+		color4_to_float4(&ambient, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, c);
+
+	set_float4(c, 0.0f, 0.0f, 0.0f, 1.0f);
+	if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &emission))
+		color4_to_float4(&emission, c);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, c);
+
+	max = 1;
+	ret1 = aiGetMaterialFloatArray(mtl, AI_MATKEY_SHININESS, &shininess, &max);
+	max = 1;
+	ret2 = aiGetMaterialFloatArray(mtl, AI_MATKEY_SHININESS_STRENGTH, &strength, &max);
+	if((ret1 == AI_SUCCESS) && (ret2 == AI_SUCCESS))
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess * strength);
+	else {
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0f);
+		set_float4(c, 0.0f, 0.0f, 0.0f, 0.0f);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, c);
+	}
+
+	max = 1;
+	if(AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &max))
+		fill_mode = wireframe ? GL_LINE : GL_FILL;
+	else
+		fill_mode = GL_FILL;
+	glPolygonMode(GL_FRONT_AND_BACK, fill_mode);
+
+	max = 1;
+	if((AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided)
+		glEnable(GL_CULL_FACE);
+	else 
+		glDisable(GL_CULL_FACE);
+}
+
+// ----------------------------------------------------------------------------
+
+// Can't send color down as a pointer to aiColor4D because AI colors are ABGR.
+void Color4f(const struct aiColor4D *color)
+{
+	glColor4f(color->r, color->g, color->b, color->a);
+}
+
+// ----------------------------------------------------------------------------
+void recursive_render (const struct aiScene *sc, const struct aiNode* nd)
+{
+	int i;
+	unsigned int n = 0, t;
+	struct aiMatrix4x4 m = nd->mTransformation;
+
+	// update transform
+	aiTransposeMatrix4(&m);
 	glPushMatrix();
-	glTranslatef(c->pointx + degx, c->pointy, c->pointz + degz - 300);
-	glRotatef(-90, 1, 0, 0);
-	glRotatef(180 + degy, 0, 0, 1);
+	glMultMatrixf((float*)&m);
 
-	glCallList(list);
+	// draw all meshes assigned to this node
+	for (; n < nd->mNumMeshes; ++n) {
+		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
+
+		apply_material(sc->mMaterials[mesh->mMaterialIndex]);
+
+		if(mesh->mNormals == NULL) {
+			glDisable(GL_LIGHTING);
+		} else {
+			glEnable(GL_LIGHTING);
+		}
+
+		if(mesh->mColors[0] != NULL) {
+			glEnable(GL_COLOR_MATERIAL);
+		} else {
+			glDisable(GL_COLOR_MATERIAL);
+		}
+
+		for (t = 0; t < mesh->mNumFaces; ++t) {
+			const struct aiFace* face = &mesh->mFaces[t];
+			GLenum face_mode;
+
+			switch(face->mNumIndices) {
+				case 1: face_mode = GL_POINTS; break;
+				case 2: face_mode = GL_LINES; break;
+				case 3: face_mode = GL_TRIANGLES; break;
+				default: face_mode = GL_POLYGON; break;
+			}
+
+			glBegin(face_mode);
+
+			for(i = 0; i < face->mNumIndices; i++) {
+				int index = face->mIndices[i];
+				if(mesh->mColors[0] != NULL)
+					Color4f(&mesh->mColors[0][index]);
+				if(mesh->mNormals != NULL) 
+					glNormal3fv(&mesh->mNormals[index].x);
+				glVertex3fv(&mesh->mVertices[index].x);
+			}
+
+			glEnd();
+		}
+
+	}
+
+	// draw all children
+	for (n = 0; n < nd->mNumChildren; ++n) {
+		recursive_render(sc, nd->mChildren[n]);
+	}
 
 	glPopMatrix();
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
 }
 
+// ----------------------------------------------------------------------------
+void do_motion (void)
+{
+	static GLint prev_time = 0;
+
+	int time = glutGet(GLUT_ELAPSED_TIME);
+	angle += (time-prev_time)*0.01;
+	prev_time = time;
+
+	glutPostRedisplay ();
+}
+
+// ----------------------------------------------------------------------------
+void display(void)
+{
+	float tmp;
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0.f,0.f,3.f,0.f,0.f,-5.f,0.f,1.f,0.f);
+
+	// rotate it around the y axis
+	glRotatef(angle,0.f,1.f,0.f);
+
+	// scale the whole asset to fit into our view frustum 
+	tmp = scene_max.x-scene_min.x;
+	tmp = aisgl_max(scene_max.y - scene_min.y,tmp);
+	tmp = aisgl_max(scene_max.z - scene_min.z,tmp);
+	tmp = 1.f / tmp;
+	glScalef(tmp, tmp, tmp);
+
+        // center the model
+	glTranslatef( -scene_center.x, -scene_center.y, -scene_center.z );
+
+        // if the display list has not been made yet, create a new one and
+        // fill it with scene contents
+	if(scene_list == 0) {
+	    scene_list = glGenLists(1);
+	    glNewList(scene_list, GL_COMPILE);
+            // now begin at the root node of the imported data and traverse
+            // the scenegraph by multiplying subsequent local transforms
+            // together on GL's matrix stack.
+	    recursive_render(scene, scene->mRootNode);
+	    glEndList();
+	}
+
+	glCallList(scene_list);
+
+	glutSwapBuffers();
+
+	do_motion();
+}
+
+// ----------------------------------------------------------------------------
+int loadasset (const char* path)
+{
+	// we are taking one of the postprocessing presets to avoid
+	// writing 20 single postprocessing flags here.
+	scene = aiImportFile(path,aiProcessPreset_TargetRealtime_Quality);
+
+	if (scene) {
+		get_bounding_box(&scene_min,&scene_max);
+		scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
+		scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
+		scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
+		return 0;
+	}
+	return 1;
+}
+
+// ----------------------------------------------------------------------------
+int main(int argc, char **argv)
+{
+	struct aiLogStream stream;
+
+	glutInitWindowSize(900,600);
+	glutInitWindowPosition(100,100);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInit(&argc, argv);
+
+	glutCreateWindow("Assimp - Very simple OpenGL sample");
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+
+	// get a handle to the predefined STDOUT log stream and attach
+	// it to the logging system. It will be active for all further
+	// calls to aiImportFile(Ex) and aiApplyPostProcessing.
+	stream = aiGetPredefinedLogStream(aiDefaultLogStream_STDOUT,NULL);
+	aiAttachLogStream(&stream);
+
+	// ... exactly the same, but this stream will now write the
+	// log file to assimp_log.txt
+	stream = aiGetPredefinedLogStream(aiDefaultLogStream_FILE,"assimp_log.txt");
+	aiAttachLogStream(&stream);
+
+	if( 0 != loadasset( argc >= 2 ? argv[1] : "../../test/models/X/dwarf.x")) {
+		if( argc != 1 || 0 != loadasset( "../../../../test/models/X/dwarf.x")) { 
+			return -1;
+		}
+	}
+
+	glClearColor(0.1f,0.1f,0.1f,1.f);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);    // Uses default lighting parameters
+
+	glEnable(GL_DEPTH_TEST);
+
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glEnable(GL_NORMALIZE);
+
+	// XXX docs say all polygons are emitted CCW, but tests show that some aren't.
+	if(getenv("MODEL_IS_BROKEN"))  
+		glFrontFace(GL_CW);
+
+	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+
+	glutGet(GLUT_ELAPSED_TIME);
+	glutMainLoop();
+
+	// cleanup - calling 'aiReleaseImport' is important, as the library 
+	// keeps internal resources until the scene is freed again. Not 
+	// doing so can cause severe resource leaking.
+	aiReleaseImport(scene);
+
+	// We added a log stream to the library, it's our job to disable it
+	// again. This will definitely release the last resources allocated
+	// by Assimp.
+	aiDetachAllLogStreams();
+	return 0;
+}

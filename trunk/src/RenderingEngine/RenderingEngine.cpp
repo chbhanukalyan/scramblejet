@@ -41,8 +41,7 @@ int RenderingEngine::Initialize(void)
 
 	skybox->setSize(1000, 1000, 1000);
 
-//	fighterjet->load("../data/staticmodels/fighter.cbk");
-	fighterjet->load("../data/staticmodels/F-16.cbk");
+	fighterjet->load("../data/staticmodels/F-16.dae");
 
 	return 0;
 }
@@ -56,12 +55,12 @@ void RenderingEngine::render(void)
 	// Set the projection matrix
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-	gluPerspective(45, 640/480.0, 0.005, 5000.0f);
+//	gluPerspective(45, 640/480.0, 0.005, 5000.0f);
 
 	// Reset the model view matrix
     glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
     glLoadIdentity();   // Reset The Modelview Matrix
-//	glOrtho(-1000, 1000, -1000, 1000, -1000, 1000);
+	glOrtho(-5000, 5000, -5000, 5000, -5000, 5000);
 
 	camera->Update();
 
@@ -71,7 +70,7 @@ void RenderingEngine::render(void)
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	/* Render the objects in order */
-	skybox->render(camera);
+//	skybox->render(camera);
 
 	fighterjet->render(camera);
 
