@@ -28,6 +28,7 @@ LDFLAGS = -Wall -Werror -g3 -lGL -lGLU -lm -lSDL -lSDL_image -lSDL_mixer -lSDL_t
 OBJECTS	=			main.o		\
 
 LIBS	=			RenderingEngine/re.a			\
+					../vendor/assimp/bin/gcc/libassimp.so	\
 
 
 $(OUTPUT): $(OBJECTS) RE

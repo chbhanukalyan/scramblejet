@@ -25,8 +25,6 @@
 class StaticModel {
 	private:
 		char fn[256];
-		unsigned char *data;
-		int numMeshes;
 
 		float scalefactor;
 		float transx;
