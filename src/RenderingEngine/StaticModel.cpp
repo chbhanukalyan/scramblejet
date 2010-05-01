@@ -90,17 +90,19 @@ void StaticModel::render(Camera *c)
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0.f,0.f,3.f,0.f,0.f,-5.f,0.f,1.f,0.f);
+	static float aa = 0;
+	aa -= 0.01f;
+//	c->Rotate(aa);
+//	glMatrixMode(GL_MODELVIEW);
+//	glLoadIdentity();
+//	gluLookAt(0.f,0.f,8.f+aa,0.f,0.f,-5.f,0.f,1.f,0.f);
 
 	// rotate it around the y axis
-	glRotatef(180,0.f,1.f,0.f);
-	glTranslatef(0.f,-.2f,-1.5f);
-static float angle = 180.f;
-	glRotatef(angle,0.f,1.f,0.f);
-	angle += 0.2;
+//	glRotatef(180,0.f,1.f,0.f);
+//	glTranslatef(0.f,-.2f,-1.5f);
+//static float angle = 180.f;
+//	glRotatef(angle,0.f,1.f,0.f);
+//	angle += 0.2;
 
 	// scale the whole asset to fit into our view frustum 
 	tmp = scene_max.x-scene_min.x;
