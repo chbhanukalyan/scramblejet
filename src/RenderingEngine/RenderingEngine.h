@@ -32,9 +32,9 @@ class RenderingEngine {
 		int hres;
 		int vres;
 
+	public:
 		StaticModel *fighterjet;
 
-	public:
 		RenderingEngine(void);
 		~RenderingEngine();
 

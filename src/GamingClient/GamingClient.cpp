@@ -33,6 +33,9 @@ unsigned int timer_callback(unsigned int tm, void *param)
 {
 	GamingClient *gc = (GamingClient*)param;
 
+	if (gc->player)
+		gc->player->handle(gc->evmap);
+
 	return gc->timerInterval;
 }
 

@@ -26,6 +26,7 @@
 
 #include "RenderingEngine/RenderingEngine.h"
 #include "GamingClient/GamingClient.h"
+#include "Objects/Player.h"
 
 int hres = 640, vres=480;
 #define	TIME_INTERVAL	10
@@ -77,6 +78,9 @@ int main(int argc, char **argv)
 
 	GamingClient *gc = new GamingClient();
 	gc->initialize("../data/default.eventmap", 10);
+
+	Player *p = new Player();
+	p->load(re, (void*)gc);
 
 	while (1) {
 		gc->handleEvents();
