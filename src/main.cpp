@@ -101,11 +101,9 @@ int main(int argc, char **argv)
 	re->Initialize();
 
 	GamingClient *gc = new GamingClient();
-	gc->initialize("../data/default.eventmap");
+	gc->initialize("../data/default.eventmap", 10);
 	evmap = gc->evmap;
 	evmap->registerFunction((int)FUNCID_QUIT, Quit);
-
-	SDL_SetTimer(TIME_INTERVAL, TimerCallback);
 
 	while (1) {
 		gc->handleEvents();

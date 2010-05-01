@@ -29,9 +29,27 @@ GamingClient::~GamingClient()
 	delete evmap;
 }
 
-int GamingClient::initialize(const char *evmapfn)
+unsigned int timer_callback(unsigned int tm, void *param)
+{
+	GamingClient *gc = (GamingClient*)param;
+
+	return gc->timerInterval;
+}
+
+int GamingClient::initialize(const char *evmapfn, int timerInt)
 {
 	evmap->loadKeymap(evmapfn);
+
+	timerInterval = (timerInt / 10) * 10;
+	if (timerInterval != timerInt) {
+		fprintf(stderr, "WARNING: Timer Interval(%d) rounded off to %d\n",
+				timerInt, timerInterval);
+	}
+
+	if ((timerID = SDL_AddTimer(timerInterval, timer_callback, this)) == NULL) {
+		fprintf(stderr, "WARNING: Unable to set SDL Timer\n");
+		return -1;
+	}
 
 	return 0;
 }
