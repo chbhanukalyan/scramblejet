@@ -43,5 +43,8 @@ enum {
 	FUNCID_QUIT			=	51,
 };
 
+extern int getFuncIDfromStr(const char *str);
+
+
 #endif	/*	__GC_FUNCIDS_H__	*/
 

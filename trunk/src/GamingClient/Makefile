@@ -26,6 +26,7 @@ AR = ar
 
 OBJECTS	=			GamingClient.o		\
 					EventMap.o			\
+					funcids.o			\
 
 $(OUTPUT): $(OBJECTS)
 	ar rcs $(OUTPUT) $(OBJECTS)

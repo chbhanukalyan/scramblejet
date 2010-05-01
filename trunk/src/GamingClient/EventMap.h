@@ -20,6 +20,8 @@
 #ifndef		__GC_EVENTMAP_H__
 #define		__GC_EVENTMAP_H__
 
+#include "funcids.h"
+
 typedef void (EventCallbackFunc)(void);
 
 #define	MAX_EVENTS_PER_FUNC	4

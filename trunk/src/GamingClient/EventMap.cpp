@@ -310,10 +310,19 @@ int EventMap::loadKeymap(const char *evmapfn)
 			fprintf(stderr, "Invalid Event map format\n");
 			goto closef;
 		}
+		// Chop the last '\n'
+		line[len-1] = '\0';
 
 		syskeyid = getKeyID(line);
-		if (sscanf(line+i+1, "%d", &funcid) != 1) {
-			fprintf(stderr, "Invalid Event map format\n");
+		funcid = getFuncIDfromStr(line + i + 1);
+
+		if (syskeyid == SDLK_UNKNOWN) {
+			fprintf(stderr, "Invalid Event map format in key: %s\n", line);
+			goto closef;
+		}
+		
+		if (funcid == FUNCID_INVALID) {
+			fprintf(stderr, "Invalid Event map format in function: %s\n", line + i + 1);
 			goto closef;
 		}
 		
