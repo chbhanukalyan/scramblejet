@@ -30,9 +30,9 @@ Camera::~Camera()
 
 void Camera::Initialize(void)
 {
-	distance = 500;
+	distance = 1;
 	height = 0;
-	angle = 0.7;
+	angle = 0;
 
 	pointx = 0;
 	pointy = 0;

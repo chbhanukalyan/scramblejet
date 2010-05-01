@@ -37,31 +37,6 @@ void Quit(void)
 	exit(0);
 }
 
-#include "GamingClient/EventMap.h"
-#include "GamingClient/funcids.h"
-EventMap *evmap = NULL;
-
-float degx = 0, degy = 0, degz = 0;
-unsigned int TimerCallback(unsigned int)
-{
-	if (evmap->eventInProgress(FUNCID_ROTXP))
-		degx += 1;
-	if (evmap->eventInProgress(FUNCID_ROTXM))
-		degx -= 1;
-	if (evmap->eventInProgress(FUNCID_ROTYP))
-		degy += 1;
-	if (evmap->eventInProgress(FUNCID_ROTYM))
-		degy -= 1;
-	if (evmap->eventInProgress(FUNCID_ROTZP))
-		degz += 1;
-	if (evmap->eventInProgress(FUNCID_ROTZM))
-		degz -= 1;
-
-//	printf("X:%f Y:%f Z:%f\n", degx, degy, degz);
-
-	return 1;
-}
-
 int main(int argc, char **argv)
 {
 	int VideoFlags = 0;
@@ -102,8 +77,6 @@ int main(int argc, char **argv)
 
 	GamingClient *gc = new GamingClient();
 	gc->initialize("../data/default.eventmap", 10);
-	evmap = gc->evmap;
-	evmap->registerFunction((int)FUNCID_QUIT, Quit);
 
 	while (1) {
 		gc->handleEvents();

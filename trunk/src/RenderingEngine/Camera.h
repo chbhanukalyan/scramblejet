@@ -58,12 +58,8 @@ class Camera {
 	void Initialize();
 
 	inline void Update(void) {
-		if (dirty) {
-			glLoadIdentity();
-			gluLookAt(camx, camy, camz, pointx, pointy, pointz, upx,
+		gluLookAt(camx, camy, camz, pointx, pointy, pointz, upx,
 				  upy, upz);
-			dirty = false;
-		}
 	}
 	void Move();
 	void MoveUp();
