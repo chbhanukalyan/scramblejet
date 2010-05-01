@@ -35,6 +35,8 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd);
 
 StaticModel::StaticModel(void)
 {
+	transx = transy = transz = 0;
+	roll = pitch = yaw = 0;
 }
 
 StaticModel::~StaticModel()
@@ -90,8 +92,7 @@ void StaticModel::render(Camera *c)
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 
-	static float aa = 0;
-	aa -= 0.01f;
+//	glTranslatef(transx, transy, transz);
 //	c->Rotate(aa);
 //	glMatrixMode(GL_MODELVIEW);
 //	glLoadIdentity();
@@ -114,7 +115,21 @@ void StaticModel::render(Camera *c)
         // center the model
 	glTranslatef( -scene_center.x, -scene_center.y, -scene_center.z );
 
+	glPushMatrix();
+	glRotatef(roll, 0, 0, 1);
+	glPushMatrix();
+	glRotatef(pitch, 1, 0, 0);
+	glPushMatrix();
+	glRotatef(yaw, 0, 1, 0);
+	glPushMatrix();
+	glTranslatef(transx, transy, transz);
+
 	glCallList(list);
+	
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);

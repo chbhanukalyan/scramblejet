@@ -22,12 +22,11 @@ RenderingEngine::RenderingEngine(void)
 {
 	camera = new Camera;
 	skybox = new SkyBox;
-	fighterjet = new StaticModel;
+	fighterjet = NULL;
 }
 
 RenderingEngine::~RenderingEngine()
 {
-	delete fighterjet;
 	delete skybox;
 	delete camera;
 }
@@ -40,8 +39,6 @@ int RenderingEngine::Initialize(void)
 	skybox->load("../data/skybox/dry/");
 
 	skybox->setSize(1000, 1000, 1000);
-
-	fighterjet->load("../data/staticmodels/F-16.dae");
 
 	return 0;
 }
@@ -72,7 +69,8 @@ void RenderingEngine::render(void)
 	/* Render the objects in order */
 	skybox->render(camera);
 
-	fighterjet->render(camera);
+	if (fighterjet)
+		fighterjet->render(camera);
 
 	glFlush();
 }

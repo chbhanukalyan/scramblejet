@@ -26,12 +26,17 @@ class StaticModel {
 	private:
 		char fn[256];
 
+		GLint list;
 		float scalefactor;
+
+	protected:
 		float transx;
 		float transy;
 		float transz;
 
-		GLint list;
+		float roll;
+		float pitch;
+		float yaw;
 
 	public:
 		StaticModel(void);

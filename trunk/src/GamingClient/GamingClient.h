@@ -23,11 +23,14 @@
 #include <SDL/SDL_timer.h>
 #include "EventMap.h"
 
+#include "../Objects/Player.h"
+
 class GamingClient {
 	private:
 		SDL_TimerID timerID;
 
 	public:
+		Player *player;
 		EventMap *evmap;
 		int timerInterval;
 

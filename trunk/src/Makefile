@@ -29,14 +29,18 @@ OBJECTS	=			main.o		\
 
 LIBS	=			RenderingEngine/re.a			\
 					GamingClient/gc.a				\
+					Objects/objs.a					\
 					../vendor/assimp/bin/gcc/libassimp.so	\
 
 
-$(OUTPUT): $(OBJECTS) RE GC
+$(OUTPUT): $(OBJECTS) RE GC OBJ
 	$(LD) -o $(OUTPUT) $(LDFLAGS) $(OBJECTS) $(LIBS)
 	
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
+
+OBJ:
+	make -C Objects
 
 GC:
 	make -C GamingClient
@@ -47,5 +51,6 @@ RE:
 clean:
 	make -C RenderingEngine clean
 	make -C GamingClient clean
+	make -C Objects clean
 	-rm -f $(OBJECTS) $(OUTPUT)
 
