@@ -20,18 +20,21 @@
 #ifndef		__GC_GAMINGCLIENT_H__
 #define		__GC_GAMINGCLIENT_H__
 
+#include <SDL/SDL_timer.h>
 #include "EventMap.h"
 
 class GamingClient {
 	private:
+		SDL_TimerID timerID;
 
 	public:
 		EventMap *evmap;
+		int timerInterval;
 
 		GamingClient(void);
 		~GamingClient();
 
-		int initialize(const char *eventmap);
+		int initialize(const char *eventmap, int timerInterval);
 
 		int connect(void);
 		void handleEvents(void);
