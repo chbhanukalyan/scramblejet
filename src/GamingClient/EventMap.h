@@ -32,10 +32,12 @@ struct function {
 	int inprogress;
 	/* For Callback */
 	EventCallbackFunc *cbs;
+	int timestamp;
 };
 
 class EventMap {
 	private:
+		unsigned long long timestamp;
 		int getKeyID(const char *key);
 
 		int ev2funcid[MAX_NUM_EVENTS];
@@ -47,7 +49,12 @@ class EventMap {
 		}
 
 	public:
-		EventMap();
+		EventMap(void);
+
+		void updateTimer(void)
+		{
+			timestamp++;
+		}
 
 		int loadKeymap(const char *evmapfn);
 
@@ -63,10 +70,17 @@ class EventMap {
 		}
 		inline void keyDown(int key) {
 			int func = ev2funcid[key];
+			if (funcArr[func].inprogress == 0) {
+				funcArr[func].timestamp = timestamp;
+			}
 			funcArr[func].inprogress++;
 			if (funcArr[func].cbs) 
 				(*funcArr[func].cbs)();
 		}
+
+		/* Serializes list of events to a buffer */
+		int serializeEvMap(unsigned char *buf, int maxlen);
+
 };
 
 #endif	/*	__GC_EVENTMAP_H__	*/

@@ -41,6 +41,8 @@ enum {
 	FUNCID_ROTZM		=	26,
 
 	FUNCID_QUIT			=	51,
+
+	MAX_FUNCID			=	128
 };
 
 extern int getFuncIDfromStr(const char *str);

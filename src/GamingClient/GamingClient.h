@@ -23,11 +23,14 @@
 #include <SDL/SDL_timer.h>
 #include "EventMap.h"
 
+#define	DEFAULT_NETWORK_EVENT_UPDATE_INTERVAL	5
+
 #include "../Objects/Player.h"
 
 class GamingClient {
 	private:
 		SDL_TimerID timerID;
+		bool connected;
 
 	public:
 		Player *player;
@@ -39,8 +42,30 @@ class GamingClient {
 
 		int initialize(const char *eventmap, int timerInterval);
 
-		int connect(void);
 		void handleEvents(void);
+
+		void updateTimerCb(void);
+
+		/* Networking Info */
+	private:
+		char serverIP[16];
+		int serverPort;
+		int localPort;
+		int commSocket;
+
+		char pktEventBuf[512];
+
+		int sendPacket(void *buf, int len);
+		int recvPacket(void *buf, int *len);
+
+		int updateInterval;
+		int networkUpdateCounter;
+
+	public:
+		int Connect(const char *serverIP, int port = 6501);
+		void Disconnect(void);
+
+		int sendEventList(void);
 
 };
 
