@@ -113,7 +113,8 @@ void RenderingEngine::removeObject(Renderable *r)
 			return;
 		}
 	}
-	fprintf(stderr, "WARNING: Trying to remove Renderable Object:  not in list\n");
+	fprintf(stderr, "WARNING: Trying to remove Renderable Object: %s "
+			"not in list\n", r->id);
 }
 
 void RenderingEngine::clearRenderList(void)

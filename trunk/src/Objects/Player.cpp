@@ -20,7 +20,7 @@
 #include "../GamingClient/GamingClient.h"
 
 Player::Player()
-	:StaticModel()
+	:StaticModel("Player")
 {
 }
 
