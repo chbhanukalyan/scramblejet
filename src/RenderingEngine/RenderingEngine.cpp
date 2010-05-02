@@ -99,6 +99,9 @@ void RenderingEngine::addObject(Renderable *r)
 
 void RenderingEngine::removeObject(Renderable *r)
 {
+	if (renderList == NULL)
+		return;
+
 	if (renderList == r) {
 		renderList = r->next;
 		r->next = NULL;
@@ -112,6 +115,7 @@ void RenderingEngine::removeObject(Renderable *r)
 			r->next = NULL;
 			return;
 		}
+		tmp = tmp->next;
 	}
 	fprintf(stderr, "WARNING: Trying to remove Renderable Object: %s "
 			"not in list\n", r->id);

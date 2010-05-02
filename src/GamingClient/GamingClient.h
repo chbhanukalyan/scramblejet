@@ -55,6 +55,7 @@ class GamingClient {
 
 		char pktEventBuf[512];
 
+		int doHandshake(void);
 		int sendPacket(void *buf, int len);
 		int recvPacket(void *buf, int *len);
 
