@@ -59,6 +59,8 @@ class GamingClient {
 		int sendPacket(void *buf, int len);
 		int recvPacket(void *buf, int *len);
 
+		void handleNetworkEvents(void);
+
 		int updateInterval;
 		int networkUpdateCounter;
 

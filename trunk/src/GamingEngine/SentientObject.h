@@ -25,7 +25,7 @@ class SentientObject {
 		SentientObject *next;
 
 		virtual void handleEvent(int funcid, int count) = 0;
-		virtual void serializeState(void *buf, int *len) = 0;
+		virtual int serializeState(void *buf) = 0;
 
 		virtual void doTick(void) = 0;
 

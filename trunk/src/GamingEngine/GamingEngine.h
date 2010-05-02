@@ -36,7 +36,7 @@ class GamingEngine {
 		~GamingEngine();
 
 		int initialize(void);
-		int startGame(void);
+		int startGame(void *server);
 		void stop(void);
 
 		void addPlayer(int id, const char *name);

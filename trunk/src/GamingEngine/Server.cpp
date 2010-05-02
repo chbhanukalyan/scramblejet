@@ -203,10 +203,24 @@ int Server::getEventList(void)
 	return 0;
 }
 
+int Server::broadcastUpdatePacket(void *buf, int len)
+{
+	int i;
+	struct srvUpdatePacket *sup = (struct srvUpdatePacket*)buf;
+	sup->phdr.version = CUR_PROTOCOL_VERSION;
+	sup->phdr.magic = CUR_PROTOCOL_MAGIC;
+	sup->phdr.type = PKTTYPE_SRV2CLI_OBJUPDTLIST;
+	fprintf(stderr, "Broadcasting Packet(len=%d) to all clients\n", len);
+	for (i = 0 ; i < curclients; i++) {
+		sendPacket(i, buf, len);
+	}
+	return 0;
+}
+
 int Server::sendPacket(ClientID cid, void *buf, int len)
 {
-	struct sockaddr_in st;
-	if (sendto(commSocket, buf, len, 0, (struct sockaddr*)&st, sizeof(st)) != len) {
+	if (sendto(commSocket, buf, len, 0, (struct sockaddr*)&cliinfo[cid].sendst,
+				sizeof(struct sockaddr_in)) != len) {
 		fprintf(stderr, "Client socket Send(%d bytes) failed: %s\n",
 				len, strerror(errno));
 		return -1;

@@ -110,6 +110,34 @@ void GamingClient::handleEvents(void)
 				break;
 		}
 	}
+
+	handleNetworkEvents();
+
+}
+
+void GamingClient::handleNetworkEvents(void)
+{
+	/* Recieve Network Packets */
+	char buf[MAX_PACKET_SIZE];
+	int len = MAX_PACKET_SIZE;
+	while (true) {
+		struct timeval tm;
+		tm.tv_sec = 0;
+		tm.tv_usec = 0;
+		fd_set fds;
+		FD_ZERO(&fds);
+		FD_SET(commSocket, &fds);
+		int ret = select(commSocket + 1, &fds, NULL, NULL, &tm);
+		if (ret > 0) {
+			if (recvPacket(buf, &len) < 0)
+				continue;
+			printf("recved packet from server len=%d\n", len);
+
+			/* TODO call update objects HERE */
+		}
+		if (ret == 0)
+			break;
+	}
 }
 
 int GamingClient::doHandshake(void)

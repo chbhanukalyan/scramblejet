@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
 	srv->startEventRecver();
 
-	ge->startGame();
+	ge->startGame(srv);
 
 	srv->stop();
 

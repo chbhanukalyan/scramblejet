@@ -36,7 +36,7 @@ class Player : public SentientObject {
 		~Player();
 
 		void handleEvent(int funcid, int count);
-		void serializeState(void *buf, int *len);
+		int serializeState(void *buf);
 
 		void doTick(void);
 };
