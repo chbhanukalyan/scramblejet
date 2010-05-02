@@ -24,12 +24,16 @@ CFLAGS = -Wall -Werror -g3
 AR = ar
 
 
-OBJECTS	=			Player.o		\
+OBJECTS	=			StaticModel.o	\
+					Player.o		\
 					SkyBox.o		\
 
 $(OUTPUT): $(OBJECTS)
 	ar rcs $(OUTPUT) $(OBJECTS)
 	
+StaticModel.o: StaticModel.cpp StaticModel.h
+	$(CC) $(CFLAGS) -I../../vendor/assimp/include/ -c StaticModel.cpp -o StaticModel.o
+
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 

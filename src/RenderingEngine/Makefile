@@ -28,15 +28,11 @@ OBJECTS	=			RenderingEngine.o	\
 					TextObject.o	\
 					TTFFont.o		\
 					Camera.o		\
-					StaticModel.o	\
 
 
 $(OUTPUT): $(OBJECTS)
 	$(AR) rcs $(OUTPUT) $(OBJECTS)
 
-StaticModel.o: StaticModel.cpp StaticModel.h
-	$(CC) $(CFLAGS) -I../../vendor/assimp/include/ -c StaticModel.cpp -o StaticModel.o
-	
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 

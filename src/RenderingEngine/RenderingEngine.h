@@ -20,8 +20,7 @@
 #ifndef		__RE_RENDERINGENGINE_H__
 #define		__RE_RENDERINGENGINE_H__
 
-#include "Camera.h"
-#include "StaticModel.h"
+#include "Renderable.h"
 
 class RenderingEngine {
 	private:
