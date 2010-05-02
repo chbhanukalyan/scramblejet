@@ -29,7 +29,7 @@
 #include "../protocol.h"
 
 #include "GamingEngine.h"
-
+#include "Server.h"
 
 GamingEngine::GamingEngine(void)
 {
@@ -45,14 +45,28 @@ int GamingEngine::initialize(void)
 	return 0;
 }
 
-int GamingEngine::startGame(void)
+int GamingEngine::startGame(void *serv)
 {
+	Server *server = (Server *)serv;
 	while (true) {
 		if (p) {
 			p->doTick();
 		}
+		
 		/* Dispatch updates after some time */
+		char buf[MAX_PACKET_SIZE];
+		int len = sizeof(struct protocolHeader);
 
+		SentientObject *seo = objList;
+		while (seo) {
+			int l = seo->serializeState(buf + len);
+			printf("SEO SERIAL len=%d ret=%d\n", len, l);
+			len += l;
+			seo = seo->next;
+		}
+		server->broadcastUpdatePacket(buf, len);
+		/* sleep some time before starting again TODO Make wakeup */
+		usleep(500000);
 	}
 	return 0;
 }

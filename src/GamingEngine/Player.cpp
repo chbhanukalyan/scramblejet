@@ -56,10 +56,14 @@ void Player::handleEvent(int funcid, int count) {
 	}
 }
 
-void Player::serializeState(void *buf, int *len) {
-	float *f = (float *)buf;
-	memcpy(f, loc, sizeof(loc));
-	*len += sizeof(loc);
+int Player::serializeState(void *buf) {
+
+	unsigned char *b = (unsigned char *)buf;
+	b[0] = 2 + sizeof(loc);		//size
+	b[1] = 0x1;					// update field id
+	memcpy(b + 2, loc, sizeof(loc));
+
+	return 2 + sizeof(loc);
 }
 
 void Player::doTick(void) {
