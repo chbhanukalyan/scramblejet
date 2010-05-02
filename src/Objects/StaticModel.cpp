@@ -33,8 +33,8 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd);
 #define aisgl_max(x,y) (y>x?y:x)
 
 
-StaticModel::StaticModel(void)
-	: Renderable()
+StaticModel::StaticModel(const char *id)
+	: Renderable(id)
 {
 	transx = transy = transz = 0;
 	roll = pitch = yaw = 0;

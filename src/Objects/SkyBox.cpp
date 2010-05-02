@@ -28,6 +28,7 @@ const char *const SkyBox::skybox_fn[6] = {
 };
 
 SkyBox::SkyBox(void)
+	: Renderable("SkyBox")
 {
 	loaded = 0;
 	for (int i = 0 ; i < 6; i++) {

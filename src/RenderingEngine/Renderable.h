@@ -20,14 +20,19 @@
 #ifndef		__RE_RENDERABLE_H__
 #define		__RE_RENDERABLE_H__
 
+#include <string.h>
+
 #include "Camera.h"
 
 class Renderable {
 	public:
+		char id[16];
 		Renderable *next;
 
 	public:
-		Renderable(void) {
+		Renderable(const char *id) {
+			strncpy(this->id, id, 15);
+			this->id[15] = '\0';
 			next = NULL;
 		}
 		virtual void render(Camera *c) = 0;

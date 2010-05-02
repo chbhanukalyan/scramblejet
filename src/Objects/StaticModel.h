@@ -39,7 +39,7 @@ class StaticModel : public Renderable {
 		float yaw;
 
 	public:
-		StaticModel(void);
+		StaticModel(const char *id);
 		~StaticModel();
 
 		int load(const char *fn);
