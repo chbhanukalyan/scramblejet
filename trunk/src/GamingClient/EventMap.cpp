@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include "EventMap.h"
+#include "../protocol.h"
 #include "SDL/SDL_keysym.h"
 
 struct KeyMap {
@@ -268,6 +269,21 @@ EventMap::EventMap(void)
 {
 	memset(ev2funcid, 0, sizeof(ev2funcid));
 	memset(funcArr, 0, sizeof(funcArr));
+}
+
+int EventMap::serializeEvMap(unsigned char *buf, int maxlen)
+{
+	int i, count = 0;
+	struct cliEvObj *evo = (struct cliEvObj*) buf;
+	for (i = 0; i < MAX_NUM_FUNCS; i++) {
+		if (funcArr[i].inprogress) {
+			evo->funcid = i;
+			evo->count = timestamp - funcArr[i].timestamp;
+			funcArr[i].timestamp = timestamp;
+			count++;
+		}
+	}
+	return count * sizeof(struct cliEvObj);
 }
 
 int EventMap::getKeyID(const char *key)

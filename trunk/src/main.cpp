@@ -79,6 +79,7 @@ int main(int argc, char **argv)
 
 	GamingClient *gc = new GamingClient();
 	gc->initialize("../data/default.eventmap", 10);
+	gc->Connect("127.0.0.1");
 
 	Player *p = new Player();
 	re->addObject(p);
