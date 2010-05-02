@@ -17,38 +17,21 @@
  */
 
 
-#ifndef		__RE_STATICMODEL_H__
-#define		__RE_STATICMODEL_H__
+#ifndef		__RE_RENDERABLE_H__
+#define		__RE_RENDERABLE_H__
 
 #include "Camera.h"
-#include "Renderable.h"
 
-class StaticModel : public Renderable {
-	private:
-		char fn[256];
-
-		GLint list;
-		float scalefactor;
-
-	protected:
-		float transx;
-		float transy;
-		float transz;
-
-		float roll;
-		float pitch;
-		float yaw;
+class Renderable {
+	public:
+		Renderable *next;
 
 	public:
-		StaticModel(void);
-		~StaticModel();
-
-		int load(const char *fn);
-		int unload(void);
-
-		void render(Camera *c);
-
+		Renderable(void) {
+			next = NULL;
+		}
+		virtual void render(Camera *c) = 0;
 };
 
-#endif	/*	__RE_STATICMODEL_H__	*/
+#endif	/*	__RE_RENDERABLE_H__	*/
 

@@ -34,6 +34,7 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd);
 
 
 StaticModel::StaticModel(void)
+	: Renderable()
 {
 	transx = transy = transz = 0;
 	roll = pitch = yaw = 0;

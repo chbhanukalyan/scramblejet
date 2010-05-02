@@ -17,38 +17,24 @@
  */
 
 
-#ifndef		__RE_STATICMODEL_H__
-#define		__RE_STATICMODEL_H__
+#ifndef		__OBJ_PLAYER_H__
+#define		__OBJ_PLAYER_H__
 
-#include "Camera.h"
-#include "Renderable.h"
+#include "../RenderingEngine/StaticModel.h"
+#include "../GamingClient/EventMap.h"
 
-class StaticModel : public Renderable {
+class Player : public StaticModel {
 	private:
-		char fn[256];
-
-		GLint list;
-		float scalefactor;
-
-	protected:
-		float transx;
-		float transy;
-		float transz;
-
-		float roll;
-		float pitch;
-		float yaw;
-
+		float locx, locy, locz;
 	public:
-		StaticModel(void);
-		~StaticModel();
+		Player();
+		~Player();
 
-		int load(const char *fn);
-		int unload(void);
+		void load(void *gc);
 
 		void render(Camera *c);
-
+		void handle(EventMap *evmap);
 };
 
-#endif	/*	__RE_STATICMODEL_H__	*/
+#endif	/*	__OBJ_PLAYER_H__	*/
 

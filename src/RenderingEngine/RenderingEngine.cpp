@@ -21,13 +21,11 @@
 RenderingEngine::RenderingEngine(void)
 {
 	camera = new Camera;
-	skybox = new SkyBox;
-	fighterjet = NULL;
+	renderList = NULL;
 }
 
 RenderingEngine::~RenderingEngine()
 {
-	delete skybox;
 	delete camera;
 }
 
@@ -36,9 +34,6 @@ int RenderingEngine::Initialize(void)
 	hres = 640;
 	vres = 480;
 	camera->Initialize();
-	skybox->load("../data/skybox/dry/");
-
-	skybox->setSize(1000, 1000, 1000);
 
 	return 0;
 }
@@ -66,17 +61,70 @@ void RenderingEngine::render(void)
 	/* Just clear the depth buffer, color is overwritten anyway */
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	/* Render the objects in order */
-	skybox->render(camera);
+#if 0 //Enable Fog
+	glEnable(GL_FOG);
+	{
+		GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1.0};
 
-	if (fighterjet)
-		fighterjet->render(camera);
+		int	fogMode = GL_EXP;
+		glFogi (GL_FOG_MODE, fogMode);
+		glFogfv (GL_FOG_COLOR, fogColor);
+		glFogf (GL_FOG_DENSITY, 0.35);
+		glHint (GL_FOG_HINT, GL_DONT_CARE);
+		glFogf (GL_FOG_START, 1.0);
+		glFogf (GL_FOG_END, 5.0);
+	}
+	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
+#endif
+
+	/* Render the objects in order */
+	Renderable *renobj = renderList;
+	while (renobj) {
+		renobj->render(camera);
+		renobj = renobj->next;
+	}
 
 	glFlush();
 }
 
 void RenderingEngine::Destroy(void)
 {
-	skybox->unload();
+}
+
+void RenderingEngine::addObject(Renderable *r)
+{
+	r->next = renderList;
+	renderList = r;
+}
+
+void RenderingEngine::removeObject(Renderable *r)
+{
+	if (renderList == r) {
+		renderList = r->next;
+		r->next = NULL;
+		return;
+	}
+
+	Renderable *tmp = renderList;
+	while (tmp != NULL) {
+		if (tmp->next == r) {
+			tmp->next = tmp->next->next;
+			r->next = NULL;
+			return;
+		}
+	}
+	fprintf(stderr, "WARNING: Trying to remove Renderable Object:  not in list\n");
+}
+
+void RenderingEngine::clearRenderList(void)
+{
+	Renderable *tmp = renderList;
+	renderList = NULL;
+
+	while (tmp != NULL) {
+		Renderable *r = tmp->next;
+		delete tmp;
+		tmp = r;
+	}
 }
 

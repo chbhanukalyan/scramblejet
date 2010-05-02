@@ -28,7 +28,6 @@ OBJECTS	=			RenderingEngine.o	\
 					TextObject.o	\
 					TTFFont.o		\
 					Camera.o		\
-					SkyBox.o		\
 					StaticModel.o	\
 
 
