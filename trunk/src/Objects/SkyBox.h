@@ -20,8 +20,8 @@
 #ifndef		__RE_SKYBOX_H__
 #define		__RE_SKYBOX_H__
 
-#include "Texture.h"
-#include "Camera.h"
+#include "../RenderingEngine/Renderable.h"
+#include "../RenderingEngine/Texture.h"
 
 enum {
 	SKYBOX_FACE_X_PLUS = 0,
@@ -32,7 +32,7 @@ enum {
 	SKYBOX_FACE_Z_MINUS,
 };
 
-class SkyBox {
+class SkyBox : public Renderable {
 	static const char *const skybox_fn[6];
 	private:
 		Texture *t[6];

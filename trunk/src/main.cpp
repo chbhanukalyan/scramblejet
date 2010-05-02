@@ -27,6 +27,7 @@
 #include "RenderingEngine/RenderingEngine.h"
 #include "GamingClient/GamingClient.h"
 #include "Objects/Player.h"
+#include "Objects/SkyBox.h"
 
 int hres = 640, vres=480;
 #define	TIME_INTERVAL	10
@@ -80,7 +81,14 @@ int main(int argc, char **argv)
 	gc->initialize("../data/default.eventmap", 10);
 
 	Player *p = new Player();
-	p->load(re, (void*)gc);
+	re->addObject(p);
+	p->load((void*)gc);
+
+	SkyBox *skybox = new SkyBox;
+	skybox->load("../data/skybox/dry/");
+	skybox->setSize(1000, 1000, 1000);
+	re->addObject(skybox);
+
 
 	while (1) {
 		gc->handleEvents();

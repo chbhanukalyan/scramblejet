@@ -21,26 +21,28 @@
 #define		__RE_RENDERINGENGINE_H__
 
 #include "Camera.h"
-#include "SkyBox.h"
 #include "StaticModel.h"
 
 class RenderingEngine {
 	private:
 		Camera *camera;
-		SkyBox *skybox;
 
 		int hres;
 		int vres;
 
-	public:
-		StaticModel *fighterjet;
+		Renderable *renderList;
 
+	public:
 		RenderingEngine(void);
 		~RenderingEngine();
 
 		int Initialize(void);
 		void render(void);
 		void Destroy(void);
+
+		void addObject(Renderable *r);
+		void removeObject(Renderable *r);
+		void clearRenderList(void);
 
 };
 
