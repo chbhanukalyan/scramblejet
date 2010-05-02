@@ -112,6 +112,37 @@ void GamingClient::handleEvents(void)
 	}
 }
 
+int GamingClient::doHandshake(void)
+{
+	char buf[MAX_PACKET_SIZE];
+	int len = MAX_PACKET_SIZE;
+
+	struct cliJoinPkt *cjp = (struct cliJoinPkt*)buf;
+	cjp->phdr.version = CUR_PROTOCOL_VERSION;
+	cjp->phdr.magic = CUR_PROTOCOL_MAGIC;
+	cjp->phdr.type = PKTTYPE_CLI2SRV_JOINGAME;
+	strncpy(cjp->playerName, "Bhanu", 16);
+
+	if (send(commSocket, buf, sizeof(*cjp), 0) < 0) {
+		fprintf(stderr, "Error sending join packet to Server\n");
+		return -1;
+	}
+
+	if ((len = recv(commSocket, buf, len, 0)) < 0) {
+		fprintf(stderr, "Server socket Recv failed: %s\n", strerror(errno));
+		return -1;
+	}
+
+	struct srvWelcomePkt *swp = (struct srvWelcomePkt*)buf;
+	if ((swp->phdr.version != CUR_PROTOCOL_VERSION) &&
+			(swp->phdr.magic != CUR_PROTOCOL_MAGIC) &&
+			(swp->phdr.type != PKTTYPE_SRV2CLI_JOINEDGAME))
+		return -1;
+
+	fprintf(stderr, "Client was successfully able to join game\n");
+	return 0;
+}
+
 int GamingClient::Connect(const char *serverIP, int port)
 {
 	int err = -1;
@@ -138,6 +169,11 @@ int GamingClient::Connect(const char *serverIP, int port)
 		goto out;
 	}
 
+	if (doHandshake() < 0) {
+		fprintf(stderr, "Unable to join Server\n");
+		goto out;
+	}
+
 	err = 0;
 	connected = true;
 
@@ -160,19 +196,28 @@ void GamingClient::Disconnect(void)
 
 int GamingClient::sendEventList(void)
 {
-	unsigned char buf[1500];
+	unsigned char buf[MAX_PACKET_SIZE];
 
 	struct cliEventPacket *evp = (struct cliEventPacket *)buf;
 	evp->phdr.version = CUR_PROTOCOL_VERSION;
+	evp->phdr.type = PKTTYPE_CLI2SRV_EVENTLIST;
 	evp->phdr.magic = CUR_PROTOCOL_MAGIC;
 
-	int len = evmap->serializeEvMap((unsigned char*)(evp->fnlist), (int)(1500 - sizeof(struct protocolHeader)));
+	int len = evmap->serializeEvMap((unsigned char*)(evp->fnlist), (int)(MAX_PACKET_SIZE - sizeof(struct protocolHeader)));
 
-	return sendPacket(buf, sizeof(struct protocolHeader) + len);
+	if (len == 0)
+		return 0;
+
+	evp->numfuncs = len/sizeof(struct cliEvObj);
+
+	fprintf(stderr, "sending event list(%d) len(%d) to server\n", evp->numfuncs, len);
+
+	return sendPacket(buf, sizeof(cliEventPacket) + len);
 }
 
 int GamingClient::sendPacket(void *buf, int len)
 {
+	fprintf(stderr, "Client socket Send(%d bytes)\n", len);
 	if (send(commSocket, buf, len, 0) != len) {
 		fprintf(stderr, "Client socket Send(%d bytes) failed: %s\n",
 				len, strerror(errno));
