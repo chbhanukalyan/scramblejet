@@ -20,7 +20,7 @@
 #ifndef		__OBJ_PLAYER_H__
 #define		__OBJ_PLAYER_H__
 
-#include "../RenderingEngine/StaticModel.h"
+#include "StaticModel.h"
 #include "../GamingClient/EventMap.h"
 
 class Player : public StaticModel {

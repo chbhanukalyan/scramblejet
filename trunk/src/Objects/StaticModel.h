@@ -20,8 +20,7 @@
 #ifndef		__RE_STATICMODEL_H__
 #define		__RE_STATICMODEL_H__
 
-#include "Camera.h"
-#include "Renderable.h"
+#include "../RenderingEngine/Renderable.h"
 
 class StaticModel : public Renderable {
 	private:
