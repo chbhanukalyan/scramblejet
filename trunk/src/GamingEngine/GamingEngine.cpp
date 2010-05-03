@@ -66,7 +66,7 @@ int GamingEngine::startGame(void *serv)
 		}
 		server->broadcastUpdatePacket(buf, len);
 		/* sleep some time before starting again TODO Make wakeup */
-		usleep(500000);
+		usleep(50000);
 	}
 	return 0;
 }

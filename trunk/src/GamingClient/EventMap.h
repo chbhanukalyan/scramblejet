@@ -78,7 +78,7 @@ class EventMap {
 				(*funcArr[func].cbs)();
 		}
 
-		/* Serializes list of events to a buffer */
+		/* Serializes list of network events to a buffer */
 		int serializeEvMap(unsigned char *buf, int maxlen);
 
 };

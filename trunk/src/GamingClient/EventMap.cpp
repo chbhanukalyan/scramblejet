@@ -276,7 +276,7 @@ int EventMap::serializeEvMap(unsigned char *buf, int maxlen)
 	int i, count = 0;
 	struct cliEvObj *evo = (struct cliEvObj*) buf;
 	for (i = 1; i < MAX_NUM_FUNCS; i++) {
-		if (funcArr[i].inprogress) {
+		if (IS_FUNC_NONLOCAL(i) && funcArr[i].inprogress) {
 			evo->funcid = i;
 			evo->count = timestamp - funcArr[i].timestamp + 1;
 			funcArr[i].timestamp = timestamp;

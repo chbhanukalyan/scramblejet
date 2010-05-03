@@ -57,9 +57,6 @@ void GamingClient::updateTimerCb(void)
 {
 	evmap->updateTimer();
 
-	if (player)
-		player->handle(evmap);
-
 	if (connected) {
 		networkUpdateCounter++;
 		if (networkUpdateCounter >= updateInterval) {
@@ -69,9 +66,13 @@ void GamingClient::updateTimerCb(void)
 	}
 }
 
+void Quit(void);
+
 int GamingClient::initialize(const char *evmapfn, int timerInt)
 {
 	evmap->loadKeymap(evmapfn);
+
+	evmap->registerFunction(FUNCID_QUIT, Quit);
 
 	timerInterval = (timerInt / 10) * 10;
 	if (timerInterval != timerInt) {
@@ -133,7 +134,19 @@ void GamingClient::handleNetworkEvents(void)
 				continue;
 			printf("recved packet from server len=%d\n", len);
 
+			struct srvUpdatePacket *sup = (struct srvUpdatePacket *)buf;
+			if ((sup->phdr.version != CUR_PROTOCOL_VERSION) &&
+					(sup->phdr.magic != CUR_PROTOCOL_MAGIC) &&
+					(sup->phdr.type != PKTTYPE_SRV2CLI_OBJUPDTLIST))
+				continue;
+
+			struct updateObj *updObjs = sup->lst;
+
 			/* TODO call update objects HERE */
+			if (player) {
+				player->update(updObjs);
+			}
+
 		}
 		if (ret == 0)
 			break;

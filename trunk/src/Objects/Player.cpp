@@ -42,26 +42,15 @@ void Player::render(Camera *c)
 	glPopMatrix();
 }
 
-void Player::handle(EventMap *evmap)
+void Player::update(struct updateObj *upObj)
 {
-	if (evmap->eventInProgress(FUNCID_ACCELERATE)) {
-		transz += 0.01;
-	}
-	if (evmap->eventInProgress(FUNCID_DECCELERATE)) {
-		transz -= 0.01;
-	}
+	if (upObj->updateFieldID != 0x1)
+		return;
 
-	if (evmap->eventInProgress(FUNCID_ROTZP))
-		roll += 0.1;
-	if (evmap->eventInProgress(FUNCID_ROTZM))
-		roll -= 0.1;
-	if (evmap->eventInProgress(FUNCID_ROTYP))
-		yaw += 0.1;
-	if (evmap->eventInProgress(FUNCID_ROTYM))
-		yaw -= 0.1;
-	if (evmap->eventInProgress(FUNCID_ROTXP))
-		pitch += 0.1;
-	if (evmap->eventInProgress(FUNCID_ROTXM))
-		pitch -= 0.1;
+	float *vals = (float *)(upObj->vals);
+	transx = locx = vals[0];
+	transy = locy = vals[1];
+	transz = locz = vals[2];
+	printf("New TRANS Vals = %f, %f, %f\n", vals[0], vals[1], vals[2]);
 }
 

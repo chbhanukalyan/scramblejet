@@ -21,6 +21,7 @@
 #define		__OBJ_PLAYER_H__
 
 #include "StaticModel.h"
+#include "../protocol.h"
 #include "../GamingClient/EventMap.h"
 
 class Player : public StaticModel {
@@ -33,7 +34,8 @@ class Player : public StaticModel {
 		void load(void *gc);
 
 		void render(Camera *c);
-		void handle(EventMap *evmap);
+		void update(struct updateObj *upObj);
+
 };
 
 #endif	/*	__OBJ_PLAYER_H__	*/
