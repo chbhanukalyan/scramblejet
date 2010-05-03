@@ -1,0 +1,10 @@
+# Network Object
+name:player
+srvclassname:Server
+cliclassname:Client
+float[]:pos:3:Position of the %P
+float:roll:cylindrical angle of the flight
+float:pitch:nose up/down angle of the flight
+float:yaw:left/right angle of the flight
+unsigned int:id:idea
+unsigned int[]:id:5:ideaaas
