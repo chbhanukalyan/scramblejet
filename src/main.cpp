@@ -90,7 +90,6 @@ int main(int argc, char **argv)
 	skybox->setSize(1000, 1000, 1000);
 	re->addObject(skybox);
 
-
 	while (1) {
 		gc->handleEvents();
 		

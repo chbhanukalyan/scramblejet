@@ -20,9 +20,13 @@
 #ifndef		__GC_FUNCIDS_H__
 #define		__GC_FUNCIDS_H__
 
+#define		FUNCID_LOCAL_MASK		0xF0
+#define		IS_FUNC_NONLOCAL(id)	(((id) != FUNCID_INVALID) && (!((id) & FUNCID_LOCAL_MASK)))
+
 enum {
 	FUNCID_INVALID		=	0,
 
+	/* Function IDs <= 127 are local events */
 	FUNCID_ACCELERATE	=	1,
 	FUNCID_DECCELERATE	=	2,
 	FUNCID_BANKLEFT		=	3,
@@ -40,9 +44,10 @@ enum {
 	FUNCID_ROTZP		=	25,
 	FUNCID_ROTZM		=	26,
 
-	FUNCID_QUIT			=	51,
+	/* Function IDs >= 128 are local events */
+	FUNCID_QUIT			=	151,
 
-	MAX_FUNCID			=	128
+	MAX_FUNCID			=	256
 };
 
 extern int getFuncIDfromStr(const char *str);

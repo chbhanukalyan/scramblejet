@@ -40,15 +40,11 @@ void Player::handleEvent(int funcid, int count) {
 	fprintf(stderr, "Player(%s) got an event:%d count:%d\n", playerName, funcid, count);
 	switch(funcid) {
 		case FUNCID_ACCELERATE: {
-			loc[0] += 0.1 * count;
-			loc[1] += 0.1 * count;
-			loc[2] += 0.1 * count;
+			loc[2] += 0.01 * count;
 			break;
 		}
 		case FUNCID_DECCELERATE: {
-			loc[0] -= 0.1 * count;
-			loc[1] -= 0.1 * count;
-			loc[2] -= 0.1 * count;
+			loc[2] -= 0.01 * count;
 			break;
 		}
 		default:
