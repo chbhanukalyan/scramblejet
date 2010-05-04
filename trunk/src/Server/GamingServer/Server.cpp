@@ -25,9 +25,9 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include "../protocol.h"
+#include "../../protocol.h"
 
-#include "GamingEngine.h"
+#include "../GamingEngine/GamingEngine.h"
 #include "Server.h"
 
 Server::Server(GamingEngine *ge)

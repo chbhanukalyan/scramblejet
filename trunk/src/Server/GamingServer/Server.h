@@ -27,7 +27,7 @@
 #include <pthread.h>
 #include <arpa/inet.h>
 
-#include "GamingEngine.h"
+#include "../GamingEngine/GamingEngine.h"
 
 struct ClientInfo {
 	char IP[16];

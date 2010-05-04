@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "Player.h"
-#include "../GamingClient/funcids.h"
+#include "../../Client/GamingClient/funcids.h"
 
 Player::Player(int id, const char *name)
 {

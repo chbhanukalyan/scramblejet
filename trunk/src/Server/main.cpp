@@ -17,8 +17,8 @@
  */
 
 #include <stdio.h>
-#include "Server.h"
-#include "GamingEngine.h"
+#include "GamingServer/Server.h"
+#include "GamingEngine/GamingEngine.h"
 
 int main(int argc, char **argv)
 {
