@@ -26,10 +26,10 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include "../protocol.h"
+#include "../../protocol.h"
 
 #include "GamingEngine.h"
-#include "Server.h"
+#include "../GamingServer/Server.h"
 
 GamingEngine::GamingEngine(void)
 {

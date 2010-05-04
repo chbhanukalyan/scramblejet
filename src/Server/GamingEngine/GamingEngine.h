@@ -25,7 +25,7 @@
 #define	DEFAULT_WAIT_BEFORE_START	10
 
 #include "SentientObject.h"
-#include "Player.h"
+#include "../Objects/Player.h"
 
 class GamingEngine {
 	private:

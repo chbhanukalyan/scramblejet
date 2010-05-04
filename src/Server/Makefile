@@ -15,25 +15,41 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-OUTPUT = ge.a
+OUTPUT = scRambleSrv
 
 CC = g++
 
 CFLAGS = -Wall -Werror -g3
 
-AR = ar
+LD = g++
 
-OBJECTS	=			GamingEngine.o	\
+LDFLAGS = -Wall -Werror -g3 -lm -lpthread
+
+OBJECTS	=			main.o		\
 
 LIBS	=			\
+					GamingEngine/ge.a			\
+					Objects/objs.a					\
+					GamingServer/gs.a			\
 
-
-$(OUTPUT): $(OBJECTS)
-	$(AR) rcs $(OUTPUT) $(OBJECTS)
+$(OUTPUT): $(OBJECTS) GE GS OBJ
+	$(LD) -o $(OUTPUT) $(LDFLAGS) $(OBJECTS) $(LIBS)
 	
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
+OBJ:
+	make -C Objects
+
+GE:
+	make -C GamingEngine
+
+GS:
+	make -C GamingServer
+
 clean:
+	make -C GamingEngine clean
+	make -C GamingServer clean
+	make -C Objects clean
 	-rm -f $(OBJECTS) $(OUTPUT)
 

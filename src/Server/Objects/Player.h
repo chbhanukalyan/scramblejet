@@ -20,7 +20,7 @@
 #ifndef		__GE_PLAYER_H__
 #define		__GE_PLAYER_H__
 
-#include "SentientObject.h"
+#include "../GamingEngine/SentientObject.h"
 
 class Player : public SentientObject {
 	private:
