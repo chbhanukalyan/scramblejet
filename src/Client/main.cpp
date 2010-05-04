@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	re->Initialize();
 
 	GamingClient *gc = new GamingClient();
-	gc->initialize("../data/default.eventmap", 10);
+	gc->initialize("../../data/default.eventmap", 10);
 	gc->Connect("127.0.0.1");
 
 	Player *p = new Player();
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 	p->load((void*)gc);
 
 	SkyBox *skybox = new SkyBox;
-	skybox->load("../data/skybox/dry/");
+	skybox->load("../../data/skybox/dry/");
 	skybox->setSize(1000, 1000, 1000);
 	re->addObject(skybox);
 
