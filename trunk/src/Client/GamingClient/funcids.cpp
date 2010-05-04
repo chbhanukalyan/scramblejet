@@ -17,7 +17,7 @@
  */
 #include <string.h>
 
-#include "funcids.h"
+#include "../../funcids.h"
 
 struct funcst {
 	const char *name;
