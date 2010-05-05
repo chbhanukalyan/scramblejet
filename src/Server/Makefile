@@ -15,15 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+include ../cmds.mk
+
 OUTPUT = scRambleSrv
 
-CC = g++
-
-CFLAGS = -Wall -Werror -g3
-
-LD = g++
-
-LDFLAGS = -Wall -Werror -g3 -lm -lpthread
+LDFLAGS := $(LDFLAGS) -lm -lpthread
 
 OBJECTS	=			main.o		\
 

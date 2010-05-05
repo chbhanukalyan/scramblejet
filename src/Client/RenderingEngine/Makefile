@@ -15,13 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+include ../../cmds.mk
+
 OUTPUT = re.a
-
-CC = g++
-
-CFLAGS = -Wall -Werror -g3
-
-AR	=	ar
 
 OBJECTS	=			RenderingEngine.o	\
 					Texture.o		\

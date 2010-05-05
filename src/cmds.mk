@@ -1,5 +1,5 @@
 # ScRamble - 3D Flight Racer
-# Copyright (C) 2009  Bhanu Chetlapalli
+# Copyright (C) 2010  Bhanu Chetlapalli
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,23 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include ../../cmds.mk
+CC = g++
 
-OUTPUT = objs.a
+CFLAGS = -Wall -Werror -g3
 
-OBJECTS	=			StaticModel.o	\
-					Player.o		\
-					SkyBox.o		\
+AR	=	ar
 
-$(OUTPUT): $(OBJECTS)
-	ar rcs $(OUTPUT) $(OBJECTS)
-	
-StaticModel.o: StaticModel.cpp StaticModel.h
-	$(CC) $(CFLAGS) -I../../../vendor/assimp/include/ -c StaticModel.cpp -o StaticModel.o
+LD = g++
 
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
-
-clean:
-	-rm -f $(OBJECTS) $(OUTPUT)
+LDFLAGS = 
 
