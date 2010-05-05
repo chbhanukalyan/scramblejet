@@ -15,15 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+include ../cmds.mk
+
 OUTPUT = scRamble
 
-CC = g++
-
-CFLAGS = -Wall -Werror -g3
-
-LD = g++
-
-LDFLAGS = -Wall -Werror -g3 -lGL -lGLU -lm -lSDL -lSDL_image -lSDL_mixer -lSDL_ttf
+LDFLAGS := $(LDFLAGS) -Wall -Werror -g3 -lGL -lGLU -lm -lSDL -lSDL_image -lSDL_mixer -lSDL_ttf
 
 OBJECTS	=			main.o		\
 
