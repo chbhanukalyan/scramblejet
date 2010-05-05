@@ -24,6 +24,9 @@
 #include <SDL/SDL_mixer.h>
 #include <signal.h>
 
+#include <unistd.h>
+#include <errno.h>
+
 #include "RenderingEngine/RenderingEngine.h"
 #include "GamingClient/GamingClient.h"
 #include "Objects/Player.h"
@@ -32,10 +35,31 @@
 int hres = 640, vres=480;
 #define	TIME_INTERVAL	10
 
+pid_t srvpid = -1;
+
 void Quit(void)
 {
+	if (srvpid != -1)
+		kill(srvpid, SIGKILL);
+
 	SDL_SetTimer(TIME_INTERVAL, NULL);
 	SDL_Quit();
+	exit(0);
+}
+
+int fork_server(const char *path)
+{
+	srvpid = fork();
+	if (srvpid < 0) {
+		fprintf(stderr, "Unable to fork server: %s", strerror(errno));
+		return -1;
+	}
+
+	if (srvpid)
+		return 0;
+
+	execlp(path, path, "dummy_map", NULL);
+	fprintf(stderr, "Unable to exec server: %s", strerror(errno));
 	exit(0);
 }
 
@@ -44,6 +68,14 @@ int main(int argc, char **argv)
 	int VideoFlags = 0;
 	SDL_Surface *MainWindow;
 	bool fullscreen = false;
+
+	if (argc >= 2) {
+		if (!strcmp(argv[1], "-s")) {
+			fork_server("../Server/scRambleSrv");
+		}
+	}
+
+	atexit(Quit);
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)	// try to initialize SDL video module
 	{

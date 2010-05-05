@@ -15,13 +15,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+ARCH=i386
+
 CC = g++
 
-CFLAGS = -Wall -Werror -g3
+CFLAGS = -m32 -Wall -Werror -g3
 
 AR	=	ar
 
 LD = g++
 
-LDFLAGS = 
+LDFLAGS = -m32
 

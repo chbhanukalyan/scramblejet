@@ -19,12 +19,6 @@ include ../../cmds.mk
 
 OUTPUT = objs.a
 
-CC = g++
-
-CFLAGS = -Wall -Werror -g3
-
-AR = ar
-
 OBJECTS	=			Player.o	\
 
 LIBS	=			\
