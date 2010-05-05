@@ -79,16 +79,22 @@ SHARED_TARGET = $(BINPATH)/libassimp$(NAMESUFFIX).so
 # Output name of static library
 STATIC = $(BINPATH)/libassimp$(NAMESUFFIX).a
 
+include ../../../src/cmds.mk
+
+ifeq ($(ARCH),i386)
+	ARCHOPTION = -m32
+endif
+
 # target: all
 # usage : build a shared library (*.so)
 all:	$(SHARED_TARGET) 
 
 $(SHARED_TARGET):  $(OBJECTS)  $(OBJECTSC)
-	gcc -o $@ $(OBJECTS) $(OBJECTSC) -shared -lstdc++ 
+	gcc $(ARCHOPTION) -o $@ $(OBJECTS) $(OBJECTSC) -shared -lstdc++ 
 %.o:%.cpp
-	$(CXX) -g -c  $(CPPFLAGS) $? -o $@ $(INCLUDEFLAGS) $(DEFINEFLAGS) -fPIC
+	$(CXX) $(ARCHOPTION) -g -c  $(CPPFLAGS) $? -o $@ $(INCLUDEFLAGS) $(DEFINEFLAGS) -fPIC
 %.oc:%.c
-	$(CXX) -x c -g -c -ansi $(CPPFLAGS) $? -o $@ -fPIC
+	$(CXX) $(ARCHOPTION) -x c -g -c -ansi $(CPPFLAGS) $? -o $@ -fPIC
 
 # target: clean
 # usage : cleanup all object files, prepare for a rebuild
