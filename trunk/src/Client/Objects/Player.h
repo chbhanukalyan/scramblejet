@@ -20,7 +20,7 @@
 #ifndef		__OBJ_PLAYER_H__
 #define		__OBJ_PLAYER_H__
 
-#include "ObjInfo.h"
+#include "../../Map/ObjInfo.h"
 #include "StaticModel.h"
 #include "../../protocol.h"
 #include "../GamingClient/EventMap.h"

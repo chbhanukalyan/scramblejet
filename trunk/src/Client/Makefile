@@ -29,7 +29,7 @@ LIBS	=			\
 					Objects/objs.a					\
 					RenderingEngine/re.a			\
 					GamingClient/gc.a				\
-					Map/map.a						\
+					../Map/map.a						\
 					../../vendor/assimp/bin/gcc/libassimp.so	\
 
 
@@ -52,13 +52,13 @@ RE:
 	make -C RenderingEngine
 
 MAP:
-	make -C Map
+	make -C ../Map
 
 clean:
 	make -C RenderingEngine clean
 	make -C GamingClient clean
 	make -C Game clean
 	make -C Objects clean
-	make -C Map clean
+	make -C ../Map clean
 	-rm -f $(OBJECTS) $(OUTPUT)
 

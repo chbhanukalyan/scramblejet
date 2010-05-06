@@ -27,19 +27,7 @@
 
 #include <stdio.h>
 
-struct CamPos {
-	float pointx;
-	float pointy;
-	float pointz;
-
-	float upx;
-	float upy;
-	float upz;
-
-	float distance;
-	float height;
-	float angle;
-};
+#include "../../Map/CamPos.h"
 
 class Camera {
  public:
