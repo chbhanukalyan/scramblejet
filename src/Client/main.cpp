@@ -32,7 +32,7 @@
 #include "GamingClient/GamingClient.h"
 #include "Objects/Player.h"
 #include "Objects/SkyBox.h"
-#include "Map/MapLoader.h"
+#include "../Map/MapLoader.h"
 
 int hres = 640, vres=480;
 #define	TIME_INTERVAL	10

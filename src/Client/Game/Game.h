@@ -25,7 +25,7 @@
 #include "../RenderingEngine/RenderingEngine.h"
 #include "../Objects/SkyBox.h"
 #include "../GamingClient/GamingClient.h"
-#include "../Map/Map.h"
+#include "../../Map/Map.h"
 
 class Game {
 	public:

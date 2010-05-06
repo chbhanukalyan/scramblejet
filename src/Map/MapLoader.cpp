@@ -25,8 +25,8 @@
 
 #include "MapLoader.h"
 
-#include "../RenderingEngine/Camera.h"
-#include "../Objects/ObjInfo.h"
+#include "CamPos.h"
+#include "ObjInfo.h"
 
 static void
 print_element_names(xmlNode * a_node)

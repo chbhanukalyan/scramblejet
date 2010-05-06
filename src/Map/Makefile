@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include ../../cmds.mk
+include ../cmds.mk
 
 OUTPUT = map.a
 

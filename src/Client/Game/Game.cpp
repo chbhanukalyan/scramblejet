@@ -17,7 +17,7 @@
  */
 
 #include "Game.h"
-#include "../Map/MapLoader.h"
+#include "../../Map/MapLoader.h"
 
 Game::Game(const char *data_dir, RenderingEngine *re, GamingClient *gc, const char *mapname)
 {

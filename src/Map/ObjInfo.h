@@ -17,30 +17,26 @@
  */
 
 
-#ifndef		__MAP_MAP_H__
-#define		__MAP_MAP_H__
+#ifndef		__MAP_OBJINFO_H__
+#define		__MAP_OBJINFO_H__
 
-#include "../RenderingEngine/Camera.h"
-#include "../Objects/ObjInfo.h"
+#include <stdio.h>
+#include <string.h>
+#include "../objtype.h"
 
-class Map {
-	public:
-		char fn[256];
-		char name[32];
-		char skyboxfn[256];
+struct ObjInfo {
+	int type;
+	int id;
+	float locx, locy, locz;
+	char modelfn[256];
 
-		float sizex, sizey, sizez;
-		CamPos initCamPos;
+	ObjInfo *next;
 
-		ObjInfo *objList;
-
-	public:
-		Map();
-		~Map();
-
-		void insertObjInfo(ObjInfo *o);
-
+	inline void dump(void) {
+		fprintf(stderr, "type(%d), id(%d), loc(%f,%f,%f), modelfn(%s)\n",
+				type, id, locx, locy, locz, modelfn);
+	}
 };
 
-#endif	/*	__MAP_MAP_H__	*/
+#endif	/*	__MAP_OBJINFO_H__	*/
 
