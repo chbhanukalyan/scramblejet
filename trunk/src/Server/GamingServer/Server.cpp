@@ -187,7 +187,6 @@ int Server::getEventList(void)
 	if (cid == INVALID_CLIENT_ID)
 		return -1;
 
-
 	struct cliEventPacket *evp = (struct cliEventPacket *)buf;
 	if ((evp->phdr.version != CUR_PROTOCOL_VERSION) &&
 			(evp->phdr.magic != CUR_PROTOCOL_MAGIC) &&
@@ -197,8 +196,8 @@ int Server::getEventList(void)
 	printf("Got Event List from Client: %d\n", evp->numfuncs);
 	int i;
 	for (i = 0; i < evp->numfuncs; i++) {
-		printf("Event(%d) is: %d, %d\n",i, evp->fnlist[i].funcid, evp->fnlist[i].count);
-		ge->p->handleEvent(evp->fnlist[i].funcid, evp->fnlist[i].count);
+		printf("Event from %d (%d) is: %d, %d\n", cid, i, evp->fnlist[i].funcid, evp->fnlist[i].count);
+		ge->playerList[cid]->handleEvent(evp->fnlist[i].funcid, evp->fnlist[i].count);
 	}
 
 	return 0;
