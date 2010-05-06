@@ -34,6 +34,7 @@
 GamingEngine::GamingEngine(void)
 {
 	objList = NULL;
+	memset(playerList, 0, sizeof(playerList));
 }
 
 GamingEngine::~GamingEngine()
@@ -49,9 +50,9 @@ int GamingEngine::startGame(void *serv)
 {
 	Server *server = (Server *)serv;
 	while (true) {
-		if (p) {
-			p->doTick();
-		}
+		for (int i = 0; i < MAX_CLIENT_ID; i++) 
+			if (playerList[i])
+				playerList[i]->doTick();
 		
 		/* Dispatch updates after some time */
 		char buf[MAX_PACKET_SIZE];
@@ -75,13 +76,15 @@ int GamingEngine::startGame(void *serv)
 
 void GamingEngine::addPlayer(int id, const char *name)
 {
-	p = new Player(id, name);
-	addObject(p);
+	playerList[id] = new Player(id, name);
+	addObject(playerList[id]);
 }
 
 void GamingEngine::removePlayer(int id)
 {
-	removeObject(p);
+	removeObject(playerList[id]);
+	delete playerList[id];
+	playerList[id] = NULL;
 }
 
 void GamingEngine::addObject(SentientObject *seo)

@@ -31,7 +31,7 @@ class GamingEngine {
 	private:
 		SentientObject *objList;
 	public:
-		Player *p;
+		Player *playerList[MAX_CLIENT_ID];
 		GamingEngine(void);
 		~GamingEngine();
 
