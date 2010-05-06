@@ -17,33 +17,30 @@
  */
 
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+#ifndef		__MAP_MAP_H__
+#define		__MAP_MAP_H__
 
-#include "Renderable.h"
+#include "../RenderingEngine/Camera.h"
+#include "../Objects/ObjInfo.h"
 
-class RenderingEngine {
-	private:
-		Camera *camera;
+class Map {
+	public:
+		char fn[256];
+		char name[32];
+		char skyboxfn[256];
 
-		int hres;
-		int vres;
+		float sizex, sizey, sizez;
+		CamPos initCamPos;
 
-		Renderable *renderList;
+		ObjInfo *objList;
 
 	public:
-		RenderingEngine(void);
-		~RenderingEngine();
+		Map();
+		~Map();
 
-		int Initialize(CamPos *initCamPos);
-		void render(void);
-		void Destroy(void);
-
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
+		void insertObjInfo(ObjInfo *o);
 
 };
 
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+#endif	/*	__MAP_MAP_H__	*/
 

@@ -19,9 +19,16 @@
 #include "Player.h"
 #include "../GamingClient/GamingClient.h"
 
-Player::Player()
+Player::Player(ObjInfo *oi)
 	:StaticModel("Player")
 {
+	id = oi->id;
+	transx = oi->locx;
+	transy = oi->locy;
+	transz = oi->locz;
+
+	StaticModel::load(oi->modelfn);
+
 }
 
 Player::~Player()
@@ -30,7 +37,6 @@ Player::~Player()
 
 void Player::load(void *gcptr)
 {
-	StaticModel::load("../../data/staticmodels/F-16.dae");
 	GamingClient *gc = (GamingClient *)gcptr;
 	gc->player = this;
 }

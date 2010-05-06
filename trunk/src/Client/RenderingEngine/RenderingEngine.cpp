@@ -29,11 +29,13 @@ RenderingEngine::~RenderingEngine()
 	delete camera;
 }
 
-int RenderingEngine::Initialize(void)
+int RenderingEngine::Initialize(CamPos *campos)
 {
 	hres = 640;
 	vres = 480;
-	camera->Initialize();
+	camera->Initialize(campos);
+
+	camera->dumpCurPos();
 
 	return 0;
 }

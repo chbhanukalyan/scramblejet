@@ -16,34 +16,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Game.h"
+#include "../Map/MapLoader.h"
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+Game::Game(const char *data_dir, RenderingEngine *re, GamingClient *gc, const char *mapname)
+{
+	strcpy(this->data_dir, data_dir);
+	this->re = re;
+	this->gc = gc;
+	strcpy(mapfn, mapname);
+}
 
-#include "Renderable.h"
+Game::~Game()
+{
+}
 
-class RenderingEngine {
-	private:
-		Camera *camera;
+void Game::initGame(void)
+{
+	map = loadMap(mapfn);
 
-		int hres;
-		int vres;
+	re->Initialize(&map->initCamPos);
 
-		Renderable *renderList;
+	gc->initialize("default.eventmap", 10);
 
-	public:
-		RenderingEngine(void);
-		~RenderingEngine();
+	player = new Player(map->objList->next);
+	re->addObject(player);
+	player->load((void*)gc);
 
-		int Initialize(CamPos *initCamPos);
-		void render(void);
-		void Destroy(void);
+	skybox = new SkyBox;
+	skybox->load(map->skyboxfn);
+	skybox->setSize(map->sizex, map->sizey, map->sizez);
+	re->addObject(skybox);
 
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
+}
 
-};
+void Game::startGame(void)
+{
+	gc->Connect("127.0.0.1");
+}
 
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+void Game::stopGame(void)
+{
+}
+
 

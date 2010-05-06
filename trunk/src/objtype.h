@@ -17,33 +17,16 @@
  */
 
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+#ifndef		__OBJTYPE_H__
+#define		__OBJTYPE_H__
 
-#include "Renderable.h"
+enum {
+	OBJTYPE_INVALID = 0,
+	OBJTYPE_PLAYER = 1,
+	OBJTYPE_STATIC = 2,
 
-class RenderingEngine {
-	private:
-		Camera *camera;
-
-		int hres;
-		int vres;
-
-		Renderable *renderList;
-
-	public:
-		RenderingEngine(void);
-		~RenderingEngine();
-
-		int Initialize(CamPos *initCamPos);
-		void render(void);
-		void Destroy(void);
-
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
-
+	OBJTYPE_MAX	= 16,
 };
 
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+#endif	/*	__OBJTYPE_H__	*/
 

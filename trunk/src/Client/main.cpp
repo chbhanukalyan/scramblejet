@@ -27,10 +27,12 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include "Game/Game.h"
 #include "RenderingEngine/RenderingEngine.h"
 #include "GamingClient/GamingClient.h"
 #include "Objects/Player.h"
 #include "Objects/SkyBox.h"
+#include "Map/MapLoader.h"
 
 int hres = 640, vres=480;
 #define	TIME_INTERVAL	10
@@ -106,21 +108,21 @@ int main(int argc, char **argv)
 	SDL_WM_SetCaption("scRamble", "scRamble");
 	SDL_ShowCursor( SDL_DISABLE );
 
+	Map *m = loadMap();
+	if (m == NULL) {
+		Quit();
+	}
+
 	RenderingEngine *re = new RenderingEngine();
-	re->Initialize();
 
 	GamingClient *gc = new GamingClient();
-	gc->initialize("../../data/default.eventmap", 10);
-	gc->Connect("127.0.0.1");
 
-	Player *p = new Player();
-	re->addObject(p);
-	p->load((void*)gc);
+	chdir("../../data/");
 
-	SkyBox *skybox = new SkyBox;
-	skybox->load("../../data/skybox/dry/");
-	skybox->setSize(1000, 1000, 1000);
-	re->addObject(skybox);
+	Game *game = new Game("../../data/", re, gc, "maps/default.map");
+	game->initGame();
+
+	game->startGame();
 
 	while (1) {
 		gc->handleEvents();

@@ -17,33 +17,26 @@
  */
 
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+#ifndef		__OBJECTS_OBJINFO_H__
+#define		__OBJECTS_OBJINFO_H__
 
-#include "Renderable.h"
+#include <stdio.h>
+#include <string.h>
+#include "../../objtype.h"
 
-class RenderingEngine {
-	private:
-		Camera *camera;
+struct ObjInfo {
+	int type;
+	int id;
+	float locx, locy, locz;
+	char modelfn[256];
 
-		int hres;
-		int vres;
+	ObjInfo *next;
 
-		Renderable *renderList;
-
-	public:
-		RenderingEngine(void);
-		~RenderingEngine();
-
-		int Initialize(CamPos *initCamPos);
-		void render(void);
-		void Destroy(void);
-
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
-
+	inline void dump(void) {
+		fprintf(stderr, "type(%d), id(%d), loc(%f,%f,%f), modelfn(%s)\n",
+				type, id, locx, locy, locz, modelfn);
+	}
 };
 
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+#endif	/*	__OBJECTS_OBJINFO_H__	*/
 

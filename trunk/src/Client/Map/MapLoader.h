@@ -17,33 +17,12 @@
  */
 
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+#ifndef		__MAP_MAPLOADER_H__
+#define		__MAP_MAPLOADER_H__
 
-#include "Renderable.h"
+#include "Map.h"
 
-class RenderingEngine {
-	private:
-		Camera *camera;
+extern Map* loadMap(const char *mapfn = "../../data/maps/default.map");
 
-		int hres;
-		int vres;
-
-		Renderable *renderList;
-
-	public:
-		RenderingEngine(void);
-		~RenderingEngine();
-
-		int Initialize(CamPos *initCamPos);
-		void render(void);
-		void Destroy(void);
-
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
-
-};
-
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+#endif	/*	__MAP_MAPLOADER_H__	*/
 

@@ -16,34 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Map.h"
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+Map::Map(void)
+{
+	objList = NULL;
+}
 
-#include "Renderable.h"
+Map::~Map()
+{
+}
 
-class RenderingEngine {
-	private:
-		Camera *camera;
-
-		int hres;
-		int vres;
-
-		Renderable *renderList;
-
-	public:
-		RenderingEngine(void);
-		~RenderingEngine();
-
-		int Initialize(CamPos *initCamPos);
-		void render(void);
-		void Destroy(void);
-
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
-
-};
-
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+void Map::insertObjInfo(ObjInfo *o)
+{
+	o->next = objList;
+	objList = o;
+}
 
