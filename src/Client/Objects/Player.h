@@ -35,6 +35,7 @@ class Player : public StaticModel {
 		~Player();
 
 		void load(void *gc);
+		void followCam(CamPos *cp);
 
 		void render(Camera *c);
 		void update(struct updateObj *upObj);

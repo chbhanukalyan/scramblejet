@@ -74,6 +74,7 @@ class Camera {
 	void Initialize(CamPos *pos = NULL);
 	void dumpCurPos(void);
 
+	void Update(CamPos *p);
 	inline void Update(void) {
 		gluLookAt(camx, camy, camz, pointx, pointy, pointz, upx,
 				  upy, upz);

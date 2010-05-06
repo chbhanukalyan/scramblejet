@@ -20,7 +20,7 @@
 	<object>
 		<type>player</type>
 		<id>1</id>
-		<location>0,.3,0</location>
+		<location>5,.3,5</location>
 		<model>staticmodels/F-16.dae</model>
 	</object>
 </map>
