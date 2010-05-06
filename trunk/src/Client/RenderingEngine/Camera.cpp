@@ -77,6 +77,20 @@ void Camera::Initialize(CamPos *p)
 	dirty = true;
 }
 
+void Camera::Update(CamPos *p)
+{
+	copyCamPos(p);
+	
+	camx = pointx + distance * sin(angle);
+	camy = pointy + height;
+	camz = pointz + distance * cos(angle);
+
+	dirty = true;
+	Update();
+}
+
+
+
 void Camera::Rotate(float a)
 {
 	angle = a;

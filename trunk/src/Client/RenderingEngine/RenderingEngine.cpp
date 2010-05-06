@@ -40,12 +40,8 @@ int RenderingEngine::Initialize(CamPos *campos)
 	return 0;
 }
 
-void RenderingEngine::render(void)
+void RenderingEngine::render(CamPos *cp)
 {
-	static float a = 0;
-//	camera->Rotate(a);
-//	camera->Rotate(2.5);
-	a+= 0.01;
 	// Set the projection matrix
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -56,7 +52,7 @@ void RenderingEngine::render(void)
     glLoadIdentity();   // Reset The Modelview Matrix
 //	glOrtho(-5000, 5000, -5000, 5000, -5000, 5000);
 
-	camera->Update();
+	camera->Update(cp);
 
 	glEnable(GL_DEPTH_TEST);
 

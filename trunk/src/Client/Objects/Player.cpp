@@ -40,6 +40,21 @@ void Player::load(void *gcptr)
 {
 }
 
+void Player::followCam(CamPos *cp)
+{
+	cp->pointx = transx;
+	cp->pointy = transy;
+	cp->pointz = transz;
+
+	cp->upx = 0;
+	cp->upy = 10000;
+	cp->upz = 0;
+
+	cp->distance = 2;
+	cp->height = 0.8;
+	cp->angle = 3.141;
+}
+
 void Player::render(Camera *c)
 {
 	glPushMatrix();

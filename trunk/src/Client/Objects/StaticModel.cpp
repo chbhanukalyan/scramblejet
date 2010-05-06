@@ -111,7 +111,7 @@ void StaticModel::render(Camera *c)
 	tmp = aisgl_max(scene_max.y - scene_min.y,tmp);
 	tmp = aisgl_max(scene_max.z - scene_min.z,tmp);
 	tmp = 1.f / tmp;
-	glScalef(tmp, tmp, tmp);
+//	glScalef(tmp, tmp, tmp);
 
         // center the model
 	glTranslatef( -scene_center.x, -scene_center.y, -scene_center.z );

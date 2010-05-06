@@ -36,7 +36,7 @@ class RenderingEngine {
 		~RenderingEngine();
 
 		int Initialize(CamPos *initCamPos);
-		void render(void);
+		void render(CamPos *followCam);
 		void Destroy(void);
 
 		void addObject(Renderable *r);

@@ -64,8 +64,10 @@ void Game::startGame(void)
 
 void Game::runGameLoop(void)
 {
+	CamPos cp;
 	gc->handleEvents(player);
-	re->render();
+	player[localPlayerID]->followCam(&cp);
+	re->render(&cp);
 }
 
 void Game::stopGame(void)
