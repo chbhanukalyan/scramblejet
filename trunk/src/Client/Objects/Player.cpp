@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cassert>
 #include "Player.h"
 #include "../GamingClient/GamingClient.h"
 
@@ -37,8 +38,6 @@ Player::~Player()
 
 void Player::load(void *gcptr)
 {
-	GamingClient *gc = (GamingClient *)gcptr;
-	gc->player = this;
 }
 
 void Player::render(Camera *c)
@@ -50,8 +49,7 @@ void Player::render(Camera *c)
 
 void Player::update(struct updateObj *upObj)
 {
-	if (upObj->updateFieldID != 0x1)
-		return;
+	assert(upObj->updateFieldID == id);
 
 	float *vals = (float *)(upObj->vals);
 	transx = locx = vals[0];

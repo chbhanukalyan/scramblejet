@@ -61,7 +61,7 @@ class Server {
 
 		/* Network Information */
 		int getEventList(void);
-		int broadcastUpdatePacket(void *buf, int len);
+		int broadcastUpdatePacket(void *buf, int len, int count_objs);
 
 	private:
 		int commSocket;
