@@ -27,6 +27,20 @@
 
 #include <stdio.h>
 
+struct CamPos {
+	float pointx;
+	float pointy;
+	float pointz;
+
+	float upx;
+	float upy;
+	float upz;
+
+	float distance;
+	float height;
+	float angle;
+};
+
 class Camera {
  public:
 	float camx;
@@ -51,11 +65,14 @@ class Camera {
 
 	bool dirty;
 
+	void copyCamPos(CamPos *p);
+
  public:
 	 Camera(void);
 	~Camera();
 
-	void Initialize();
+	void Initialize(CamPos *pos = NULL);
+	void dumpCurPos(void);
 
 	inline void Update(void) {
 		gluLookAt(camx, camy, camz, pointx, pointy, pointz, upx,

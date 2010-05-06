@@ -17,33 +17,37 @@
  */
 
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+#ifndef		__GAME_GAME_H__
+#define		__GAME_GAME_H__
 
-#include "Renderable.h"
+#include "../RenderingEngine/RenderingEngine.h"
+#include "../Objects/SkyBox.h"
+#include "../GamingClient/GamingClient.h"
+#include "../Map/Map.h"
 
-class RenderingEngine {
-	private:
-		Camera *camera;
+class Game {
+	public:
+		char data_dir[256];
+		char mapfn[256];
 
-		int hres;
-		int vres;
+		RenderingEngine *re;
+		GamingClient *gc;
+		Map *map;
 
-		Renderable *renderList;
+		SkyBox *skybox;
+		Player *player;
+
 
 	public:
-		RenderingEngine(void);
-		~RenderingEngine();
+		Game(const char *base_dir, RenderingEngine *re, GamingClient *gc, const char *mapfn);
+		~Game();
 
-		int Initialize(CamPos *initCamPos);
-		void render(void);
-		void Destroy(void);
+		void initGame(void);
 
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
+		void startGame(void);
+		void stopGame(void);
 
 };
 
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+#endif	/*	__GAME_GAME_H__	*/
 

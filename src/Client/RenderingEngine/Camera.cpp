@@ -28,8 +28,33 @@ Camera::~Camera()
 {
 }
 
-void Camera::Initialize(void)
+void Camera::copyCamPos(CamPos *p)
 {
+	pointx = p->pointx;
+	pointy = p->pointy;
+	pointz = p->pointz;
+	upx = p->upx;
+	upy = p->upy;
+	upz = p->upz;
+	height = p->height;
+	angle = p->angle;
+	distance = p->distance;
+}
+
+void Camera::dumpCurPos(void)
+{
+	fprintf(stderr, "Camera Cur Pos: POINT(%.2f,%.2f,%.2f) UP(%.2f,%.2f,%.2f) "
+			"Height(%.2f) ANGLE(%.2f) DIST(%.2f) "
+			"CAM(calculated:%.2f,%.2f,%.2f)\n",
+			pointx, pointy, pointz, upx, upy, upz, height, angle, distance,
+			camx, camy, camz);
+}
+
+void Camera::Initialize(CamPos *p)
+{
+	if (p) {
+		copyCamPos(p);
+	} else {
 	distance = 1;
 	height = 0;
 	angle = 0;
@@ -42,6 +67,7 @@ void Camera::Initialize(void)
 	upy = 10000;
 	upz = 0;
 
+	}
 	
 	camx = distance * sin(angle);
 	camy = height;
