@@ -47,6 +47,50 @@ void Player::handleEvent(int funcid, int count) {
 			loc[2] -= 0.01 * count;
 			break;
 		}
+		case FUNCID_BANKRIGHT: {
+			loc[0] += 0.01 * count;
+			break;
+		}
+		case FUNCID_BANKLEFT: {
+			loc[0] -= 0.01 * count;
+			break;
+		}
+		case FUNCID_CLIMBUP: {
+			loc[1] += 0.01 * count;
+			break;
+		}
+		case FUNCID_CLIMBDOWN: {
+			loc[1] -= 0.01 * count;
+			break;
+		}
+		case FUNCID_FIRE1: break;
+		case FUNCID_FIRE2: break;
+
+		case FUNCID_ROTXP: {
+			dir[0] += 0.1 * count;
+			break;
+		}
+		case FUNCID_ROTXM: {
+			dir[0] -= 0.1 * count;
+			break;
+		}
+		case FUNCID_ROTYP: {
+			dir[1] += 0.1 * count;
+			break;
+		}
+		case FUNCID_ROTYM: {
+			dir[1] -= 0.1 * count;
+			break;
+		}
+		case FUNCID_ROTZP: {
+			dir[2] += 0.1 * count;
+			break;
+		}
+		case FUNCID_ROTZM: {
+			dir[2] -= 0.1 * count;
+			break;
+		}
+
 		default:
 		   break;
 	}
@@ -55,11 +99,12 @@ void Player::handleEvent(int funcid, int count) {
 int Player::serializeState(void *buf) {
 
 	unsigned char *b = (unsigned char *)buf;
-	b[0] = 2 + sizeof(loc);		//size
+	b[0] = 2 + sizeof(loc) + sizeof(dir);		//size
 	b[1] = (unsigned char)id;					// update player id
 	memcpy(b + 2, loc, sizeof(loc));
+	memcpy(b + 2 + sizeof(loc), dir, sizeof(dir));
 
-	return 2 + sizeof(loc);
+	return 2 + sizeof(loc) + sizeof(dir);
 }
 
 void Player::doTick(void) {

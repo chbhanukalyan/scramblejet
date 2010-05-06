@@ -20,7 +20,7 @@
 #ifndef		__GC_FUNCIDS_H__
 #define		__GC_FUNCIDS_H__
 
-#define		FUNCID_LOCAL_MASK		0xF0
+#define		FUNCID_LOCAL_MASK		0x80
 #define		IS_FUNC_NONLOCAL(id)	(((id) != FUNCID_INVALID) && (!((id) & FUNCID_LOCAL_MASK)))
 
 enum {
