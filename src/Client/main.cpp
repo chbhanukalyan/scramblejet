@@ -125,9 +125,7 @@ int main(int argc, char **argv)
 	game->startGame();
 
 	while (1) {
-		gc->handleEvents();
-		
-		re->render();
+		game->runGameLoop();
 
 		SDL_GL_SwapBuffers();
 	}

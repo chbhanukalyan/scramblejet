@@ -163,6 +163,7 @@ void Server::welcomeClient(void)
 	swp->phdr.version = CUR_PROTOCOL_VERSION;
 	swp->phdr.magic = CUR_PROTOCOL_MAGIC;
 	swp->phdr.type = PKTTYPE_SRV2CLI_JOINEDGAME;
+	swp->generated_id = curclients;
 
 	if (sendto(commSocket, buf, sizeof(*swp), 0,
 				(struct sockaddr *)&ci->sendst, sizeof(ci->sendst)) < 0) {
@@ -203,13 +204,14 @@ int Server::getEventList(void)
 	return 0;
 }
 
-int Server::broadcastUpdatePacket(void *buf, int len)
+int Server::broadcastUpdatePacket(void *buf, int len, int count)
 {
 	int i;
 	struct srvUpdatePacket *sup = (struct srvUpdatePacket*)buf;
 	sup->phdr.version = CUR_PROTOCOL_VERSION;
 	sup->phdr.magic = CUR_PROTOCOL_MAGIC;
 	sup->phdr.type = PKTTYPE_SRV2CLI_OBJUPDTLIST;
+	sup->num_updtobjs = count;
 	fprintf(stderr, "Broadcasting Packet(len=%d) to all clients\n", len);
 	for (i = 0 ; i < curclients; i++) {
 		sendPacket(i, buf, len);

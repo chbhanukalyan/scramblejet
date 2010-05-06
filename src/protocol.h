@@ -59,6 +59,7 @@ struct updateObj {
 
 struct srvUpdatePacket {
 	struct protocolHeader phdr;
+	int num_updtobjs;
 
 	/* Object Update List */
 	struct updateObj lst[];
@@ -73,6 +74,7 @@ struct cliJoinPkt {
 #define	PKTTYPE_SRV2CLI_JOINEDGAME	0xF1
 struct srvWelcomePkt {
 	struct protocolHeader phdr;
+	int generated_id;
 };
 
 #endif	/*	__PROTOCOL_H__	*/

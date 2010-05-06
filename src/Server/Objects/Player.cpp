@@ -56,7 +56,7 @@ int Player::serializeState(void *buf) {
 
 	unsigned char *b = (unsigned char *)buf;
 	b[0] = 2 + sizeof(loc);		//size
-	b[1] = 0x1;					// update field id
+	b[1] = (unsigned char)id;					// update player id
 	memcpy(b + 2, loc, sizeof(loc));
 
 	return 2 + sizeof(loc);

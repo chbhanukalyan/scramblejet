@@ -20,6 +20,8 @@
 #ifndef		__GAME_GAME_H__
 #define		__GAME_GAME_H__
 
+#define	MAX_NUM_PLAYERS	16
+
 #include "../RenderingEngine/RenderingEngine.h"
 #include "../Objects/SkyBox.h"
 #include "../GamingClient/GamingClient.h"
@@ -30,13 +32,14 @@ class Game {
 		char data_dir[256];
 		char mapfn[256];
 
+		int localPlayerID;
+
 		RenderingEngine *re;
 		GamingClient *gc;
 		Map *map;
 
 		SkyBox *skybox;
-		Player *player;
-
+		Player *player[MAX_NUM_PLAYERS];
 
 	public:
 		Game(const char *base_dir, RenderingEngine *re, GamingClient *gc, const char *mapfn);
@@ -45,6 +48,7 @@ class Game {
 		void initGame(void);
 
 		void startGame(void);
+		void runGameLoop(void);
 		void stopGame(void);
 
 };

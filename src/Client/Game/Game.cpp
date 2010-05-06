@@ -25,6 +25,8 @@ Game::Game(const char *data_dir, RenderingEngine *re, GamingClient *gc, const ch
 	this->re = re;
 	this->gc = gc;
 	strcpy(mapfn, mapname);
+	memset(player, 0, sizeof(player));
+	localPlayerID = -1;
 }
 
 Game::~Game()
@@ -39,9 +41,14 @@ void Game::initGame(void)
 
 	gc->initialize("default.eventmap", 10);
 
-	player = new Player(map->objList->next);
-	re->addObject(player);
-	player->load((void*)gc);
+	ObjInfo *o = map->objList;
+	while (o) {
+		Player *p = new Player(o);
+		re->addObject(p);
+		p->load((void*)gc);
+		player[p->id] = p;
+		o = o->next;
+	}
 
 	skybox = new SkyBox;
 	skybox->load(map->skyboxfn);
@@ -52,7 +59,13 @@ void Game::initGame(void)
 
 void Game::startGame(void)
 {
-	gc->Connect("127.0.0.1");
+	gc->Connect("127.0.0.1", 6501, &localPlayerID);
+}
+
+void Game::runGameLoop(void)
+{
+	gc->handleEvents(player);
+	re->render();
 }
 
 void Game::stopGame(void)

@@ -27,9 +27,10 @@
 
 class Player : public StaticModel {
 	private:
-		int id;
 		float locx, locy, locz;
 	public:
+		int id;
+
 		Player(ObjInfo *);
 		~Player();
 

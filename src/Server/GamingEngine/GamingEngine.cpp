@@ -55,16 +55,18 @@ int GamingEngine::startGame(void *serv)
 		
 		/* Dispatch updates after some time */
 		char buf[MAX_PACKET_SIZE];
-		int len = sizeof(struct protocolHeader);
+		int len = sizeof(struct protocolHeader) + sizeof(int);
 
+		int count = 0;
 		SentientObject *seo = objList;
 		while (seo) {
 			int l = seo->serializeState(buf + len);
 			printf("SEO SERIAL len=%d ret=%d\n", len, l);
 			len += l;
 			seo = seo->next;
+			count++;
 		}
-		server->broadcastUpdatePacket(buf, len);
+		server->broadcastUpdatePacket(buf, len, count);
 		/* sleep some time before starting again TODO Make wakeup */
 		usleep(50000);
 	}

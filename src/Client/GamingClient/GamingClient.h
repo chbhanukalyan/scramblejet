@@ -33,7 +33,6 @@ class GamingClient {
 		bool connected;
 
 	public:
-		Player *player;
 		EventMap *evmap;
 		int timerInterval;
 
@@ -42,7 +41,7 @@ class GamingClient {
 
 		int initialize(const char *eventmap, int timerInterval);
 
-		void handleEvents(void);
+		void handleEvents(Player **);
 
 		void updateTimerCb(void);
 
@@ -55,17 +54,17 @@ class GamingClient {
 
 		char pktEventBuf[512];
 
-		int doHandshake(void);
+		int doHandshake(int *localPlayerID);
 		int sendPacket(void *buf, int len);
 		int recvPacket(void *buf, int *len);
 
-		void handleNetworkEvents(void);
+		void handleNetworkEvents(Player **);
 
 		int updateInterval;
 		int networkUpdateCounter;
 
 	public:
-		int Connect(const char *serverIP, int port = 6501);
+		int Connect(const char *serverIP, int port, int *localPlayerID);
 		void Disconnect(void);
 
 		int sendEventList(void);

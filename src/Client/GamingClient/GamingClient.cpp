@@ -88,7 +88,7 @@ int GamingClient::initialize(const char *evmapfn, int timerInt)
 	return 0;
 }
 
-void GamingClient::handleEvents(void)
+void GamingClient::handleEvents(Player **playerList)
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -112,11 +112,11 @@ void GamingClient::handleEvents(void)
 		}
 	}
 
-	handleNetworkEvents();
+	handleNetworkEvents(playerList);
 
 }
 
-void GamingClient::handleNetworkEvents(void)
+void GamingClient::handleNetworkEvents(Player **playerList)
 {
 	/* Recieve Network Packets */
 	char buf[MAX_PACKET_SIZE];
@@ -140,11 +140,15 @@ void GamingClient::handleNetworkEvents(void)
 					(sup->phdr.type != PKTTYPE_SRV2CLI_OBJUPDTLIST))
 				continue;
 
-			struct updateObj *updObjs = sup->lst;
+			unsigned char *b = (unsigned char *)sup->lst;
 
 			/* TODO call update objects HERE */
-			if (player) {
-				player->update(updObjs);
+			for (int i = 0; i < sup->num_updtobjs; i++) {
+				struct updateObj *updt = (struct updateObj*)b;
+				printf("sup->num_updtobjs = %d updtfid = %d siz=%d\n", sup->num_updtobjs, updt->updateFieldID, updt->size);
+				if (playerList[updt->updateFieldID])
+					playerList[updt->updateFieldID]->update(updt);
+				b += updt->size;
 			}
 
 		}
@@ -153,7 +157,7 @@ void GamingClient::handleNetworkEvents(void)
 	}
 }
 
-int GamingClient::doHandshake(void)
+int GamingClient::doHandshake(int *localPlayerID)
 {
 	char buf[MAX_PACKET_SIZE];
 	int len = MAX_PACKET_SIZE;
@@ -180,11 +184,13 @@ int GamingClient::doHandshake(void)
 			(swp->phdr.type != PKTTYPE_SRV2CLI_JOINEDGAME))
 		return -1;
 
-	fprintf(stderr, "Client was successfully able to join game\n");
+	*localPlayerID = swp->generated_id;
+
+	fprintf(stderr, "Client was successfully able to join game with ID=%d\n", *localPlayerID);
 	return 0;
 }
 
-int GamingClient::Connect(const char *serverIP, int port)
+int GamingClient::Connect(const char *serverIP, int port, int *localPlayerID)
 {
 	int err = -1;
 
@@ -210,7 +216,7 @@ int GamingClient::Connect(const char *serverIP, int port)
 		goto out;
 	}
 
-	if (doHandshake() < 0) {
+	if (doHandshake(localPlayerID) < 0) {
 		fprintf(stderr, "Unable to join Server\n");
 		goto out;
 	}
