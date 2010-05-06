@@ -55,6 +55,9 @@ void Player::update(struct updateObj *upObj)
 	transx = locx = vals[0];
 	transy = locy = vals[1];
 	transz = locz = vals[2];
-	printf("New TRANS Vals = %f, %f, %f\n", vals[0], vals[1], vals[2]);
+	roll = vals[3];
+	pitch = vals[4];
+	yaw = vals[5];
+	printf("New TRANS Vals = %f, %f, %f, %f %f %f\n", vals[0], vals[1], vals[2], roll, pitch, yaw);
 }
 

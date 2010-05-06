@@ -55,17 +55,17 @@ void Camera::Initialize(CamPos *p)
 	if (p) {
 		copyCamPos(p);
 	} else {
-	distance = 1;
-	height = 0;
-	angle = 0;
+		distance = 1;
+		height = 0;
+		angle = 0;
 
-	pointx = 0;
-	pointy = 0;
-	pointz = 0;
+		pointx = 0;
+		pointy = 0;
+		pointz = 0;
 
-	upx = 0;
-	upy = 10000;
-	upz = 0;
+		upx = 0;
+		upy = 10000;
+		upz = 0;
 
 	}
 	
