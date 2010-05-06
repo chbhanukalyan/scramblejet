@@ -30,6 +30,7 @@
 class Game {
 	public:
 		char data_dir[256];
+		char mapName[32];
 		char mapfn[256];
 
 		int localPlayerID;
@@ -42,7 +43,7 @@ class Game {
 		Player *player[MAX_NUM_PLAYERS];
 
 	public:
-		Game(const char *base_dir, RenderingEngine *re, GamingClient *gc, const char *mapfn);
+		Game(const char *base_dir, RenderingEngine *re, GamingClient *gc);
 		~Game();
 
 		void initGame(void);

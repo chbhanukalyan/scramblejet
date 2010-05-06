@@ -54,7 +54,7 @@ class Server {
 		~Server();
 
 		int initialize(const char *serverIP, int port = 6501);
-		int waitForClients(void);
+		int waitForClients(const char *mapName);
 		int startEventRecver(void);
 		int start(void);
 		void stop(void);
@@ -65,7 +65,7 @@ class Server {
 
 	private:
 		int commSocket;
-		void welcomeClient(void);
+		void welcomeClient(const char *mapName);
 
 		int sendPacket(ClientID cid, void *buf, int len);
 		ClientID lookupClientID(struct sockaddr_in *st);

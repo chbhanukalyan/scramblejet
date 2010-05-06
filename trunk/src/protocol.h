@@ -75,6 +75,8 @@ struct cliJoinPkt {
 struct srvWelcomePkt {
 	struct protocolHeader phdr;
 	int generated_id;
+	char mapcksum[8];
+	char mapName[32];
 };
 
 #endif	/*	__PROTOCOL_H__	*/

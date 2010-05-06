@@ -135,8 +135,8 @@ void GamingClient::handleNetworkEvents(Player **playerList)
 			printf("recved packet from server len=%d\n", len);
 
 			struct srvUpdatePacket *sup = (struct srvUpdatePacket *)buf;
-			if ((sup->phdr.version != CUR_PROTOCOL_VERSION) &&
-					(sup->phdr.magic != CUR_PROTOCOL_MAGIC) &&
+			if ((sup->phdr.version != CUR_PROTOCOL_VERSION) ||
+					(sup->phdr.magic != CUR_PROTOCOL_MAGIC) ||
 					(sup->phdr.type != PKTTYPE_SRV2CLI_OBJUPDTLIST))
 				continue;
 
@@ -157,7 +157,7 @@ void GamingClient::handleNetworkEvents(Player **playerList)
 	}
 }
 
-int GamingClient::doHandshake(int *localPlayerID)
+int GamingClient::doHandshake(int *localPlayerID, char *mapName)
 {
 	char buf[MAX_PACKET_SIZE];
 	int len = MAX_PACKET_SIZE;
@@ -179,18 +179,19 @@ int GamingClient::doHandshake(int *localPlayerID)
 	}
 
 	struct srvWelcomePkt *swp = (struct srvWelcomePkt*)buf;
-	if ((swp->phdr.version != CUR_PROTOCOL_VERSION) &&
-			(swp->phdr.magic != CUR_PROTOCOL_MAGIC) &&
+	if ((swp->phdr.version != CUR_PROTOCOL_VERSION) ||
+			(swp->phdr.magic != CUR_PROTOCOL_MAGIC) ||
 			(swp->phdr.type != PKTTYPE_SRV2CLI_JOINEDGAME))
 		return -1;
 
 	*localPlayerID = swp->generated_id;
+	strncpy(mapName, swp->mapName, 32);
 
 	fprintf(stderr, "Client was successfully able to join game with ID=%d\n", *localPlayerID);
 	return 0;
 }
 
-int GamingClient::Connect(const char *serverIP, int port, int *localPlayerID)
+int GamingClient::Connect(const char *serverIP, int port, int *localPlayerID, char *mapName)
 {
 	int err = -1;
 
@@ -216,7 +217,7 @@ int GamingClient::Connect(const char *serverIP, int port, int *localPlayerID)
 		goto out;
 	}
 
-	if (doHandshake(localPlayerID) < 0) {
+	if (doHandshake(localPlayerID, mapName) < 0) {
 		fprintf(stderr, "Unable to join Server\n");
 		goto out;
 	}

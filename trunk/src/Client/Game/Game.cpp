@@ -19,12 +19,11 @@
 #include "Game.h"
 #include "../../Map/MapLoader.h"
 
-Game::Game(const char *data_dir, RenderingEngine *re, GamingClient *gc, const char *mapname)
+Game::Game(const char *data_dir, RenderingEngine *re, GamingClient *gc)
 {
 	strcpy(this->data_dir, data_dir);
 	this->re = re;
 	this->gc = gc;
-	strcpy(mapfn, mapname);
 	memset(player, 0, sizeof(player));
 	localPlayerID = -1;
 }
@@ -35,11 +34,15 @@ Game::~Game()
 
 void Game::initGame(void)
 {
+	gc->initialize("default.eventmap", 10);
+	if (gc->Connect("127.0.0.1", 6501, &localPlayerID, mapName) < 0)
+		return;
+
+	sprintf(mapfn, "maps/%s.map", mapName);
+
 	map = loadMap(mapfn);
 
 	re->Initialize(&map->initCamPos);
-
-	gc->initialize("default.eventmap", 10);
 
 	ObjInfo *o = map->objList;
 	while (o) {
@@ -59,7 +62,6 @@ void Game::initGame(void)
 
 void Game::startGame(void)
 {
-	gc->Connect("127.0.0.1", 6501, &localPlayerID);
 }
 
 void Game::runGameLoop(void)

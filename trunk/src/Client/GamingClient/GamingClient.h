@@ -54,7 +54,7 @@ class GamingClient {
 
 		char pktEventBuf[512];
 
-		int doHandshake(int *localPlayerID);
+		int doHandshake(int *localPlayerID, char *mapName);
 		int sendPacket(void *buf, int len);
 		int recvPacket(void *buf, int *len);
 
@@ -64,7 +64,7 @@ class GamingClient {
 		int networkUpdateCounter;
 
 	public:
-		int Connect(const char *serverIP, int port, int *localPlayerID);
+		int Connect(const char *serverIP, int port, int *localPlayerID, char *mapName);
 		void Disconnect(void);
 
 		int sendEventList(void);

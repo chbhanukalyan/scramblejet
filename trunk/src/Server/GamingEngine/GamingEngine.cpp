@@ -31,10 +31,11 @@
 #include "GamingEngine.h"
 #include "../GamingServer/Server.h"
 
-GamingEngine::GamingEngine(void)
+GamingEngine::GamingEngine(Map *map)
 {
 	objList = NULL;
 	memset(playerList, 0, sizeof(playerList));
+	this->map = map;
 }
 
 GamingEngine::~GamingEngine()
