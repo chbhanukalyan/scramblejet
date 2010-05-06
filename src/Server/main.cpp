@@ -17,6 +17,8 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
+#include "../Map/MapLoader.h"
 #include "GamingServer/Server.h"
 #include "GamingEngine/GamingEngine.h"
 
@@ -24,18 +26,27 @@ int main(int argc, char **argv)
 {
 	GamingEngine *ge = NULL;
 	Server *srv = NULL;
+	Map *map = NULL;
 
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s map\n", argv[0]);
 		return -1;
 	}
 
-	ge = new GamingEngine;
+	chdir("../../data");
+
+	map = loadMap(argv[1]);
+	if (map == NULL) {
+		fprintf(stderr, "Unable to load Map: %s\n", argv[1]);
+		return -1;
+	}
+
+	ge = new GamingEngine(map);
 	srv = new Server(ge);
 
 	srv->initialize("127.0.0.1");
 
-	while (srv->waitForClients() == 0) {
+	while (srv->waitForClients(map->name) == 0) {
 		fprintf(stderr, "Still waiting for clients\n");
 	}
 

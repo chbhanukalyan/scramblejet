@@ -49,7 +49,7 @@ void Quit(void)
 	exit(0);
 }
 
-int fork_server(const char *path)
+int fork_server(const char *path, const char *mapname)
 {
 	srvpid = fork();
 	if (srvpid < 0) {
@@ -60,7 +60,7 @@ int fork_server(const char *path)
 	if (srvpid)
 		return 0;
 
-	execlp(path, path, "dummy_map", NULL);
+	execlp(path, path, mapname, NULL);
 	fprintf(stderr, "Unable to exec server: %s", strerror(errno));
 	exit(0);
 }
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
 	if (argc >= 2) {
 		if (!strcmp(argv[1], "-s")) {
-			fork_server("../Server/scRambleSrv");
+			fork_server("../Server/scRambleSrv", "maps/default.map");
 		}
 	}
 
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 
 	chdir("../../data/");
 
-	Game *game = new Game("../../data/", re, gc, "maps/default.map");
+	Game *game = new Game("../../data/", re, gc);
 	game->initGame();
 
 	game->startGame();

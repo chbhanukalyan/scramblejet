@@ -19,16 +19,17 @@ include ../cmds.mk
 
 OUTPUT = scRambleSrv
 
-LDFLAGS := $(LDFLAGS) -lm -lpthread
+LDFLAGS := $(LDFLAGS) -lm -lpthread -lxml2
 
 OBJECTS	=			main.o		\
 
 LIBS	=			\
 					GamingEngine/ge.a			\
-					Objects/objs.a					\
+					../Map/map.a				\
+					Objects/objs.a				\
 					GamingServer/gs.a			\
 
-$(OUTPUT): $(OBJECTS) GE GS OBJ
+$(OUTPUT): $(OBJECTS) GE GS OBJ MAP
 	$(LD) -o $(OUTPUT) $(LDFLAGS) $(OBJECTS) $(LIBS)
 	
 %.o: %.cpp
@@ -43,9 +44,13 @@ GE:
 GS:
 	make -C GamingServer
 
+MAP:
+	make -C ../Map
+
 clean:
 	make -C GamingEngine clean
 	make -C GamingServer clean
 	make -C Objects clean
+	make -C ../Map clean
 	-rm -f $(OBJECTS) $(OUTPUT)
 

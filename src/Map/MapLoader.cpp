@@ -172,6 +172,7 @@ void readMap(xmlNode *node, Map *map)
 
 Map *loadMap(const char *fn)
 {
+	int err = -1;
 	Map *map = NULL;
 	map = new Map;
 
@@ -201,6 +202,8 @@ Map *loadMap(const char *fn)
 	/* Get the name */
 	readMap(root_element, map);
 
+	err = 0;
+
  out:
 	/*free the document */
 	if (doc) xmlFreeDoc(doc);
@@ -211,6 +214,10 @@ Map *loadMap(const char *fn)
 	 */
 	xmlCleanupParser();
 
+	if (err) {
+		delete map;
+		map = NULL;
+	}
 	return map;
 }
 

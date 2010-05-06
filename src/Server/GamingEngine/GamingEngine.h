@@ -24,6 +24,7 @@
 #define	INVALID_CLIENT_ID		(-1)
 #define	DEFAULT_WAIT_BEFORE_START	10
 
+#include "../../Map/Map.h"
 #include "SentientObject.h"
 #include "../Objects/Player.h"
 
@@ -31,8 +32,10 @@ class GamingEngine {
 	private:
 		SentientObject *objList;
 	public:
+		Map *map;
+
 		Player *playerList[MAX_CLIENT_ID];
-		GamingEngine(void);
+		GamingEngine(Map *map);
 		~GamingEngine();
 
 		int initialize(void);

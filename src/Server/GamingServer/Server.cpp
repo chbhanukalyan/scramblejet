@@ -73,7 +73,7 @@ int Server::initialize(const char *serverIP, int port)
 	return err;
 }
 
-int Server::waitForClients(void)
+int Server::waitForClients(const char *mapName)
 {
 	int numClients = 0;
 	struct timeval tm;
@@ -92,7 +92,7 @@ int Server::waitForClients(void)
 		ret = select(commSocket+1, &fds, NULL, NULL, &tm);
 		if (ret > 0) {
 			if (FD_ISSET(commSocket, &fds)) {
-				welcomeClient();
+				welcomeClient(mapName);
 				numClients++;
 			}
 		}
@@ -133,10 +133,11 @@ void Server::stop(void)
 	close(commSocket);
 }
 
-void Server::welcomeClient(void)
+void Server::welcomeClient(const char *mapName)
 {
 	char buf[MAX_PACKET_SIZE];
 	int len = MAX_PACKET_SIZE;
+	ClientID cid;
 
 	struct sockaddr_in st;
 	socklen_t slen = sizeof(st);
@@ -145,25 +146,40 @@ void Server::welcomeClient(void)
 		fprintf(stderr, "Server socket Recv failed: %s\n", strerror(errno));
 		return;
 	}
-	if (lookupClientID(&st) != INVALID_CLIENT_ID)
-		return;
 
 	struct cliJoinPkt *cjp = (struct cliJoinPkt*)buf;
-	if ((cjp->phdr.version != CUR_PROTOCOL_VERSION) &&
-			(cjp->phdr.magic != CUR_PROTOCOL_MAGIC) &&
+	if ((cjp->phdr.version != CUR_PROTOCOL_VERSION) ||
+			(cjp->phdr.magic != CUR_PROTOCOL_MAGIC) ||
 			(cjp->phdr.type != PKTTYPE_CLI2SRV_JOINGAME))
 		return;
 
-	ClientInfo *ci = &cliinfo[curclients];
-	memcpy(&ci->sendst, &st, sizeof(st));
-	inet_ntop(AF_INET, &st.sin_addr, ci->IP, 16);
-	strncpy(ci->playerName, cjp->playerName, 16);
+	ClientInfo *ci = NULL;
+
+	cid = lookupClientID(&st);
+	/* Handles case where UDP packet was lost, so reattempting to join */
+	if (cid == INVALID_CLIENT_ID) {
+		ci = &cliinfo[curclients];
+		memcpy(&ci->sendst, &st, sizeof(st));
+		inet_ntop(AF_INET, &st.sin_addr, ci->IP, 16);
+		strncpy(ci->playerName, cjp->playerName, 16);
+		cid = curclients;
+		ge->addPlayer(cid, ci->playerName);
+
+		fprintf(stderr, "Client connected from Client IP(%s) Player(%s)\n",
+				ci->IP, ci->playerName);
+	} else {
+		ci = &cliinfo[cid];
+
+		fprintf(stderr, "Client re-connected from Client IP(%s) Player(%s)\n",
+				ci->IP, ci->playerName);
+	}
 
 	struct srvWelcomePkt *swp = (struct srvWelcomePkt*)buf;
 	swp->phdr.version = CUR_PROTOCOL_VERSION;
 	swp->phdr.magic = CUR_PROTOCOL_MAGIC;
 	swp->phdr.type = PKTTYPE_SRV2CLI_JOINEDGAME;
-	swp->generated_id = curclients;
+	swp->generated_id = cid;
+	strncpy(swp->mapName, mapName, 32);
 
 	if (sendto(commSocket, buf, sizeof(*swp), 0,
 				(struct sockaddr *)&ci->sendst, sizeof(ci->sendst)) < 0) {
@@ -171,10 +187,6 @@ void Server::welcomeClient(void)
 				"Player(%s)\n", ci->IP, ci->playerName);
 	}
 
-	ge->addPlayer(curclients, ci->playerName);
-
-	fprintf(stderr, "Client connected from Client IP(%s) Player(%s)\n",
-			ci->IP, ci->playerName);
 	curclients++;
 	return;
 }
@@ -188,8 +200,8 @@ int Server::getEventList(void)
 		return -1;
 
 	struct cliEventPacket *evp = (struct cliEventPacket *)buf;
-	if ((evp->phdr.version != CUR_PROTOCOL_VERSION) &&
-			(evp->phdr.magic != CUR_PROTOCOL_MAGIC) &&
+	if ((evp->phdr.version != CUR_PROTOCOL_VERSION) ||
+			(evp->phdr.magic != CUR_PROTOCOL_MAGIC) ||
 			(evp->phdr.type != PKTTYPE_CLI2SRV_EVENTLIST))
 		return -1;
 
