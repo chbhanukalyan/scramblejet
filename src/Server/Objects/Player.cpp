@@ -132,9 +132,9 @@ int Player::serializeState(void *buf) {
 
 void Player::doTick(void) {
 	/* Change angles to direction vector */
-//	dir[0] = cosf(pitch) * sinf(yaw);
-//	dir[1] = sinf(pitch);
-//	dir[2] = cosf(pitch) * cosf(yaw);
+	dir[0] = cosf(pitch) * sinf(yaw);
+	dir[1] = -sinf(pitch);
+	dir[2] = cosf(pitch) * cosf(yaw);
 
 	/* go to next position */
 	loc[0] += dir[0] * vel;
