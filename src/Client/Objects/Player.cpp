@@ -52,7 +52,7 @@ void Player::followCam(CamPos *cp)
 	cp->upz = 0;
 
 	cp->distance = 2;
-	cp->height = 0.8;
+	cp->height = 0.4;
 	cp->angle = 3.141;
 }
 
