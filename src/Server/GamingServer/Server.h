@@ -20,10 +20,6 @@
 #ifndef		__GE_SERVER_H__
 #define		__GE_SERVER_H__
 
-#define	MAX_CLIENT_ID			32
-#define	INVALID_CLIENT_ID		(-1)
-#define	DEFAULT_WAIT_BEFORE_START	10
-
 #include <pthread.h>
 #include <arpa/inet.h>
 

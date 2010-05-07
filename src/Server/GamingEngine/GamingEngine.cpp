@@ -77,7 +77,8 @@ int GamingEngine::startGame(void *serv)
 
 void GamingEngine::addPlayer(int id, const char *name)
 {
-	playerList[id] = new Player(id, name);
+	ObjInfo *o = map->getObj(OBJTYPE_PLAYER, id);
+	playerList[id] = new Player(o, name);
 	addObject(playerList[id]);
 }
 

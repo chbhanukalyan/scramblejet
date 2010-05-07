@@ -114,6 +114,22 @@ void readObject(xmlNode *node, Map *map)
 	node = xmlNextElementSibling(node);
 	readStr(node, o->modelfn);
 
+
+	node = xmlNextElementSibling(node);
+	readFloat(node, &o->accel);
+
+	node = xmlNextElementSibling(node);
+	readFloat(node, &o->maxspeed);
+
+	node = xmlNextElementSibling(node);
+	readFloat(node, &o->minspeed);
+
+	node = xmlNextElementSibling(node);
+	readFloat(node, &o->minanglerot);
+
+	node = xmlNextElementSibling(node);
+	readFloat(node, &o->maxanglerot);
+
 	map->insertObjInfo(o);
 
 	o->dump();

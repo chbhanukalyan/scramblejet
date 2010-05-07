@@ -20,19 +20,34 @@
 #ifndef		__GE_PLAYER_H__
 #define		__GE_PLAYER_H__
 
+#include "../../Map/ObjInfo.h"
 #include "../GamingEngine/SentientObject.h"
 
 class Player : public SentientObject {
 	private:
 		float loc[3];
-		float vel[3];
+		float vel;
+		float accel;
 		float dir[3];
+
+		float maxspeed, minspeed;
+		float minanglerot, maxanglerot;
+
+		inline void setSpeed(float s) {
+			if (s > maxspeed) s = maxspeed;
+			if (s < minspeed) s = minspeed;
+			vel = s;
+		}
+		inline void setAngle(float a, int type) {
+			if (a > maxanglerot) a = maxanglerot;
+			if (a < minanglerot) a = minanglerot;
+		}
 
 	public:
 		int id;
 		char playerName[16];
 
-		Player(int id, const char *name);
+		Player(ObjInfo *o, const char *name);
 		~Player();
 
 		void handleEvent(int funcid, int count);

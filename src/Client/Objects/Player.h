@@ -29,6 +29,7 @@
 class Player : public StaticModel {
 	private:
 		float locx, locy, locz;
+		float dirx, diry, dirz;
 
 		Flame *flame;
 

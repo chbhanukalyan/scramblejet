@@ -27,14 +27,21 @@
 struct ObjInfo {
 	int type;
 	int id;
+	float accel;
 	float locx, locy, locz;
+	float dirx, diry, dirz;
+	float initialVelocity;
+	float maxspeed, minspeed;
+	float minanglerot, maxanglerot;
 	char modelfn[256];
 
 	ObjInfo *next;
 
 	inline void dump(void) {
-		fprintf(stderr, "type(%d), id(%d), loc(%f,%f,%f), modelfn(%s)\n",
-				type, id, locx, locy, locz, modelfn);
+		fprintf(stderr, "type(%d), id(%d), loc(%f,%f,%f), modelfn(%s)\n"
+				"speed(max:%f min:%f) anglerot(max:%f min:%f)\n",
+				type, id, locx, locy, locz, modelfn,
+				maxspeed, minspeed, maxanglerot, minanglerot);
 	}
 };
 
