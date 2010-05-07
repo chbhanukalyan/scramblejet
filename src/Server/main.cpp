@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	ge = new GamingEngine(map);
 	srv = new Server(ge);
 
-	srv->initialize("127.0.0.1");
+	srv->initialize("0.0.0.0");
 
 	while (srv->waitForClients(map->name) == 0) {
 		fprintf(stderr, "Still waiting for clients\n");

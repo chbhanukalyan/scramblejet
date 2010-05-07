@@ -17,6 +17,7 @@
 		<location>0,0,0</location>
 		<direction>0,0,1</direction>
 		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
 		<accel>0.01</accel>
 		<maxspeed>1</maxspeed>
 		<minspeed>0</minspeed>
@@ -29,6 +30,7 @@
 		<location>5,.3,5</location>
 		<direction>0,0,1</direction>
 		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
 		<accel>0.01</accel>
 		<maxspeed>1</maxspeed>
 		<minspeed>0</minspeed>

@@ -61,11 +61,11 @@ void Player::handleEvent(int funcid, int count) {
 			break;
 		}
 		case FUNCID_BANKRIGHT: {
-			loc[0] += 0.01 * count;
+			loc[0] -= 0.01 * count;
 			break;
 		}
 		case FUNCID_BANKLEFT: {
-			loc[0] -= 0.01 * count;
+			loc[0] += 0.01 * count;
 			break;
 		}
 		case FUNCID_CLIMBUP: {
