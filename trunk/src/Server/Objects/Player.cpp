@@ -23,13 +23,23 @@
 #include "Player.h"
 #include "../../funcids.h"
 
-Player::Player(int id, const char *name)
+Player::Player(ObjInfo *o, const char *name)
 {
-	this->id = id;
+	id = o->id;
 	strncpy(playerName, name, 16);
-	loc[0] = loc[1] = loc[2] = 0;
-	dir[0] = dir[1] = dir[2] = 0;
-	vel[0] = vel[1] = vel[2] = 0;
+//	dir[0] = dir[1] = dir[2] = 0;
+//	dir[2] = 1.0f;
+	dir[0] = o->dirx;
+	dir[1] = o->diry;
+	dir[2] = o->dirz;
+	vel = o->initialVelocity;
+	loc[0] = o->locx;
+	loc[1] = o->locy;
+	loc[2] = o->locz;
+	maxspeed = o->maxspeed;
+	minspeed = o->minspeed;
+	maxanglerot = o->maxanglerot;
+	minanglerot = o->minanglerot;
 }
 
 Player::~Player()
@@ -40,11 +50,11 @@ void Player::handleEvent(int funcid, int count) {
 	fprintf(stderr, "Player(%s) got an event:%d count:%d\n", playerName, funcid, count);
 	switch(funcid) {
 		case FUNCID_ACCELERATE: {
-			loc[2] += 0.01 * count;
+			setSpeed(vel + 0.01 * count);
 			break;
 		}
 		case FUNCID_DECCELERATE: {
-			loc[2] -= 0.01 * count;
+			setSpeed(vel - 0.01 * count);
 			break;
 		}
 		case FUNCID_BANKRIGHT: {
@@ -108,5 +118,9 @@ int Player::serializeState(void *buf) {
 }
 
 void Player::doTick(void) {
+	/* go to next position */
+	loc[0] += dir[0] * vel;
+	loc[1] += dir[1] * vel;
+	loc[2] += dir[2] * vel;
 }
 

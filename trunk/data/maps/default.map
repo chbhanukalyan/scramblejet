@@ -1,5 +1,5 @@
 <map>
-	<name>Columbia</name>
+	<name>default</name>
 	<size>1000,1000,1000</size>
 	<camera>
 		<look>0,0,0</look>
@@ -16,12 +16,22 @@
 		<id>0</id>
 		<location>0,0,0</location>
 		<model>staticmodels/F-16.dae</model>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.1</minanglerot>
+		<maxanglerot>1</maxanglerot>
 	</object>
 	<object>
 		<type>player</type>
 		<id>1</id>
 		<location>5,.3,5</location>
 		<model>staticmodels/F-16.dae</model>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.1</minanglerot>
+		<maxanglerot>1</maxanglerot>
 	</object>
 </map>
 

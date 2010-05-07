@@ -17,40 +17,22 @@
  */
 
 
-#ifndef		__MAP_MAP_H__
-#define		__MAP_MAP_H__
+#ifndef		__MAP_CAMPOS_H__
+#define		__MAP_CAMPOS_H__
 
-#include "CamPos.h"
-#include "ObjInfo.h"
+struct CamPos {
+	float pointx;
+	float pointy;
+	float pointz;
 
-class Map {
-	public:
-		char fn[256];
-		char name[32];
-		char skyboxfn[256];
+	float upx;
+	float upy;
+	float upz;
 
-		float sizex, sizey, sizez;
-		CamPos initCamPos;
-
-		ObjInfo *objList;
-
-	public:
-		Map();
-		~Map();
-
-		inline ObjInfo *getObj(int type, int id) {
-			ObjInfo *t = objList;
-			while (t) {
-				if (t->type == type && t->id == id)
-					return t;
-				t = t->next;
-			}
-			return NULL;
-		}
-
-		void insertObjInfo(ObjInfo *o);
-
+	float distance;
+	float height;
+	float angle;
 };
 
-#endif	/*	__MAP_MAP_H__	*/
+#endif	/*	__MAP_CAMPOS_H__	*/
 

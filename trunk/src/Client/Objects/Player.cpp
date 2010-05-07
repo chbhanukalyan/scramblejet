@@ -28,6 +28,10 @@ Player::Player(ObjInfo *oi)
 	transy = oi->locy;
 	transz = oi->locz;
 
+	dirx = oi->dirx;
+	diry = oi->diry;
+	dirz = oi->dirz;
+
 	StaticModel::load(oi->modelfn);
 	flame = new Flame;
 	flame->load("textures/flame.tga");
