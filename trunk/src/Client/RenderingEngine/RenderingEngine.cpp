@@ -59,6 +59,8 @@ void RenderingEngine::render(CamPos *cp)
 	/* Just clear the depth buffer, color is overwritten anyway */
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+	int fog = 0;
+	if (fog) {
 	glEnable(GL_FOG);
 	{
 		GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1.0};
@@ -72,7 +74,7 @@ void RenderingEngine::render(CamPos *cp)
 		glFogf (GL_FOG_END, 5.0);
 	}
 	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
-
+	}
 	/* Render the objects in order */
 	Renderable *renobj = renderList;
 	while (renobj) {

@@ -29,7 +29,8 @@ Player::Player(ObjInfo *oi)
 	transz = oi->locz;
 
 	StaticModel::load(oi->modelfn);
-
+	flame = new Flame;
+	flame->load("textures/flame.tga");
 }
 
 Player::~Player()
@@ -60,6 +61,7 @@ void Player::render(Camera *c)
 	glPushMatrix();
 	StaticModel::render(c);
 	glPopMatrix();
+	flame->render(c);
 }
 
 void Player::update(struct updateObj *upObj)

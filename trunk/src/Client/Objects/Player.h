@@ -24,10 +24,14 @@
 #include "StaticModel.h"
 #include "../../protocol.h"
 #include "../GamingClient/EventMap.h"
+#include "Flame.h"
 
 class Player : public StaticModel {
 	private:
 		float locx, locy, locz;
+
+		Flame *flame;
+
 	public:
 		int id;
 

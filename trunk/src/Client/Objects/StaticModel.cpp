@@ -117,13 +117,13 @@ void StaticModel::render(Camera *c)
 	glTranslatef( -scene_center.x, -scene_center.y, -scene_center.z );
 
 	glPushMatrix();
+	glTranslatef(transx, transy, transz);
+	glPushMatrix();
 	glRotatef(roll, 0, 0, 1);
 	glPushMatrix();
 	glRotatef(pitch, 1, 0, 0);
 	glPushMatrix();
 	glRotatef(yaw, 0, 1, 0);
-	glPushMatrix();
-	glTranslatef(transx, transy, transz);
 
 	glCallList(list);
 	

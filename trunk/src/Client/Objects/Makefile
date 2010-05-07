@@ -20,6 +20,7 @@ include ../../cmds.mk
 OUTPUT = objs.a
 
 OBJECTS	=			StaticModel.o	\
+					Flame.o			\
 					Player.o		\
 					SkyBox.o		\
 

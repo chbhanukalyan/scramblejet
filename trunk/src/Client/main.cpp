@@ -120,7 +120,10 @@ int main(int argc, char **argv)
 	chdir("../../data/");
 
 	Game *game = new Game("../../data/", re, gc);
-	game->initGame();
+	if (game->initGame()) {
+		fprintf(stderr, "Failed to Init Game\n");
+		Quit();
+	}
 
 	game->startGame();
 
