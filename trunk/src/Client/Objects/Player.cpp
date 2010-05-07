@@ -70,10 +70,10 @@ void Player::render(Camera *c)
 	
 	/* Rotate Around Y-AXIS */
 	glRotatef(RADIAN2DEG(yaw), 0, 1, 0);
-	glPushMatrix();
 
 	/* Now figure out a vector which will allow it to rotate on the specific axis */
-	glRotatef(RADIAN2DEG(pitch), cos(yaw), 0, -sin(yaw));
+	glRotatef(RADIAN2DEG(pitch), 1, 0, 0);
+
 	glPushMatrix();
 	glRotatef(RADIAN2DEG(roll), 0, 0, 1);
 	glPushMatrix();
@@ -82,7 +82,6 @@ void Player::render(Camera *c)
 	
 	flame->render(c);
 	
-	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
