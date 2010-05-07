@@ -15,6 +15,7 @@
 		<type>player</type>
 		<id>0</id>
 		<location>0,0,0</location>
+		<direction>0,0,1</direction>
 		<model>staticmodels/F-16.dae</model>
 		<accel>0.01</accel>
 		<maxspeed>1</maxspeed>
@@ -26,6 +27,7 @@
 		<type>player</type>
 		<id>1</id>
 		<location>5,.3,5</location>
+		<direction>0,0,1</direction>
 		<model>staticmodels/F-16.dae</model>
 		<accel>0.01</accel>
 		<maxspeed>1</maxspeed>
