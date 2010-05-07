@@ -32,11 +32,11 @@ Game::~Game()
 {
 }
 
-void Game::initGame(void)
+int Game::initGame(void)
 {
 	gc->initialize("default.eventmap", 10);
 	if (gc->Connect("127.0.0.1", 6501, &localPlayerID, mapName) < 0)
-		return;
+		return -1;
 
 	sprintf(mapfn, "maps/%s.map", mapName);
 
@@ -58,6 +58,7 @@ void Game::initGame(void)
 	skybox->setSize(map->sizex, map->sizey, map->sizez);
 	re->addObject(skybox);
 
+	return 0;
 }
 
 void Game::startGame(void)

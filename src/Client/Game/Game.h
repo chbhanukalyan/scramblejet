@@ -46,7 +46,7 @@ class Game {
 		Game(const char *base_dir, RenderingEngine *re, GamingClient *gc);
 		~Game();
 
-		void initGame(void);
+		int initGame(void);
 
 		void startGame(void);
 		void runGameLoop(void);
