@@ -19,6 +19,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <cassert>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -45,8 +46,9 @@ print_element_names(xmlNode * a_node)
 	}
 }
 
-void readTriplet(xmlNode *pos, float *x, float *y, float *z)
+void readTriplet(xmlNode *pos, const char *name, float *x, float *y, float *z)
 {
+	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
 	if (sscanf((const char*)str, "%f,%f,%f", x, y ,z) != 3) {
 		fprintf(stderr, "Invalid Position format - %s\n", str);
@@ -54,8 +56,9 @@ void readTriplet(xmlNode *pos, float *x, float *y, float *z)
 	xmlFree(str);
 }
 
-void readFloat(xmlNode *pos, float *f)
+void readFloat(xmlNode *pos, const char *name, float *f)
 {
+	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
 	if (sscanf((const char*)str, "%f", f) != 1) {
 		fprintf(stderr, "Invalid Float format - %s\n", str);
@@ -63,8 +66,9 @@ void readFloat(xmlNode *pos, float *f)
 	xmlFree(str);
 }
 
-void readInt(xmlNode *pos, int *d)
+void readInt(xmlNode *pos, const char *name, int *d)
 {
+	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
 	if (sscanf((const char*)str, "%d", d) != 1) {
 		fprintf(stderr, "Invalid Int format - %s\n", str);
@@ -72,8 +76,9 @@ void readInt(xmlNode *pos, int *d)
 	xmlFree(str);
 }
 
-void readStr(xmlNode *pos, char *s)
+void readStr(xmlNode *pos, const char *name, char *s)
 {
+	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
 	strcpy(s, (const char *)str);
 	xmlFree(str);
@@ -102,33 +107,36 @@ void readObject(xmlNode *node, Map *map)
 	ObjInfo *o = new ObjInfo;
 
 	node = xmlFirstElementChild(node);
-	readStr(node, type);
+	readStr(node, "type", type);
 	o->type = lookupObjType(type);
 
 	node = xmlNextElementSibling(node);
-	readInt(node, &o->id);
+	readInt(node, "id", &o->id);
 
 	node = xmlNextElementSibling(node);
-	readTriplet(node, &o->locx, &o->locy, &o->locz);
+	readTriplet(node, "location", &o->locx, &o->locy, &o->locz);
 
 	node = xmlNextElementSibling(node);
-	readStr(node, o->modelfn);
+	readTriplet(node, "direction", &o->dirx, &o->diry, &o->dirz);
+
+	node = xmlNextElementSibling(node);
+	readStr(node, "model", o->modelfn);
 
 
 	node = xmlNextElementSibling(node);
-	readFloat(node, &o->accel);
+	readFloat(node, "accel", &o->accel);
 
 	node = xmlNextElementSibling(node);
-	readFloat(node, &o->maxspeed);
+	readFloat(node, "maxspeed", &o->maxspeed);
 
 	node = xmlNextElementSibling(node);
-	readFloat(node, &o->minspeed);
+	readFloat(node, "minspeed", &o->minspeed);
 
 	node = xmlNextElementSibling(node);
-	readFloat(node, &o->minanglerot);
+	readFloat(node, "minanglerot", &o->minanglerot);
 
 	node = xmlNextElementSibling(node);
-	readFloat(node, &o->maxanglerot);
+	readFloat(node, "maxanglerot", &o->maxanglerot);
 
 	map->insertObjInfo(o);
 
@@ -140,35 +148,35 @@ void readCameraPos(xmlNode *node, Map *map)
 	CamPos *c = &map->initCamPos;
 
 	node = xmlFirstElementChild(node);
-	readTriplet(node, &c->pointx, &c->pointy, &c->pointz);
+	readTriplet(node, "look", &c->pointx, &c->pointy, &c->pointz);
 
 	node = xmlNextElementSibling(node);
-	readTriplet(node, &c->upx, &c->upy, &c->upz);
+	readTriplet(node, "up", &c->upx, &c->upy, &c->upz);
 
 	node = xmlNextElementSibling(node);
-	readFloat(node, &c->distance);
+	readFloat(node, "distance", &c->distance);
 	node = xmlNextElementSibling(node);
-	readFloat(node, &c->angle);
+	readFloat(node, "angle", &c->angle);
 	node = xmlNextElementSibling(node);
-	readFloat(node, &c->height);
+	readFloat(node, "height", &c->height);
 
 }
 
 void readSkyBox(xmlNode *node, Map *map)
 {
 	node = xmlFirstElementChild(node);
-	readStr(node, map->skyboxfn);
+	readStr(node, "dir", map->skyboxfn);
 }
 
 void readMap(xmlNode *node, Map *map)
 {
 	/* Read the map name */
 	node = xmlFirstElementChild(node);
-	readStr(node, map->name);
+	readStr(node, "name", map->name);
 
 	/* Read the Size of the map */
 	node = xmlNextElementSibling(node);
-	readTriplet(node, &map->sizex, &map->sizey, &map->sizez);
+	readTriplet(node, "size", &map->sizex, &map->sizey, &map->sizez);
 	printf("Map Size = %f %f %f\n", map->sizex, map->sizey, map->sizez);
 
 	/* Camera Position */

@@ -39,9 +39,11 @@ struct ObjInfo {
 
 	inline void dump(void) {
 		fprintf(stderr, "type(%d), id(%d), loc(%f,%f,%f), modelfn(%s)\n"
-				"speed(max:%f min:%f) anglerot(max:%f min:%f)\n",
+				"speed(max:%f min:%f) anglerot(max:%f min:%f)\n"
+				"dir(%f,%f,%f) initVel(%f) accel(%f)\n",
 				type, id, locx, locy, locz, modelfn,
-				maxspeed, minspeed, maxanglerot, minanglerot);
+				maxspeed, minspeed, maxanglerot, minanglerot,
+				dirx, diry, dirz, initialVelocity, accel);
 	}
 };
 
