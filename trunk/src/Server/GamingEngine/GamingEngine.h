@@ -22,7 +22,7 @@
 
 #define	MAX_CLIENT_ID			32
 #define	INVALID_CLIENT_ID		(-1)
-#define	DEFAULT_WAIT_BEFORE_START	3
+#define	DEFAULT_WAIT_BEFORE_START	10
 
 #include "../../Map/Map.h"
 #include "SentientObject.h"
