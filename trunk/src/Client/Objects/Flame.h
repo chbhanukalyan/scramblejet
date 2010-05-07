@@ -34,15 +34,15 @@ class Flame : public Renderable {
 
 		float *sinarr, *cosarr;
 		int numTris;
-		float x, y, z;
+
+		float transx, transy, transz;
 
 	public:
-		Flame(void);
+		Flame(float, float, float);
 		~Flame();
 
-		inline void setSize(float w, float l)
+		inline void setLength(float l)
 		{
-			width = w;
 			length = l;
 		}
 

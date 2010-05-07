@@ -33,7 +33,7 @@ Player::Player(ObjInfo *oi)
 	dirz = oi->dirz;
 
 	StaticModel::load(oi->modelfn);
-	flame = new Flame;
+	flame = new Flame(0.019, 0.016, -1.45);
 	flame->load("textures/flame.tga");
 }
 
@@ -62,10 +62,31 @@ void Player::followCam(CamPos *cp)
 
 void Player::render(Camera *c)
 {
+	/* 1 radian = 57.296 degrees */
+#define	RADIAN2DEG(x)	((x) * 57.29578f)
 	glPushMatrix();
+	glTranslatef(locx, locy, locz);
+	glPushMatrix();
+	
+	/* Rotate Around Y-AXIS */
+	glRotatef(RADIAN2DEG(yaw), 0, 1, 0);
+	glPushMatrix();
+
+	/* Now figure out a vector which will allow it to rotate on the specific axis */
+	glRotatef(RADIAN2DEG(pitch), cos(yaw), 0, -sin(yaw));
+	glPushMatrix();
+	glRotatef(RADIAN2DEG(roll), 0, 0, 1);
+	glPushMatrix();
+
 	StaticModel::render(c);
-	glPopMatrix();
+	
 	flame->render(c);
+	
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
 }
 
 void Player::update(struct updateObj *upObj)
@@ -76,9 +97,9 @@ void Player::update(struct updateObj *upObj)
 	transx = locx = vals[0];
 	transy = locy = vals[1];
 	transz = locz = vals[2];
-	roll = vals[3];
-	pitch = vals[4];
-	yaw = vals[5];
+	pitch = vals[3];
+	yaw = vals[4];
+	roll = vals[5];
 	printf("New TRANS Vals = %f, %f, %f, %f %f %f\n", vals[0], vals[1], vals[2], roll, pitch, yaw);
 }
 
