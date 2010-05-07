@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "Player.h"
 #include "../../funcids.h"
@@ -27,8 +28,6 @@ Player::Player(ObjInfo *o, const char *name)
 {
 	id = o->id;
 	strncpy(playerName, name, 16);
-//	dir[0] = dir[1] = dir[2] = 0;
-//	dir[2] = 1.0f;
 	dir[0] = o->dirx;
 	dir[1] = o->diry;
 	dir[2] = o->dirz;
@@ -40,6 +39,10 @@ Player::Player(ObjInfo *o, const char *name)
 	minspeed = o->minspeed;
 	maxanglerot = o->maxanglerot;
 	minanglerot = o->minanglerot;
+
+	/* Unit Vector to angle */
+	pitch = asinf(dir[1]);
+	yaw = asinf(dir[0]/cosf(pitch));
 }
 
 Player::~Player()
@@ -77,27 +80,27 @@ void Player::handleEvent(int funcid, int count) {
 		case FUNCID_FIRE2: break;
 
 		case FUNCID_ROTXP: {
-			dir[0] += 0.1 * count;
+			pitch += minanglerot * count;
 			break;
 		}
 		case FUNCID_ROTXM: {
-			dir[0] -= 0.1 * count;
+			pitch -= minanglerot * count;
 			break;
 		}
 		case FUNCID_ROTYP: {
-			dir[1] += 0.1 * count;
+			yaw += minanglerot * count;
 			break;
 		}
 		case FUNCID_ROTYM: {
-			dir[1] -= 0.1 * count;
+			yaw -= minanglerot * count;
 			break;
 		}
 		case FUNCID_ROTZP: {
-			dir[2] += 0.1 * count;
+			roll += 0.01 * count;
 			break;
 		}
 		case FUNCID_ROTZM: {
-			dir[2] -= 0.1 * count;
+			roll -= 0.01 * count;
 			break;
 		}
 
@@ -106,18 +109,33 @@ void Player::handleEvent(int funcid, int count) {
 	}
 }
 
+#define	SERIALIZE_ELEM(x)	\
+	do {\
+		memcpy(b + len, &(x), sizeof(x)); len += sizeof(x);\
+	} while (0)
+
 int Player::serializeState(void *buf) {
-
+	int len = 0;
 	unsigned char *b = (unsigned char *)buf;
-	b[0] = 2 + sizeof(loc) + sizeof(dir);		//size
 	b[1] = (unsigned char)id;					// update player id
-	memcpy(b + 2, loc, sizeof(loc));
-	memcpy(b + 2 + sizeof(loc), dir, sizeof(dir));
+	len = 2;
 
-	return 2 + sizeof(loc) + sizeof(dir);
+	SERIALIZE_ELEM(loc);
+	SERIALIZE_ELEM(pitch);
+	SERIALIZE_ELEM(yaw);
+	SERIALIZE_ELEM(roll);
+
+	b[0] = len;
+
+	return len;
 }
 
 void Player::doTick(void) {
+	/* Change angles to direction vector */
+//	dir[0] = cosf(pitch) * sinf(yaw);
+//	dir[1] = sinf(pitch);
+//	dir[2] = cosf(pitch) * cosf(yaw);
+
 	/* go to next position */
 	loc[0] += dir[0] * vel;
 	loc[1] += dir[1] * vel;

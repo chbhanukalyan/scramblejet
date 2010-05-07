@@ -18,7 +18,7 @@
 
 #include "Flame.h"
 
-Flame::Flame(void)
+Flame::Flame(float x, float y, float z)
 	: Renderable("Flame")
 {
 	tipwidth = .01f;
@@ -30,9 +30,9 @@ Flame::Flame(void)
 	texXRange = 0.2;
 	numTris = 12;
 
-	x = 0.001;
-	y = -0.045;
-	z = -0.9;
+	transx = x;
+	transy = y;
+	transz = z;
 
 	sinarr = new float[numTris+1];
 	cosarr = new float[numTris+1];
@@ -66,6 +66,7 @@ void Flame::render(Camera *c)
 	glColor4f(1,1,1,1);
 
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
 	
 //	glEnable(GL_ALPHA_TEST);
 //	glAlphaFunc(GL_GREATER, 0.5);
@@ -108,17 +109,18 @@ void Flame::render(Camera *c)
 	glBegin(GL_QUADS);
 	for (int i = 0; i < numTris; i++) {
 		glTexCoord2f( texXStart + texXRange * ((float)i)/numTris, 1.0f);
-		glVertex3f(x+width*sinarr[i], y+width*cosarr[i], z);
+		glVertex3f(transx+width*sinarr[i], transy+width*cosarr[i], transz);
 		glTexCoord2f( texXStart + texXRange * ((float)i+1)/numTris, 1.0f);
-		glVertex3f(x+width*sinarr[i+1], y+width*cosarr[i+1], z);
+		glVertex3f(transx+width*sinarr[i+1], transy+width*cosarr[i+1], transz);
 		glTexCoord2f( texXStart + texXRange * ((float)i+1)/numTris, 0.0f);
-		glVertex3f(x+tipwidth*sinarr[i+1], y+tipwidth*cosarr[i+1], z-length);
+		glVertex3f(transx+tipwidth*sinarr[i+1], transy+tipwidth*cosarr[i+1], transz-length);
 		glTexCoord2f( texXStart + texXRange * ((float)i)/numTris, 0.0f);
-		glVertex3f(x+tipwidth*sinarr[i], y+tipwidth*cosarr[i], z-length);
+		glVertex3f(transx+tipwidth*sinarr[i], transy+tipwidth*cosarr[i], transz-length);
 	}
 	glEnd();
 
 
+	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);

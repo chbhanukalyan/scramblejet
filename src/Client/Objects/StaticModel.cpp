@@ -93,19 +93,6 @@ void StaticModel::render(Camera *c)
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 
-//	glTranslatef(transx, transy, transz);
-//	c->Rotate(aa);
-//	glMatrixMode(GL_MODELVIEW);
-//	glLoadIdentity();
-//	gluLookAt(0.f,0.f,8.f+aa,0.f,0.f,-5.f,0.f,1.f,0.f);
-
-	// rotate it around the y axis
-//	glRotatef(180,0.f,1.f,0.f);
-//	glTranslatef(0.f,-.2f,-1.5f);
-//static float angle = 180.f;
-//	glRotatef(angle,0.f,1.f,0.f);
-//	angle += 0.2;
-
 	// scale the whole asset to fit into our view frustum 
 	tmp = scene_max.x-scene_min.x;
 	tmp = aisgl_max(scene_max.y - scene_min.y,tmp);
@@ -116,22 +103,8 @@ void StaticModel::render(Camera *c)
         // center the model
 	glTranslatef( -scene_center.x, -scene_center.y, -scene_center.z );
 
-	glPushMatrix();
-	glTranslatef(transx, transy, transz);
-	glPushMatrix();
-	glRotatef(roll, 0, 0, 1);
-	glPushMatrix();
-	glRotatef(pitch, 1, 0, 0);
-	glPushMatrix();
-	glRotatef(yaw, 0, 1, 0);
-
 	glCallList(list);
 	
-	glPopMatrix();
-	glPopMatrix();
-	glPopMatrix();
-	glPopMatrix();
-
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);

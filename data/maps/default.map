@@ -20,8 +20,8 @@
 		<accel>0.01</accel>
 		<maxspeed>1</maxspeed>
 		<minspeed>0</minspeed>
-		<minanglerot>0.1</minanglerot>
-		<maxanglerot>1</maxanglerot>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
 	</object>
 	<object>
 		<type>player</type>
@@ -32,8 +32,8 @@
 		<accel>0.01</accel>
 		<maxspeed>1</maxspeed>
 		<minspeed>0</minspeed>
-		<minanglerot>0.1</minanglerot>
-		<maxanglerot>1</maxanglerot>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
 	</object>
 </map>
 
