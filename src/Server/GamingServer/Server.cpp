@@ -265,7 +265,6 @@ int Server::broadcastUpdatePacket(void *buf, int len, int count)
 
 int Server::sendPacket(ClientID cid, void *buf, int len)
 {
-	struct srvUpdatePacket *sup = (struct srvUpdatePacket*)buf;
 	if (sendto(commSocket, buf, len, 0, (struct sockaddr*)&cliinfo[cid]->sendst,
 				sizeof(struct sockaddr_in)) != len) {
 		fprintf(stderr, "Client socket Send(%d bytes) failed: %s\n",
