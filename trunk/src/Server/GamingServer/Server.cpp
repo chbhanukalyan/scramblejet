@@ -120,6 +120,7 @@ int Server::handleIncomingPackets(const char *mapName, long waitTime)
 				(cliinfo[i]->lastresp + maxUnresploop < curloopnum)) {
 				if (cliinfo[i]->lastresp + maxUnresploop + maxPingWaitloopTime < curloopnum) {
 					/* Even pings were unhelpful... kill it */
+					ge->removePlayer(i);
 					ClientInfo *tmp = cliinfo[i];
 					cliinfo[i] = NULL;
 					fprintf(stderr, "Kicking out dead player: %s from IP:%s Port:%d\n",
@@ -264,6 +265,7 @@ int Server::broadcastUpdatePacket(void *buf, int len, int count)
 
 int Server::sendPacket(ClientID cid, void *buf, int len)
 {
+	struct srvUpdatePacket *sup = (struct srvUpdatePacket*)buf;
 	if (sendto(commSocket, buf, len, 0, (struct sockaddr*)&cliinfo[cid]->sendst,
 				sizeof(struct sockaddr_in)) != len) {
 		fprintf(stderr, "Client socket Send(%d bytes) failed: %s\n",

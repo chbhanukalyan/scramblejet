@@ -99,9 +99,10 @@ void GamingEngine::addPlayer(int id, const char *name)
 
 void GamingEngine::removePlayer(int id)
 {
-	removeObject(playerList[id]);
-	delete playerList[id];
+	Player *p = playerList[id];
 	playerList[id] = NULL;
+	removeObject(p);
+	delete p;
 }
 
 void GamingEngine::addObject(SentientObject *seo)
