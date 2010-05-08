@@ -53,6 +53,8 @@ int GamingEngine::startGame(void *serv)
 {
 	int wait_time = timer_loop_time;
 
+	fprintf(stderr, "Game Started\n");
+
 	Server *server = (Server *)serv;
 	while (true) {
 		struct timeval starttm, stoptm;
@@ -71,7 +73,6 @@ int GamingEngine::startGame(void *serv)
 		SentientObject *seo = objList;
 		while (seo) {
 			int l = seo->serializeState(buf + len);
-			printf("SEO SERIAL len=%d ret=%d\n", len, l);
 			len += l;
 			seo = seo->next;
 			count++;

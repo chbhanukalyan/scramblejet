@@ -43,6 +43,7 @@ Player::Player(ObjInfo *o, const char *name)
 	/* Unit Vector to angle */
 	pitch = asinf(dir[1]);
 	yaw = asinf(dir[0]/cosf(pitch));
+	roll = 0;
 }
 
 Player::~Player()
