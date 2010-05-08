@@ -46,7 +46,7 @@ print_element_names(xmlNode * a_node)
 	}
 }
 
-void readTriplet(xmlNode *pos, const char *name, float *x, float *y, float *z)
+static void readTriplet(xmlNode *pos, const char *name, float *x, float *y, float *z)
 {
 	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
@@ -56,7 +56,7 @@ void readTriplet(xmlNode *pos, const char *name, float *x, float *y, float *z)
 	xmlFree(str);
 }
 
-void readFloat(xmlNode *pos, const char *name, float *f)
+static void readFloat(xmlNode *pos, const char *name, float *f)
 {
 	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
@@ -66,7 +66,7 @@ void readFloat(xmlNode *pos, const char *name, float *f)
 	xmlFree(str);
 }
 
-void readInt(xmlNode *pos, const char *name, int *d)
+static void readInt(xmlNode *pos, const char *name, int *d)
 {
 	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
@@ -76,7 +76,7 @@ void readInt(xmlNode *pos, const char *name, int *d)
 	xmlFree(str);
 }
 
-void readStr(xmlNode *pos, const char *name, char *s)
+static void readStr(xmlNode *pos, const char *name, char *s)
 {
 	assert(!strcmp(name, (const char*)pos->name));
 	xmlChar *str = xmlNodeGetContent(pos);
@@ -90,7 +90,7 @@ const char * objtypes_arr[OBJTYPE_MAX] = {
 	"static",	/* OBJTYPE_STATIC */
 };
 
-int lookupObjType(const char *str)
+static int lookupObjType(const char *str)
 {
 	for (int i = 0; i < OBJTYPE_MAX; i++)
 		if (!strcmp(str, objtypes_arr[i]))
@@ -98,7 +98,7 @@ int lookupObjType(const char *str)
 	return OBJTYPE_INVALID;
 }
 
-void readObject(xmlNode *node, Map *map)
+static void readObject(xmlNode *node, Map *map)
 {
 	if (node == NULL)
 		return;
@@ -146,7 +146,7 @@ void readObject(xmlNode *node, Map *map)
 	o->dump();
 }
 
-void readCameraPos(xmlNode *node, Map *map)
+static void readCameraPos(xmlNode *node, Map *map)
 {
 	CamPos *c = &map->initCamPos;
 
@@ -165,13 +165,13 @@ void readCameraPos(xmlNode *node, Map *map)
 
 }
 
-void readSkyBox(xmlNode *node, Map *map)
+static void readSkyBox(xmlNode *node, Map *map)
 {
 	node = xmlFirstElementChild(node);
 	readStr(node, "dir", map->skyboxfn);
 }
 
-void readMap(xmlNode *node, Map *map)
+static void readMap(xmlNode *node, Map *map)
 {
 	/* Read the map name */
 	node = xmlFirstElementChild(node);
