@@ -45,13 +45,7 @@ int main(int argc, char **argv)
 	srv = new Server(ge);
 
 	srv->initialize("0.0.0.0");
-
-	while (srv->waitForClients(map->name) == 0) {
-		fprintf(stderr, "Still waiting for clients\n");
-	}
-
-	srv->startEventRecver();
-
+	
 	ge->startGame(srv);
 
 	srv->stop();

@@ -25,6 +25,7 @@
 #include <netinet/in.h>
 #include <errno.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include "../../protocol.h"
 
@@ -36,6 +37,7 @@ GamingEngine::GamingEngine(Map *map)
 	objList = NULL;
 	memset(playerList, 0, sizeof(playerList));
 	this->map = map;
+	timer_loop_time = DEFAULT_WAIT_BEFORE_START_USEC;
 }
 
 GamingEngine::~GamingEngine()
@@ -49,8 +51,14 @@ int GamingEngine::initialize(void)
 
 int GamingEngine::startGame(void *serv)
 {
+	int wait_time = timer_loop_time;
+
 	Server *server = (Server *)serv;
 	while (true) {
+		struct timeval starttm, stoptm;
+
+		gettimeofday(&starttm, NULL);
+
 		for (int i = 0; i < MAX_CLIENT_ID; i++) 
 			if (playerList[i])
 				playerList[i]->doTick();
@@ -69,8 +77,14 @@ int GamingEngine::startGame(void *serv)
 			count++;
 		}
 		server->broadcastUpdatePacket(buf, len, count);
-		/* sleep some time before starting again TODO Make wakeup */
-		usleep(50000);
+
+		gettimeofday(&stoptm, NULL);
+		wait_time = timer_loop_time - (stoptm.tv_usec - starttm.tv_usec);
+		if (wait_time < 0)
+			wait_time = 0;
+
+		/* Gather all events from queued packets */
+		server->handleIncomingPackets(map->name, wait_time);
 	}
 	return 0;
 }
