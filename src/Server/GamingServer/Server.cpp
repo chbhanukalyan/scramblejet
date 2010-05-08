@@ -33,7 +33,6 @@
 Server::Server(GamingEngine *ge)
 {
 	commSocket = -1;
-	curclients = 0;
 	memset(&cliinfo, 0, sizeof(cliinfo));
 	this->ge = ge;
 }
@@ -45,6 +44,11 @@ Server::~Server()
 int Server::initialize(const char *serverIP, int port)
 {
 	int err = -1;
+
+	curloopnum = 0;
+	maxUnresploop = 750;	/* Approx 10 secs of inactivity */
+	maxPingWaitloopTime = 1500; /* Approx 20 secs of waiting for ping */
+	checkCliStatusEverySecs = 300;
 
 	if ((commSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		fprintf(stderr, "Creating Server Socket failed: %s\n", strerror(errno));
@@ -72,6 +76,18 @@ int Server::initialize(const char *serverIP, int port)
 	return err;
 }
 
+int Server::dispatchPing(ClientID cid)
+{
+	struct genPingReq ping;
+	memset(&ping, 0, sizeof(ping));
+	ping.phdr.version = CUR_PROTOCOL_VERSION;
+	ping.phdr.type = PKTTYPE_GENERIC_PINGREQ;
+	ping.phdr.magic = CUR_PROTOCOL_MAGIC;
+	fprintf(stderr, "Sending Ping Req to Client:%s Port:%d Player:%s\n",
+			cliinfo[cid]->IP, cliinfo[cid]->port, cliinfo[cid]->playerName);
+	return sendPacket(cid, &ping, sizeof(ping));
+}
+
 int Server::handleIncomingPackets(const char *mapName, long waitTime)
 {
 	struct timeval tm;
@@ -96,6 +112,28 @@ int Server::handleIncomingPackets(const char *mapName, long waitTime)
 		else
 			return -1;
 	}
+
+	if (curloopnum % checkCliStatusEverySecs == 0) {
+		/* Check for dead clients */
+		for (int i = 0; i < MAX_CLIENT_ID; i++) {
+			if (cliinfo[i] && 
+				(cliinfo[i]->lastresp + maxUnresploop < curloopnum)) {
+				if (cliinfo[i]->lastresp + maxUnresploop + maxPingWaitloopTime < curloopnum) {
+					/* Even pings were unhelpful... kill it */
+					ClientInfo *tmp = cliinfo[i];
+					cliinfo[i] = NULL;
+					fprintf(stderr, "Kicking out dead player: %s from IP:%s Port:%d\n",
+							tmp->playerName, tmp->IP, tmp->port);
+					delete tmp;
+				} else {
+					/* Client may be dead... send ping */
+					dispatchPing(i);
+				}
+			}
+		}
+	}
+
+	curloopnum++;
 
 	return 0;
 }
@@ -127,12 +165,18 @@ int Server::processIncomingPacket(const char *mapName)
 		case PKTTYPE_CLI2SRV_EVENTLIST: {
 			if (cid != INVALID_CLIENT_ID) {
 				getEventList(cid, buf, len);
+				cliinfo[cid]->lastresp = curloopnum;
 			} else {
 				fprintf(stderr, "Invalid client:%x port:%d sent eventlist\n",
 						st.sin_addr.s_addr, htons(st.sin_port));
 				return -1;
 			}
 
+			break;
+		}
+		case PKTTYPE_GENERIC_PINGRESP: {
+			if (cid != INVALID_CLIENT_ID)
+				cliinfo[cid]->lastresp = curloopnum;
 			break;
 		}
 		case PKTTYPE_CLI2SRV_JOINGAME: {
@@ -156,20 +200,21 @@ void Server::welcomeClient(ClientID cid, struct sockaddr_in *st, const char *map
 
 	/* Handles case where UDP packet was lost, so reattempting to join */
 	if (cid == INVALID_CLIENT_ID) {
-		ci = &cliinfo[curclients];
+		ci = new ClientInfo;
 		memcpy(&ci->sendst, st, sizeof(struct sockaddr_in));
 		inet_ntop(AF_INET, &st->sin_addr.s_addr, ci->IP, 16);
 		strncpy(ci->playerName, cjp->playerName, 16);
-		cid = curclients;
+		ci->port = htons(st->sin_port);
+		cid = getFreeClientID();
 		ge->addPlayer(cid, ci->playerName);
-
-		fprintf(stderr, "Client connected from Client IP(%s) Player(%s)\n",
-				ci->IP, ci->playerName);
+		cliinfo[cid] = ci;
+		fprintf(stderr, "Client connected from Client IP(%s) Port(%d) Player(%s)\n",
+				ci->IP, ci->port, ci->playerName);
 	} else {
-		ci = &cliinfo[cid];
+		ci = cliinfo[cid];
 
-		fprintf(stderr, "Client re-connected from Client IP(%s) Player(%s)\n",
-				ci->IP, ci->playerName);
+		fprintf(stderr, "Client re-connected from Client IP(%s) Port(%d) Player(%s)\n",
+				ci->IP, ci->port, ci->playerName);
 	}
 
 	struct srvWelcomePkt *swp = (struct srvWelcomePkt*)buf;
@@ -182,10 +227,9 @@ void Server::welcomeClient(ClientID cid, struct sockaddr_in *st, const char *map
 	if (sendto(commSocket, buf, sizeof(*swp), 0,
 				(struct sockaddr *)&ci->sendst, sizeof(ci->sendst)) < 0) {
 		fprintf(stderr, "Error sending welcome packet to Client IP(%s) "
-				"Player(%s)\n", ci->IP, ci->playerName);
+				"Port(%d) Player(%s)\n", ci->IP, ci->port, ci->playerName);
 	}
 
-	curclients++;
 	return;
 }
 
@@ -211,16 +255,16 @@ int Server::broadcastUpdatePacket(void *buf, int len, int count)
 	sup->phdr.magic = CUR_PROTOCOL_MAGIC;
 	sup->phdr.type = PKTTYPE_SRV2CLI_OBJUPDTLIST;
 	sup->num_updtobjs = count;
-	fprintf(stderr, "Broadcasting Packet(len=%d) to all clients\n", len);
-	for (i = 0 ; i < curclients; i++) {
-		sendPacket(i, buf, len);
+	for (i = 0 ; i < MAX_CLIENT_ID; i++) {
+		if (cliinfo[i])
+			sendPacket(i, buf, len);
 	}
 	return 0;
 }
 
 int Server::sendPacket(ClientID cid, void *buf, int len)
 {
-	if (sendto(commSocket, buf, len, 0, (struct sockaddr*)&cliinfo[cid].sendst,
+	if (sendto(commSocket, buf, len, 0, (struct sockaddr*)&cliinfo[cid]->sendst,
 				sizeof(struct sockaddr_in)) != len) {
 		fprintf(stderr, "Client socket Send(%d bytes) failed: %s\n",
 				len, strerror(errno));
@@ -232,9 +276,20 @@ int Server::sendPacket(ClientID cid, void *buf, int len)
 ClientID Server::lookupClientID(struct sockaddr_in *st)
 {
 	int i;
-	for (i = 0; i < curclients; i++)
-		if ((cliinfo[i].sendst.sin_addr.s_addr == st->sin_addr.s_addr) &&
-				(cliinfo[i].sendst.sin_port == st->sin_port))
+	for (i = 0; i < MAX_CLIENT_ID; i++)
+		if (cliinfo[i] &&
+			(cliinfo[i]->sendst.sin_addr.s_addr == st->sin_addr.s_addr) &&
+			(cliinfo[i]->sendst.sin_port == st->sin_port))
+			return i;
+
+	return INVALID_CLIENT_ID;
+}
+
+ClientID Server::getFreeClientID(void)
+{
+	int i;
+	for (i = 0; i < MAX_CLIENT_ID; i++)
+		if (cliinfo[i] == NULL)
 			return i;
 
 	return INVALID_CLIENT_ID;

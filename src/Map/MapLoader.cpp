@@ -124,7 +124,7 @@ void readObject(xmlNode *node, Map *map)
 
 
 	node = xmlNextElementSibling(node);
-	readFloat(node, "initialvelocity", &o->accel);
+	readFloat(node, "initialvelocity", &o->initialVelocity);
 
 	node = xmlNextElementSibling(node);
 	readFloat(node, "accel", &o->accel);

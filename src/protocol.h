@@ -79,5 +79,12 @@ struct srvWelcomePkt {
 	char mapName[32];
 };
 
+#define	PKTTYPE_GENERIC_PINGREQ		0xF8
+#define	PKTTYPE_GENERIC_PINGRESP	0xF9
+struct genPingReq {
+	struct protocolHeader phdr;
+};
+
+
 #endif	/*	__PROTOCOL_H__	*/
 

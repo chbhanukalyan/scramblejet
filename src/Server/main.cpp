@@ -27,17 +27,21 @@ int main(int argc, char **argv)
 	GamingEngine *ge = NULL;
 	Server *srv = NULL;
 	Map *map = NULL;
+	const char *mapname = "maps/default.map";
 
-	if (argc != 2) {
+	if (argc > 2) {
 		fprintf(stderr, "Usage: %s map\n", argv[0]);
 		return -1;
+	}
+	if (argc == 2) {
+		mapname = argv[1];
 	}
 
 	chdir("../../data");
 
-	map = loadMap(argv[1]);
+	map = loadMap(mapname);
 	if (map == NULL) {
-		fprintf(stderr, "Unable to load Map: %s\n", argv[1]);
+		fprintf(stderr, "Unable to load Map: %s\n", mapname);
 		return -1;
 	}
 

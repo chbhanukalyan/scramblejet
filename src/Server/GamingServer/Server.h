@@ -26,7 +26,10 @@
 
 struct ClientInfo {
 	char IP[16];
+	int port;
 	char playerName[16];
+
+	long lastresp;
 
 	struct sockaddr_in sendst;
 };
@@ -35,10 +38,21 @@ typedef int ClientID;
 
 class Server {
 	private:
-		int curclients;
-		ClientInfo cliinfo[MAX_CLIENT_ID];
+		ClientInfo *cliinfo[MAX_CLIENT_ID];
 
 		GamingEngine *ge;
+
+		/* Incremented every loop */
+		int curloopnum;
+
+		/* Num loops of quiet before forcing a ping */
+		int checkCliStatusEverySecs;	/* Check clients status every this time */
+		int maxUnresploop;	/* Approx 10 secs of inactivity */
+		int maxPingWaitloopTime; /* Approx 20 secs of waiting for ping */
+
+		int dispatchPing(ClientID);
+
+		ClientID getFreeClientID(void);
 
 	public:
 		Server(GamingEngine *ge);
