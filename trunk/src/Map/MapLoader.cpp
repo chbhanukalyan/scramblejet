@@ -29,23 +29,6 @@
 #include "CamPos.h"
 #include "ObjInfo.h"
 
-static void
-print_element_names(xmlNode * a_node)
-{
-	xmlNode *cur_node = NULL;
-
-	for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
-		if (cur_node->type == XML_ELEMENT_NODE) {
-			printf("node type: Element, name: %s\n", cur_node->name);
-		}
-		if (xmlNodeIsText(cur_node))
-			printf("cur_node->val = %s\n", xmlNodeGetContent(cur_node));
-
-
-		print_element_names(cur_node->children);
-	}
-}
-
 static void readTriplet(xmlNode *pos, const char *name, float *x, float *y, float *z)
 {
 	assert(!strcmp(name, (const char*)pos->name));
