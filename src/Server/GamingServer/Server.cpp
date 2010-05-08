@@ -35,7 +35,6 @@ Server::Server(GamingEngine *ge)
 	commSocket = -1;
 	curclients = 0;
 	memset(&cliinfo, 0, sizeof(cliinfo));
-	waitBeforeStart = DEFAULT_WAIT_BEFORE_START;
 	this->ge = ge;
 }
 
@@ -73,14 +72,11 @@ int Server::initialize(const char *serverIP, int port)
 	return err;
 }
 
-int Server::waitForClients(const char *mapName)
+int Server::handleIncomingPackets(const char *mapName, long waitTime)
 {
-	int numClients = 0;
 	struct timeval tm;
-	tm.tv_sec = waitBeforeStart;
-	tm.tv_usec = 0;
-
-	fprintf(stderr, "INFO: Waiting for Clients\n");
+	tm.tv_sec = 0;
+	tm.tv_usec = waitTime;
 
 	while (true) {
 		int ret;
@@ -92,8 +88,7 @@ int Server::waitForClients(const char *mapName)
 		ret = select(commSocket+1, &fds, NULL, NULL, &tm);
 		if (ret > 0) {
 			if (FD_ISSET(commSocket, &fds)) {
-				welcomeClient(mapName);
-				numClients++;
+				processIncomingPacket(mapName);
 			}
 		}
 		else if (ret == 0)
@@ -102,28 +97,49 @@ int Server::waitForClients(const char *mapName)
 			return -1;
 	}
 
-	return numClients;
+	return 0;
 }
 
-void *event_recver_thread(void *arg)
+int Server::processIncomingPacket(const char *mapName)
 {
-	Server *srvr = (Server*)arg;
-	printf("Event Reciever Thread Started\n");
-	while (true) {
-		srvr->getEventList();
-	}
+	unsigned char buf[MAX_PACKET_SIZE];
+	int len = MAX_PACKET_SIZE;
+	struct sockaddr_in st;
+	socklen_t slen = sizeof(st);
 
-	return NULL;
-}
-
-int Server::startEventRecver(void)
-{
-	if (pthread_create(&eventReceiverThread, NULL, event_recver_thread, this) < 0) {
-		fprintf(stderr, "Unable to start Event recevier thread\n");
+	if ((len = recvfrom(commSocket, buf, len, 0, (struct sockaddr*)&st, &slen)) < 0) {
+		fprintf(stderr, "Client socket Recv failed: %s\n", strerror(errno));
 		return -1;
 	}
 
-	pthread_detach(eventReceiverThread);
+	struct protocolHeader *phdr = (struct protocolHeader *)buf;
+
+	if ((phdr->version != CUR_PROTOCOL_VERSION) ||
+			(phdr->magic != CUR_PROTOCOL_MAGIC)) {
+		fprintf(stderr, "Illegal packet recvd from client:%x port:%d ver:%d magic:%#x\n",
+				st.sin_addr.s_addr, htons(st.sin_port), phdr->version, phdr->magic);
+		return -1;
+	}
+
+	ClientID cid = lookupClientID(&st);
+
+	switch (phdr->type) {
+		case PKTTYPE_CLI2SRV_EVENTLIST: {
+			if (cid != INVALID_CLIENT_ID) {
+				getEventList(cid, buf, len);
+			} else {
+				fprintf(stderr, "Invalid client:%x port:%d sent eventlist\n",
+						st.sin_addr.s_addr, htons(st.sin_port));
+				return -1;
+			}
+
+			break;
+		}
+		case PKTTYPE_CLI2SRV_JOINGAME: {
+			welcomeClient(cid, &st, mapName, buf, len);
+			break;
+		}
+	}
 
 	return 0;
 }
@@ -133,34 +149,16 @@ void Server::stop(void)
 	close(commSocket);
 }
 
-void Server::welcomeClient(const char *mapName)
+void Server::welcomeClient(ClientID cid, struct sockaddr_in *st, const char *mapName, unsigned char *buf, int len)
 {
-	char buf[MAX_PACKET_SIZE];
-	int len = MAX_PACKET_SIZE;
-	ClientID cid;
-
-	struct sockaddr_in st;
-	socklen_t slen = sizeof(st);
-
-	if ((len = recvfrom(commSocket, buf, len, 0, (struct sockaddr*)&st, &slen)) < 0) {
-		fprintf(stderr, "Server socket Recv failed: %s\n", strerror(errno));
-		return;
-	}
-
 	struct cliJoinPkt *cjp = (struct cliJoinPkt*)buf;
-	if ((cjp->phdr.version != CUR_PROTOCOL_VERSION) ||
-			(cjp->phdr.magic != CUR_PROTOCOL_MAGIC) ||
-			(cjp->phdr.type != PKTTYPE_CLI2SRV_JOINGAME))
-		return;
-
 	ClientInfo *ci = NULL;
 
-	cid = lookupClientID(&st);
 	/* Handles case where UDP packet was lost, so reattempting to join */
 	if (cid == INVALID_CLIENT_ID) {
 		ci = &cliinfo[curclients];
-		memcpy(&ci->sendst, &st, sizeof(st));
-		inet_ntop(AF_INET, &st.sin_addr, ci->IP, 16);
+		memcpy(&ci->sendst, st, sizeof(struct sockaddr_in));
+		inet_ntop(AF_INET, &st->sin_addr.s_addr, ci->IP, 16);
 		strncpy(ci->playerName, cjp->playerName, 16);
 		cid = curclients;
 		ge->addPlayer(cid, ci->playerName);
@@ -191,19 +189,9 @@ void Server::welcomeClient(const char *mapName)
 	return;
 }
 
-int Server::getEventList(void)
+int Server::getEventList(ClientID cid, unsigned char *buf, int len)
 {
-	int len = MAX_PACKET_SIZE;
-	unsigned char buf[MAX_PACKET_SIZE];
-	ClientID cid = recvPacket(buf, &len);
-	if (cid == INVALID_CLIENT_ID)
-		return -1;
-
 	struct cliEventPacket *evp = (struct cliEventPacket *)buf;
-	if ((evp->phdr.version != CUR_PROTOCOL_VERSION) ||
-			(evp->phdr.magic != CUR_PROTOCOL_MAGIC) ||
-			(evp->phdr.type != PKTTYPE_CLI2SRV_EVENTLIST))
-		return -1;
 
 	printf("Got Event List from Client: %d\n", evp->numfuncs);
 	int i;
@@ -245,25 +233,10 @@ ClientID Server::lookupClientID(struct sockaddr_in *st)
 {
 	int i;
 	for (i = 0; i < curclients; i++)
-		if ((cliinfo[i].sendst.sin_addr.s_addr == st->sin_addr.s_addr) && (cliinfo[i].sendst.sin_port == st->sin_port))
+		if ((cliinfo[i].sendst.sin_addr.s_addr == st->sin_addr.s_addr) &&
+				(cliinfo[i].sendst.sin_port == st->sin_port))
 			return i;
 
 	return INVALID_CLIENT_ID;
-}
-
-ClientID Server::recvPacket(void *buf, int *len)
-{
-	int l = *len;
-	struct sockaddr_in st;
-	socklen_t slen = sizeof(st);
-
-	if ((l = recvfrom(commSocket, buf, l, 0, (struct sockaddr*)&st, &slen)) < 0) {
-		fprintf(stderr, "Client socket Recv failed: %s\n", strerror(errno));
-		return INVALID_CLIENT_ID;
-	}
-	*len = l;
-
-	/* Lookup the client information */
-	return lookupClientID(&st);
 }
 

@@ -22,7 +22,7 @@
 
 #define	MAX_CLIENT_ID			32
 #define	INVALID_CLIENT_ID		(-1)
-#define	DEFAULT_WAIT_BEFORE_START	10
+#define	DEFAULT_WAIT_BEFORE_START_USEC	(20*1000)
 
 #include "../../Map/Map.h"
 #include "SentientObject.h"
@@ -31,6 +31,8 @@
 class GamingEngine {
 	private:
 		SentientObject *objList;
+		long timer_loop_time;
+
 	public:
 		Map *map;
 

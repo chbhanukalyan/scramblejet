@@ -19,7 +19,7 @@ include ../cmds.mk
 
 OUTPUT = scRambleSrv
 
-LDFLAGS := $(LDFLAGS) -lm -lpthread -lxml2
+LDFLAGS := $(LDFLAGS) -lm -lxml2
 
 OBJECTS	=			main.o		\
 

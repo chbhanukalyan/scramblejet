@@ -20,7 +20,6 @@
 #ifndef		__GE_SERVER_H__
 #define		__GE_SERVER_H__
 
-#include <pthread.h>
 #include <arpa/inet.h>
 
 #include "../GamingEngine/GamingEngine.h"
@@ -36,12 +35,8 @@ typedef int ClientID;
 
 class Server {
 	private:
-
-		int waitBeforeStart;
 		int curclients;
 		ClientInfo cliinfo[MAX_CLIENT_ID];
-
-		pthread_t eventReceiverThread;
 
 		GamingEngine *ge;
 
@@ -50,22 +45,21 @@ class Server {
 		~Server();
 
 		int initialize(const char *serverIP, int port = 6501);
-		int waitForClients(const char *mapName);
-		int startEventRecver(void);
-		int start(void);
+		int handleIncomingPackets(const char *mapName, long waitTime);
+
 		void stop(void);
 
 		/* Network Information */
-		int getEventList(void);
 		int broadcastUpdatePacket(void *buf, int len, int count_objs);
 
 	private:
 		int commSocket;
-		void welcomeClient(const char *mapName);
+		int processIncomingPacket(const char *mapName);
+		void welcomeClient(ClientID cid, struct sockaddr_in *st, const char *mapName, unsigned char *buf, int len);
+		int getEventList(ClientID cid, unsigned char *buf, int len);
 
 		int sendPacket(ClientID cid, void *buf, int len);
 		ClientID lookupClientID(struct sockaddr_in *st);
-		ClientID recvPacket(void *buf, int *len);
 
 };
 
