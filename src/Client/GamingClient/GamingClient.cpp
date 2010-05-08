@@ -25,6 +25,7 @@
 #include <netinet/in.h>
 #include <errno.h>
 #include <unistd.h>
+#include <cassert>
 
 #include "../../protocol.h"
 
@@ -120,8 +121,8 @@ void GamingClient::handleNetworkEvents(Player **playerList)
 {
 	/* Recieve Network Packets */
 	char buf[MAX_PACKET_SIZE];
-	int len = MAX_PACKET_SIZE;
 	while (true) {
+		int len = MAX_PACKET_SIZE;
 		struct timeval tm;
 		tm.tv_sec = 0;
 		tm.tv_usec = 0;
@@ -132,23 +133,34 @@ void GamingClient::handleNetworkEvents(Player **playerList)
 		if (ret > 0) {
 			if (recvPacket(buf, &len) < 0)
 				continue;
-			printf("recved packet from server len=%d\n", len);
 
 			struct srvUpdatePacket *sup = (struct srvUpdatePacket *)buf;
+
 			if ((sup->phdr.version != CUR_PROTOCOL_VERSION) ||
-					(sup->phdr.magic != CUR_PROTOCOL_MAGIC) ||
-					(sup->phdr.type != PKTTYPE_SRV2CLI_OBJUPDTLIST))
+					(sup->phdr.magic != CUR_PROTOCOL_MAGIC))
 				continue;
+			switch (sup->phdr.type) {
+				case PKTTYPE_SRV2CLI_OBJUPDTLIST: {
 
-			unsigned char *b = (unsigned char *)sup->lst;
+				unsigned char *b = (unsigned char *)sup->lst;
 
-			/* TODO call update objects HERE */
-			for (int i = 0; i < sup->num_updtobjs; i++) {
-				struct updateObj *updt = (struct updateObj*)b;
-				printf("sup->num_updtobjs = %d updtfid = %d siz=%d\n", sup->num_updtobjs, updt->updateFieldID, updt->size);
-				if (playerList[updt->updateFieldID])
-					playerList[updt->updateFieldID]->update(updt);
-				b += updt->size;
+					/* TODO call update objects HERE */
+					for (int i = 0; i < sup->num_updtobjs; i++) {
+						struct updateObj *updt = (struct updateObj*)b;
+						printf("sup->num_updtobjs = %d updtfid = %d siz=%d\n", sup->num_updtobjs, updt->updateFieldID, updt->size);
+						if (playerList[updt->updateFieldID])
+							playerList[updt->updateFieldID]->update(updt);
+						b += updt->size;
+					}
+				}
+				case PKTTYPE_GENERIC_PINGREQ: {
+					/* Send back a ping */
+					struct genPingReq *ping = (struct genPingReq *)buf;
+					ping->phdr.type = PKTTYPE_GENERIC_PINGRESP;
+					sendPacket(buf, sizeof(struct genPingReq));
+				}
+				default:
+					break;
 			}
 
 		}
