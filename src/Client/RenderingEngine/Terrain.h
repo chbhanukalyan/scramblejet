@@ -17,40 +17,39 @@
  */
 
 
-#ifndef		__RE_RENDERINGENGINE_H__
-#define		__RE_RENDERINGENGINE_H__
+#ifndef		__RE_TERRAIN_H__
+#define		__RE_TERRAIN_H__
 
-#include "Renderable.h"
-#include "Terrain.h"
-#include "../Panel/Panel.h"
+#include "../../types.h"
+#include "Camera.h"
 
-class RenderingEngine {
+class Terrain {
 	private:
-		Camera *camera;
+		char fn[256];
+		unsigned char *data;
 
-		int hres;
-		int vres;
+		int imgWidth;
+		int imgHeight;
 
-		Renderable *renderList;
-		Terrain *terrain;
-		Panel *panel;
+		GLint displayList;
+
+		void getVertex(int i, int j, Vec3D *v, float *c) {
+			v->x = 8.0 * (i - imgWidth/2);
+			v->y = data[i * imgHeight + j] - 200.0;
+			v->z = 8.0 * (j - imgHeight/2);
+			*c = ((float)data[i * imgHeight + j]) / 256.0;
+		}
 
 	public:
-		RenderingEngine(void);
-		~RenderingEngine();
+		Terrain(const char *name);
+		~Terrain();
 
-		int Initialize(CamPos *initCamPos);
-		void render(CamPos *followCam, long curTicks);
-		void Destroy(void);
+		int load(void);
+		int unload(void);
 
-		void addPanel(Panel *p) {
-			panel = p;
-		}
-		void addObject(Renderable *r);
-		void removeObject(Renderable *r);
-		void clearRenderList(void);
+		void render(Camera *c);
 
 };
 
-#endif	/*	__RE_RENDERINGENGINE_H__	*/
+#endif	/*	__RE_TERRAIN_H__	*/
 

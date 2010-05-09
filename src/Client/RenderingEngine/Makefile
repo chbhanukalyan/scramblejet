@@ -24,6 +24,7 @@ OBJECTS	=			RenderingEngine.o	\
 					TextObject.o	\
 					TTFFont.o		\
 					Camera.o		\
+					Terrain.o		\
 
 
 $(OUTPUT): $(OBJECTS)
