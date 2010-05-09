@@ -20,6 +20,7 @@
 #ifndef		__F_H__
 #define		__F_H__
 
+#include ".h"
 
 #endif	/*	__F_H__	*/
 
