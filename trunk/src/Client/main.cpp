@@ -30,8 +30,7 @@
 #include "Game/Game.h"
 #include "RenderingEngine/RenderingEngine.h"
 #include "GamingClient/GamingClient.h"
-#include "Objects/Player.h"
-#include "Objects/SkyBox.h"
+#include "Menu/Menu.h"
 #include "../Map/MapLoader.h"
 
 int hres = 640, vres=480;
@@ -125,10 +124,13 @@ int main(int argc, char **argv)
 		Quit();
 	}
 
+//	Menu *menu = new Menu;
+
 	game->startGame();
 
 	while (1) {
 		game->runGameLoop();
+//		menu->render();
 
 		SDL_GL_SwapBuffers();
 	}

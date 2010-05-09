@@ -17,41 +17,52 @@
  */
 
 
-#ifndef		__OBJECTS_FLAME_H__
-#define		__OBJECTS_FLAME_H__
+#ifndef		__PANEL_PANEL_H__
+#define		__PANEL_PANEL_H__
 
-#include "../RenderingEngine/Renderable.h"
-#include "../RenderingEngine/Texture.h"
+#include <cassert>
 
-class Flame : public Renderable {
+#include "../RenderingEngine/Camera.h"
+#include "../Objects/IndObj.h"
+#include "RadarMap.h"
+
+class Panel {
 	private:
-		Texture *t;
-		float size;
-		float width, tipwidth, length;
-		bool redflame;
-		float texXStart;
-		float texXRange;
+		bool displayPanel;
+		RadarMap *horizRadarMap;
+		RadarMap *vertRadarMap;
 
-		float *sinarr, *cosarr;
-		int numTris;
-
-		float transx, transy, transz;
+		IndObj *objList;
 
 	public:
-		Flame(float, float, float);
-		~Flame();
+		Panel(void);
+		~Panel();
 
-		inline void setLength(float l)
-		{
-			length = l;
+		inline void showPanel(bool show) {
+			this->displayPanel = show;
 		}
 
-		int load(const char *path);
-		void unload(void);
+		void render(long curtick, Camera *c);
 
-		void render(Camera *c);
+		void addObject(IndObj *obj) {
+			assert(obj);
+			obj->inext = objList;
+			objList = obj;
+		}
+		void removeObject(IndObj *obj) {
+			assert(obj);
+			IndObj *tmp = objList;
+			while (tmp) {
+				if (tmp->inext == obj) {
+					tmp->inext = tmp->inext->inext;
+					break;
+				}
+				tmp = tmp->inext;
+			}
+		}
+
 
 };
 
-#endif	/*	__OBJECTS_FLAME_H__	*/
+#endif	/*	__PANEL_PANEL_H__	*/
 

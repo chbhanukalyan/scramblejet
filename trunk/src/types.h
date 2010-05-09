@@ -17,46 +17,25 @@
  */
 
 
-#ifndef		__GAME_GAME_H__
-#define		__GAME_GAME_H__
+#ifndef		__TYPES_H__
+#define		__TYPES_H__
 
-#define	MAX_NUM_PLAYERS	16
-
-#include "../RenderingEngine/RenderingEngine.h"
-#include "../Objects/SkyBox.h"
-#include "../Panel/Panel.h"
-#include "../GamingClient/GamingClient.h"
-#include "../../Map/Map.h"
-
-class Game {
+class Vec2D {
 	public:
-		char data_dir[256];
-		char mapName[32];
-		char mapfn[256];
-
-		int localPlayerID;
-
-		RenderingEngine *re;
-		GamingClient *gc;
-		Map *map;
-
-		SkyBox *skybox;
-		Player *player[MAX_NUM_PLAYERS];
-		Panel *panel;
-
-	public:
-		long curticks;
-
-		Game(const char *base_dir, RenderingEngine *re, GamingClient *gc);
-		~Game();
-
-		int initGame(void);
-
-		void startGame(void);
-		void runGameLoop(void);
-		void stopGame(void);
-
+		float x, y;
+		float magnitude(void) {
+			return x*x + y*y;
+		}
 };
 
-#endif	/*	__GAME_GAME_H__	*/
+class Vec3D {
+	public:
+		float x, y, z;
+		float magnitude(void) {
+			return x*x + y*y + z*z;
+		}
+};
+
+
+#endif	/*	__TYPES_H__	*/
 

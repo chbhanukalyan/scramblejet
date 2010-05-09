@@ -33,6 +33,8 @@ class GamingClient {
 		bool connected;
 
 	public:
+		long curTicks;
+
 		EventMap *evmap;
 		int timerInterval;
 
