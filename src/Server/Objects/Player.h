@@ -35,6 +35,8 @@ class Player : public SentientObject {
 
 		float pitch, yaw, roll;
 
+		int turning;
+
 		inline void setSpeed(float s) {
 			if (s > maxspeed) s = maxspeed;
 			if (s < minspeed) s = minspeed;

@@ -69,7 +69,7 @@ void RadarMap::render(long curtick, Camera *c, IndObj *iolist)
 
 	if (displayType == RADARMAP_TYPE_HORIZONTAL) {
 		glPushMatrix();
-		glRotatef(c->angle * 57.296 + 180, 0, 0, 1);
+		glRotatef(-c->angle * 57.296 + 180, 0, 0, 1);
 	}
 
 	/* Draw the Radar Screen */
