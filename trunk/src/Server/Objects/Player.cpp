@@ -93,7 +93,7 @@ void Player::handleEvent(int funcid, int count) {
 			yaw += minanglerot * count;
 			if (roll > -1.5)
 				roll -= minanglerot * count;
-			if (turning < 15)
+			if (turning < 5)
 				turning += count/2;
 			break;
 		}
@@ -101,7 +101,7 @@ void Player::handleEvent(int funcid, int count) {
 			yaw -= minanglerot * count;
 			if (roll < 1.5)
 				roll += minanglerot * count;
-			if (turning < 15)
+			if (turning < 5)
 				turning += count/2;
 			break;
 		}
@@ -145,8 +145,8 @@ void Player::doTick(void) {
 		/* Get roll back to normal */
 		if (roll > 0.7) roll -= 0.1;
 		if (roll < -0.7) roll += 0.1;
-		if (roll > minanglerot*4) roll -= minanglerot*4;
-		else if (roll < -minanglerot*4) roll += minanglerot*4;
+		if (roll > minanglerot*5) roll -= minanglerot*5;
+		else if (roll < -minanglerot*5) roll += minanglerot*5;
 		else roll = 0;
 	} else {
 		/* Next time we know we are not turning if we dont have this set */

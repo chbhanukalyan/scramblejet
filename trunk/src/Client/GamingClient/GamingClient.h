@@ -23,7 +23,7 @@
 #include <SDL/SDL_timer.h>
 #include "EventMap.h"
 
-#define	DEFAULT_NETWORK_EVENT_UPDATE_INTERVAL	5
+#define	DEFAULT_NETWORK_EVENT_UPDATE_INTERVAL	2
 
 #include "../Objects/Player.h"
 
