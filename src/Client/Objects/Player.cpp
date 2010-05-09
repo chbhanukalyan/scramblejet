@@ -21,7 +21,7 @@
 #include "../GamingClient/GamingClient.h"
 
 Player::Player(ObjInfo *oi)
-	:StaticModel("Player")
+	:StaticModel("Player"), IndObj("Player")
 {
 	id = oi->id;
 	transx = oi->locx;

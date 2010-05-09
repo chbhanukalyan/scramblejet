@@ -16,47 +16,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef		__PANEL_RADARMAP_H__
+#define		__PANEL_RADARMAP_H__
 
-#ifndef		__GAME_GAME_H__
-#define		__GAME_GAME_H__
+#include "../Objects/IndObj.h"
+#include "../RenderingEngine/Camera.h"
+#include "../RenderingEngine/Texture.h"
 
-#define	MAX_NUM_PLAYERS	16
+enum {
+	RADARMAP_TYPE_HORIZONTAL,
+	RADARMAP_TYPE_VERTICAL
+};
+class RadarMap {
+	private:
+		float startAngle;
+		float angle;
+		Texture *bg;
 
-#include "../RenderingEngine/RenderingEngine.h"
-#include "../Objects/SkyBox.h"
-#include "../Panel/Panel.h"
-#include "../GamingClient/GamingClient.h"
-#include "../../Map/Map.h"
+		float cx, cy;
+		float size;
+		int displayType;
 
-class Game {
-	public:
-		char data_dir[256];
-		char mapName[32];
-		char mapfn[256];
-
-		int localPlayerID;
-
-		RenderingEngine *re;
-		GamingClient *gc;
-		Map *map;
-
-		SkyBox *skybox;
-		Player *player[MAX_NUM_PLAYERS];
-		Panel *panel;
+		float scalex, scaley, scalez;
+		bool scalevec3d(Camera *c, Vec3D *v3, Vec2D *v);
 
 	public:
-		long curticks;
+		RadarMap(int type);
+		~RadarMap();
 
-		Game(const char *base_dir, RenderingEngine *re, GamingClient *gc);
-		~Game();
+		void placeRadarMap(float centx, float centy) {
+			cx = centx; cy = centy;
+		}
 
-		int initGame(void);
-
-		void startGame(void);
-		void runGameLoop(void);
-		void stopGame(void);
+		void render(long curtick, Camera *c, IndObj *objList);
 
 };
 
-#endif	/*	__GAME_GAME_H__	*/
+#endif	/*	__PANEL_RADARMAP_H__	*/
 

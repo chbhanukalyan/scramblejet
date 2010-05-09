@@ -40,7 +40,7 @@ int RenderingEngine::Initialize(CamPos *campos)
 	return 0;
 }
 
-void RenderingEngine::render(CamPos *cp)
+void RenderingEngine::render(CamPos *cp, long curTicks)
 {
 	// Set the projection matrix
     glMatrixMode(GL_PROJECTION);
@@ -81,6 +81,10 @@ void RenderingEngine::render(CamPos *cp)
 		renobj->render(camera);
 		renobj = renobj->next;
 	}
+
+
+	/* This should be the last element as we disable depth buffer while drawing this */
+	panel->render(curTicks, camera);
 
 	glFlush();
 }

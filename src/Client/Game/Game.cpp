@@ -44,10 +44,14 @@ int Game::initGame(void)
 
 	re->Initialize(&map->initCamPos);
 
+	panel = new Panel;
+	re->addPanel(panel);
+
 	ObjInfo *o = map->objList;
 	while (o) {
 		Player *p = new Player(o);
 		re->addObject(p);
+		panel->addObject(p);
 		p->load((void*)gc);
 		player[p->id] = p;
 		o = o->next;
@@ -70,7 +74,7 @@ void Game::runGameLoop(void)
 	CamPos cp;
 	gc->handleEvents(player);
 	player[localPlayerID]->followCam(&cp);
-	re->render(&cp);
+	re->render(&cp, gc->curTicks);
 }
 
 void Game::stopGame(void)

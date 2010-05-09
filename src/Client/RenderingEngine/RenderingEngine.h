@@ -21,6 +21,7 @@
 #define		__RE_RENDERINGENGINE_H__
 
 #include "Renderable.h"
+#include "../Panel/Panel.h"
 
 class RenderingEngine {
 	private:
@@ -30,15 +31,19 @@ class RenderingEngine {
 		int vres;
 
 		Renderable *renderList;
+		Panel *panel;
 
 	public:
 		RenderingEngine(void);
 		~RenderingEngine();
 
 		int Initialize(CamPos *initCamPos);
-		void render(CamPos *followCam);
+		void render(CamPos *followCam, long curTicks);
 		void Destroy(void);
 
+		void addPanel(Panel *p) {
+			panel = p;
+		}
 		void addObject(Renderable *r);
 		void removeObject(Renderable *r);
 		void clearRenderList(void);

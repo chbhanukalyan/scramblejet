@@ -58,6 +58,8 @@ void GamingClient::updateTimerCb(void)
 {
 	evmap->updateTimer();
 
+	curTicks++;
+
 	if (connected) {
 		networkUpdateCounter++;
 		if (networkUpdateCounter >= updateInterval) {
@@ -74,6 +76,8 @@ int GamingClient::initialize(const char *evmapfn, int timerInt)
 	evmap->loadKeymap(evmapfn);
 
 	evmap->registerFunction(FUNCID_QUIT, Quit);
+
+	curTicks = 0;
 
 	timerInterval = (timerInt / 10) * 10;
 	if (timerInterval != timerInt) {

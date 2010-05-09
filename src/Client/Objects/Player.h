@@ -20,13 +20,14 @@
 #ifndef		__OBJ_PLAYER_H__
 #define		__OBJ_PLAYER_H__
 
+#include "IndObj.h"
 #include "../../Map/ObjInfo.h"
 #include "StaticModel.h"
 #include "../../protocol.h"
 #include "../GamingClient/EventMap.h"
 #include "Flame.h"
 
-class Player : public StaticModel {
+class Player : public StaticModel, public IndObj {
 	private:
 		float locx, locy, locz;
 		float dirx, diry, dirz;
@@ -43,6 +44,11 @@ class Player : public StaticModel {
 		void followCam(CamPos *cp);
 
 		void render(Camera *c);
+		void getPos(Vec3D *v) {
+			v->x = locx;
+			v->y = locy;
+			v->z = locz;
+		}
 		void update(struct updateObj *upObj);
 
 };
