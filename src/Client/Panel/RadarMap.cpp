@@ -57,14 +57,20 @@ bool RadarMap::scalevec3d(Camera *c, Vec3D *v3, Vec2D *v)
 	}
 	if (size*size <= v->magnitude())
 		return false;
-	v->x += cx;
-	v->y += cy;
 	return true;
 }
 
 void RadarMap::render(long curtick, Camera *c, IndObj *iolist)
 {
 	angle = startAngle + curtick/40.0f;
+
+	glPushMatrix();
+	glTranslatef(cx, cy, 0);
+
+	if (displayType == RADARMAP_TYPE_HORIZONTAL) {
+		glPushMatrix();
+		glRotatef(c->angle * 57.296 + 180, 0, 0, 1);
+	}
 
 	/* Draw the Radar Screen */
 	glEnable(GL_TEXTURE_2D);
@@ -73,13 +79,13 @@ void RadarMap::render(long curtick, Camera *c, IndObj *iolist)
 	glBindTexture(GL_TEXTURE_2D, bg->texid);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0, 0);
-		glVertex2f(cx - size, cy - size);
+		glVertex2f(-size, - size);
 		glTexCoord2f(1, 0);
-		glVertex2f(cx + size, cy - size);
+		glVertex2f(+ size, - size);
 		glTexCoord2f(1, 1);
-		glVertex2f(cx + size, cy + size);
+		glVertex2f(+ size, + size);
 		glTexCoord2f(0, 1);
-		glVertex2f(cx - size, cy + size);
+		glVertex2f(- size, + size);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
@@ -91,11 +97,11 @@ void RadarMap::render(long curtick, Camera *c, IndObj *iolist)
 	glLineWidth(1);
 	glBegin(GL_TRIANGLES);
 		glColor4f(0, 1, 0, 1);
-		glVertex2f(cx + size*sin(angle), cy + size*cos(angle));
+		glVertex2f(+ size*sin(angle),  + size*cos(angle));
 		glColor4f(0, 1, 0, 0);
-		glVertex2f(cx + size*sin(angle-0.4f), cy + size*cos(angle-0.4f));
+		glVertex2f(+ size*sin(angle-0.4f), + size*cos(angle-0.4f));
 		glColor4f(0, 1, 0, 1);
-		glVertex2f(cx, cy);
+		glVertex2f(0, 0);
 	glEnd();
 	glDisable(GL_BLEND);
 
@@ -103,8 +109,8 @@ void RadarMap::render(long curtick, Camera *c, IndObj *iolist)
 	glColor4f(0, 1, 0, 1);
 	glLineWidth(1);
 	glBegin(GL_LINES);
-		glVertex2f(cx, cy);
-		glVertex2f(cx + size*sin(angle), cy + size*cos(angle));
+		glVertex2f(0, 0);
+		glVertex2f(size*sin(angle), size*cos(angle));
 	glEnd();
 
 	/* Draw the points */
@@ -122,6 +128,9 @@ void RadarMap::render(long curtick, Camera *c, IndObj *iolist)
 	}
 	glEnd();
 
+	if (displayType == RADARMAP_TYPE_HORIZONTAL)
+		glPopMatrix();
+	glPopMatrix();
 }
 
 
