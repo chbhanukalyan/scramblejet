@@ -44,6 +44,7 @@ Player::Player(ObjInfo *o, const char *name)
 	pitch = asinf(dir[1]);
 	yaw = asinf(dir[0]/cosf(pitch));
 	roll = 0;
+	turning = 0;
 }
 
 Player::~Player()
@@ -90,10 +91,18 @@ void Player::handleEvent(int funcid, int count) {
 		}
 		case FUNCID_ROTYP: {
 			yaw += minanglerot * count;
+			if (roll > -1.5)
+				roll -= minanglerot * count;
+			if (turning < 15)
+				turning += count/2;
 			break;
 		}
 		case FUNCID_ROTYM: {
 			yaw -= minanglerot * count;
+			if (roll < 1.5)
+				roll += minanglerot * count;
+			if (turning < 15)
+				turning += count/2;
 			break;
 		}
 		case FUNCID_ROTZP: {
@@ -132,6 +141,18 @@ int Player::serializeState(void *buf) {
 }
 
 void Player::doTick(void) {
+	if (turning <= 0) {
+		/* Get roll back to normal */
+		if (roll > 0.7) roll -= 0.1;
+		if (roll < -0.7) roll += 0.1;
+		if (roll > minanglerot*4) roll -= minanglerot*4;
+		else if (roll < -minanglerot*4) roll += minanglerot*4;
+		else roll = 0;
+	} else {
+		/* Next time we know we are not turning if we dont have this set */
+		turning--;
+	}
+
 	/* Change angles to direction vector */
 	dir[0] = cosf(pitch) * sinf(yaw);
 	dir[1] = -sinf(pitch);
