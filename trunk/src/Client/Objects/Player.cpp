@@ -24,13 +24,15 @@ Player::Player(ObjInfo *oi)
 	:StaticModel("Player"), IndObj("Player")
 {
 	id = oi->id;
-	transx = oi->locx;
-	transy = oi->locy;
-	transz = oi->locz;
+	locx = transx = oi->locx;
+	locy = transy = oi->locy;
+	locz = transz = oi->locz;
 
 	dirx = oi->dirx;
 	diry = oi->diry;
 	dirz = oi->dirz;
+
+	pitch = yaw = roll = 0;
 
 	StaticModel::load(oi->modelfn);
 	flame = new Flame(0.019, 0.016, -1.45);

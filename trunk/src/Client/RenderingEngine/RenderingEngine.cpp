@@ -22,10 +22,12 @@ RenderingEngine::RenderingEngine(void)
 {
 	camera = new Camera;
 	renderList = NULL;
+	terrain = new Terrain("terrains/default.hmap");
 }
 
 RenderingEngine::~RenderingEngine()
 {
+	delete terrain;
 	delete camera;
 }
 
@@ -34,6 +36,8 @@ int RenderingEngine::Initialize(CamPos *campos)
 	hres = 640;
 	vres = 480;
 	camera->Initialize(campos);
+
+	terrain->load();
 
 	camera->dumpCurPos();
 
@@ -56,32 +60,38 @@ void RenderingEngine::render(CamPos *cp, long curTicks)
 
 	glEnable(GL_DEPTH_TEST);
 
+	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	/* Just clear the depth buffer, color is overwritten anyway */
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	int fog = 0;
 	if (fog) {
 	glEnable(GL_FOG);
 	{
-		GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1.0};
+		GLfloat fogColor[4] = {1, 1, 1, 1};
+//		GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1.0};
 
-		int	fogMode = GL_EXP;
-		glFogi (GL_FOG_MODE, fogMode);
+//		int	fogMode = GL_EXP;
+//		glFogi (GL_FOG_MODE, fogMode);
+		glFogi(GL_FOG_MODE, GL_LINEAR);
 		glFogfv (GL_FOG_COLOR, fogColor);
-		glFogf (GL_FOG_DENSITY, 0.35);
+//		glFogf (GL_FOG_DENSITY, 0.35);
+//		glHint (GL_FOG_HINT, GL_NICEST);
 		glHint (GL_FOG_HINT, GL_DONT_CARE);
-		glFogf (GL_FOG_START, 1.0);
-		glFogf (GL_FOG_END, 5.0);
+		glFogf (GL_FOG_START, 300.0);
+		glFogf (GL_FOG_END, 1000.0);
 	}
 	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	}
+
+	terrain->render(camera);
+
 	/* Render the objects in order */
 	Renderable *renobj = renderList;
 	while (renobj) {
 		renobj->render(camera);
 		renobj = renobj->next;
 	}
-
 
 	/* This should be the last element as we disable depth buffer while drawing this */
 	panel->render(curTicks, camera);
@@ -91,6 +101,7 @@ void RenderingEngine::render(CamPos *cp, long curTicks)
 
 void RenderingEngine::Destroy(void)
 {
+	terrain->unload();
 }
 
 void RenderingEngine::addObject(Renderable *r)
