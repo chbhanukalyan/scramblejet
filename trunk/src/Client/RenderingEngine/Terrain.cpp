@@ -84,12 +84,9 @@ int Terrain::load(void)
 	glNewList(displayList, GL_COMPILE);
 	glColor3f(1,1,1);
 	glDisable(GL_TEXTURE_2D);
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	for (int i = 0 ; i < imgWidth - 1; i++) {
-//	for (int i = 0 ; i < 100; i++) {
 		glBegin(GL_TRIANGLE_STRIP);
 		for (int j = 0 ; j < imgHeight - 1; j++) {
-//		for (int j = 0 ; j < 100; j++) {
 			Vec3D a,b;
 			float c1, c2;
 
@@ -103,7 +100,6 @@ int Terrain::load(void)
 		}
 		glEnd();
 	}
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEndList();
 
 	err = 0;
