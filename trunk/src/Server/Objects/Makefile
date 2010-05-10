@@ -20,6 +20,7 @@ include ../../cmds.mk
 OUTPUT = objs.a
 
 OBJECTS	=			Player.o	\
+					Missile.o	\
 
 LIBS	=			\
 

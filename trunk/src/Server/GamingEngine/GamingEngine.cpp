@@ -32,12 +32,17 @@
 #include "GamingEngine.h"
 #include "../GamingServer/Server.h"
 
+GamingEngine *GamingEngine::g_GamingEngine = NULL;
+
 GamingEngine::GamingEngine(Map *map)
 {
-	objList = NULL;
+	sentObjList = NULL;
+	moveObjList = NULL;
 	memset(playerList, 0, sizeof(playerList));
 	this->map = map;
 	timer_loop_time = DEFAULT_WAIT_BEFORE_START_USEC;
+
+	g_GamingEngine = this;
 }
 
 GamingEngine::~GamingEngine()
@@ -65,16 +70,29 @@ int GamingEngine::startGame(void *serv)
 			if (playerList[i])
 				playerList[i]->doTick();
 		
+		MovableObject *mov = moveObjList;
+		while (mov) {
+			mov->doTick();
+			mov = mov->moveNext;
+		}
+		
 		/* Dispatch updates after some time */
 		char buf[MAX_PACKET_SIZE];
 		int len = sizeof(struct protocolHeader) + sizeof(int);
 
 		int count = 0;
-		SentientObject *seo = objList;
+		SentientObject *seo = sentObjList;
 		while (seo) {
 			int l = seo->serializeState(buf + len);
 			len += l;
-			seo = seo->next;
+			seo = seo->sentNext;
+			count++;
+		}
+		mov = moveObjList;
+		while (mov) {
+			int l = mov->serializeState(buf + len);
+			len += l;
+			mov = mov->moveNext;
 			count++;
 		}
 		server->broadcastUpdatePacket(buf, len, count);
@@ -94,41 +112,77 @@ void GamingEngine::addPlayer(int id, const char *name)
 {
 	ObjInfo *o = map->getObj(OBJTYPE_PLAYER, id);
 	playerList[id] = new Player(o, name);
-	addObject(playerList[id]);
+	addSentObject(playerList[id]);
 }
 
 void GamingEngine::removePlayer(int id)
 {
 	Player *p = playerList[id];
 	playerList[id] = NULL;
-	removeObject(p);
+	removeSentObject(p);
 	delete p;
 }
 
-void GamingEngine::addObject(SentientObject *seo)
+void GamingEngine::addSentObject(SentientObject *seo)
 {
-	seo->next = objList;
-	objList = seo;
+	seo->sentNext = sentObjList;
+	sentObjList = seo;
 }
 
-void GamingEngine::removeObject(SentientObject *seo)
+void GamingEngine::removeSentObject(SentientObject *seo)
 {
-	if (objList == NULL)
+	if (sentObjList == NULL)
 		return;
 
-	if (objList == seo) {
-		objList = seo->next;
-		seo->next = NULL;
+	if (sentObjList == seo) {
+		sentObjList = seo->sentNext;
+		seo->sentNext = NULL;
 		return;
 	}
-	SentientObject *tmp = objList;
+	SentientObject *tmp = sentObjList;
 	while (tmp) {
-		if (tmp->next == seo) {
-			tmp->next = tmp->next->next;
-			seo->next = NULL;
+		if (tmp->sentNext == seo) {
+			tmp->sentNext = tmp->sentNext->sentNext;
+			seo->sentNext = NULL;
 			return;
 		}
-		tmp = tmp->next;
+		tmp = tmp->sentNext;
+	}
+	fprintf(stderr, "WARNING: Trying to remove Sentient Object: "
+			"not in list\n");
+}
+
+void GamingEngine::addMissile(Missile *m)
+{
+
+	fprintf(stderr, "Launching Missile\n");
+	addMovableObject(m);
+}
+
+void GamingEngine::addMovableObject(MovableObject *mov)
+{
+	mov->moveNext = moveObjList;
+	moveObjList = mov;
+}
+
+void GamingEngine::removeMovableObject(MovableObject *mov)
+{
+	if (moveObjList == NULL)
+		return;
+
+	if (moveObjList == mov) {
+		moveObjList = mov->moveNext;
+		mov->moveNext = NULL;
+		return;
+	}
+	MovableObject *tmp = moveObjList;
+	while (tmp) {
+		if (tmp->moveNext == mov) {
+			tmp->moveNext = tmp->moveNext->moveNext;
+			mov->moveNext = NULL;
+			return;
+		}
+		tmp = tmp->moveNext;
 	}
 	fprintf(stderr, "WARNING: Trying to remove Sentient Object: "
 			"not in list\n");

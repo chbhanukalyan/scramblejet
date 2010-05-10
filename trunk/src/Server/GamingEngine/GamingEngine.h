@@ -27,16 +27,21 @@
 #include "../../Map/Map.h"
 #include "SentientObject.h"
 #include "../Objects/Player.h"
+#include "../Objects/Missile.h"
 
 class GamingEngine {
 	private:
-		SentientObject *objList;
+		SentientObject *sentObjList;
+		MovableObject *moveObjList;
 		long timer_loop_time;
 
 	public:
 		Map *map;
 
+		static GamingEngine *g_GamingEngine;
+
 		Player *playerList[MAX_CLIENT_ID];
+
 		GamingEngine(Map *map);
 		~GamingEngine();
 
@@ -47,9 +52,13 @@ class GamingEngine {
 		void addPlayer(int id, const char *name);
 		void removePlayer(int id);
 
-		void addObject(SentientObject *seo);
-		void removeObject(SentientObject *seo);
+		void addMissile(Missile *m);
 
+		void addSentObject(SentientObject *seo);
+		void removeSentObject(SentientObject *seo);
+
+		void addMovableObject(MovableObject *mov);
+		void removeMovableObject(MovableObject *mov);
 };
 
 #endif	/*	__GE_GAMINGENGINE_H__	*/
