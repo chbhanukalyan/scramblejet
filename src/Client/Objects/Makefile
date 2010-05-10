@@ -22,6 +22,7 @@ OUTPUT = objs.a
 OBJECTS	=			StaticModel.o	\
 					Flame.o			\
 					Player.o		\
+					Missile.o		\
 					SkyBox.o		\
 
 $(OUTPUT): $(OBJECTS)

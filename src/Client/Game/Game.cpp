@@ -19,17 +19,22 @@
 #include "Game.h"
 #include "../../Map/MapLoader.h"
 
+Game *Game::g_game = NULL;
+
 Game::Game(const char *data_dir, RenderingEngine *re, GamingClient *gc)
 {
 	strcpy(this->data_dir, data_dir);
 	this->re = re;
 	this->gc = gc;
-	memset(player, 0, sizeof(player));
+	memset(playerList, 0, sizeof(playerList));
 	localPlayerID = -1;
+	memset(missileList, 0, sizeof(missileList));
+	g_game = this;
 }
 
 Game::~Game()
 {
+	g_game = NULL;
 }
 
 int Game::initGame(void)
@@ -53,7 +58,7 @@ int Game::initGame(void)
 		re->addObject(p);
 		panel->addObject(p);
 		p->load((void*)gc);
-		player[p->id] = p;
+		playerList[p->id] = p;
 		o = o->next;
 	}
 
@@ -72,8 +77,8 @@ void Game::startGame(void)
 void Game::runGameLoop(void)
 {
 	CamPos cp;
-	gc->handleEvents(player);
-	player[localPlayerID]->followCam(&cp);
+	gc->handleEvents();
+	playerList[localPlayerID]->followCam(&cp);
 	re->render(&cp, gc->curTicks);
 }
 

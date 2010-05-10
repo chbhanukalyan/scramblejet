@@ -31,6 +31,7 @@ class Player : public StaticModel, public IndObj {
 	private:
 		float locx, locy, locz;
 		float dirx, diry, dirz;
+		float pitch, yaw, roll;
 
 		Flame *flame;
 

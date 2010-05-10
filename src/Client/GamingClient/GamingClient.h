@@ -25,7 +25,6 @@
 
 #define	DEFAULT_NETWORK_EVENT_UPDATE_INTERVAL	2
 
-#include "../Objects/Player.h"
 
 class GamingClient {
 	private:
@@ -43,7 +42,7 @@ class GamingClient {
 
 		int initialize(const char *eventmap, int timerInterval);
 
-		void handleEvents(Player **);
+		void handleEvents(void);
 
 		void updateTimerCb(void);
 
@@ -60,7 +59,8 @@ class GamingClient {
 		int sendPacket(void *buf, int len);
 		int recvPacket(void *buf, int *len);
 
-		void handleNetworkEvents(Player **);
+		void handleNetworkEvents(void);
+		void updateObject(struct updateObj *updt);
 
 		int updateInterval;
 		int networkUpdateCounter;

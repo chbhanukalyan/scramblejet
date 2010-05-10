@@ -20,19 +20,24 @@
 #ifndef		__GAME_GAME_H__
 #define		__GAME_GAME_H__
 
-#define	MAX_NUM_PLAYERS	16
+#define	MAX_NUM_PLAYERS		16
+#define	MAX_NUM_MISSILES	256
 
 #include "../RenderingEngine/RenderingEngine.h"
 #include "../Objects/SkyBox.h"
 #include "../Panel/Panel.h"
 #include "../GamingClient/GamingClient.h"
 #include "../../Map/Map.h"
+#include "../Objects/Player.h"
+#include "../Objects/Missile.h"
 
 class Game {
 	public:
 		char data_dir[256];
 		char mapName[32];
 		char mapfn[256];
+
+		static Game *g_game;
 
 		int localPlayerID;
 
@@ -41,7 +46,8 @@ class Game {
 		Map *map;
 
 		SkyBox *skybox;
-		Player *player[MAX_NUM_PLAYERS];
+		Player *playerList[MAX_NUM_PLAYERS];
+		Missile *missileList[MAX_NUM_MISSILES];
 		Panel *panel;
 
 	public:
@@ -55,6 +61,18 @@ class Game {
 		void startGame(void);
 		void runGameLoop(void);
 		void stopGame(void);
+
+		void addNewPlayer(void) {}
+		void updateMissile(struct updateObj *updt) {
+			int id = updt->updateFieldID;
+			if (missileList[id] == NULL) {
+				Missile *m = new Missile(id);
+				missileList[id] = m;
+				re->addObject(m);
+				panel->addObject(m);
+			}
+			missileList[id]->update(updt);
+		}
 
 };
 

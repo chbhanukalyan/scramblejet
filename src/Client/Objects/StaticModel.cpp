@@ -36,8 +36,6 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd);
 StaticModel::StaticModel(const char *id)
 	: Renderable(id)
 {
-	transx = transy = transz = 0;
-	roll = pitch = yaw = 0;
 }
 
 StaticModel::~StaticModel()
@@ -52,6 +50,8 @@ int StaticModel::load(const char *fn)
 	}
 	strncpy(this->fn, fn, 255);
 
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);    // Uses default lighting parameters
 
@@ -83,7 +83,7 @@ void StaticModel::render(Camera *c)
 {
 	float tmp;
 
-	glEnable(GL_CULL_FACE);
+//	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
 	glEnable(GL_LIGHTING);

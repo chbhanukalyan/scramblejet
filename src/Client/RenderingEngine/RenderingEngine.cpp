@@ -39,6 +39,9 @@ int RenderingEngine::Initialize(CamPos *campos)
 
 	terrain->load();
 
+	/* Load list of models */
+
+
 	camera->dumpCurPos();
 
 	return 0;

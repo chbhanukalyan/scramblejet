@@ -17,37 +17,33 @@
  */
 
 #include <cassert>
-#include "Player.h"
+#include "Missile.h"
 #include "../GamingClient/GamingClient.h"
 
-Player::Player(ObjInfo *oi)
-	:StaticModel("Player"), IndObj("Player")
+Missile::Missile(int id)
+	:StaticModel("Missile"), IndObj("Missile")
 {
-	id = oi->id;
-	locx = oi->locx;
-	locy = oi->locy;
-	locz = oi->locz;
-
-	dirx = oi->dirx;
-	diry = oi->diry;
-	dirz = oi->dirz;
+	this->id = id;
+	assert(id >= 32);
+	locx = locy = locz = 0;
 
 	pitch = yaw = roll = 0;
 
-	StaticModel::load(oi->modelfn);
+	StaticModel::load("staticmodels/F-16.dae");
+//	StaticModel::load("models/missile.dae");
 	flame = new Flame(0.019, 0.016, -1.45);
 	flame->load("textures/flame.tga");
 }
 
-Player::~Player()
+Missile::~Missile()
 {
 }
 
-void Player::load(void *gcptr)
+void Missile::load(void *gcptr)
 {
 }
 
-void Player::followCam(CamPos *cp)
+void Missile::followCam(CamPos *cp)
 {
 	cp->pointx = locx;
 	cp->pointy = locy;
@@ -63,13 +59,17 @@ void Player::followCam(CamPos *cp)
 	cp->angle = 3.141 + yaw;
 }
 
-void Player::render(Camera *c)
+void Missile::render(Camera *c)
 {
+	glColor3f(1,1,1);
 	/* 1 radian = 57.296 degrees */
 #define	RADIAN2DEG(x)	((x) * 57.29578f)
 	glPushMatrix();
 	glTranslatef(locx, locy, locz);
 	glPushMatrix();
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 	
 	/* Rotate Around Y-AXIS */
 	glRotatef(RADIAN2DEG(yaw), 0, 1, 0);
@@ -81,7 +81,9 @@ void Player::render(Camera *c)
 	glRotatef(RADIAN2DEG(roll), 0, 0, 1);
 	glPushMatrix();
 
+#if 1
 	StaticModel::render(c);
+#endif
 	
 	flame->render(c);
 	
@@ -91,7 +93,7 @@ void Player::render(Camera *c)
 	glPopMatrix();
 }
 
-void Player::update(struct updateObj *upObj)
+void Missile::update(struct updateObj *upObj)
 {
 	assert(upObj->updateFieldID == id);
 
@@ -102,7 +104,6 @@ void Player::update(struct updateObj *upObj)
 	pitch = vals[3];
 	yaw = vals[4];
 	roll = vals[5];
-//	printf("New TRANS Vals = %f, %f, %f, %f %f %f\n", vals[0], vals[1], vals[2], roll, pitch, yaw);
+//	printf("NEW Missile Vals = %f, %f, %f, %f %f %f\n", vals[0], vals[1], vals[2], roll, pitch, yaw);
 }
-
 
