@@ -20,6 +20,8 @@
 #ifndef		__TYPES_H__
 #define		__TYPES_H__
 
+#include <GL/gl.h>
+
 #define		PI	(3.14159)
 
 class Vec2D {
@@ -33,8 +35,42 @@ class Vec2D {
 class Vec3D {
 	public:
 		float x, y, z;
+		Vec3D(void) {
+			this->x = this->y = this->z = 0;
+		}
+		Vec3D(float x, float y, float z) {
+			this->x = x; this->y = y; this->z = z;
+		}
 		float magnitude(void) {
 			return x*x + y*y + z*z;
+		}
+		Vec3D operator+(Vec3D &o) {
+			return Vec3D(x+o.x, y+o.y, z+o.z);
+		}
+		Vec3D operator-(Vec3D &o) {
+			return Vec3D(x-o.x, y-o.y, z-o.z);
+		}
+		Vec3D operator*(float s) {
+			return Vec3D(x*s, y*s, z*s);
+		}
+		Vec3D operator/(float s) {
+			return Vec3D(x/s, y/s, z/s);
+		}
+
+		void GlVertex3f(Vec3D v) {
+			glVertex3f(v.x, v.y, v.z);
+		}
+
+};
+
+class Vec4D {
+	public:
+		float x, y, z, w;
+		Vec4D(void) {
+			x = y = z = w = 0;
+		}
+		Vec4D(float x, float y, float z, float w) {
+			this->x = x; this->y = y; this->z = z; this->w = w;
 		}
 };
 
