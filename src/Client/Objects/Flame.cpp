@@ -23,11 +23,11 @@ Flame::Flame(float x, float y, float z)
 {
 	tipwidth = .01f;
 	width = .025f;
-	length = .2f;
+	length = .3f;
 	t = NULL;
 	redflame = 1;
-	texXStart = 0.15;
-	texXRange = 0.2;
+	texXStart = 0.22;
+	texXRange = 0.02;
 	numTris = 12;
 
 	transx = x;
@@ -38,8 +38,8 @@ Flame::Flame(float x, float y, float z)
 	cosarr = new float[numTris+1];
 
 	for (int i = 0; i <= numTris; i++) {
-		sinarr[i] = sin(2*i*3.141/(numTris));
-		cosarr[i] = cos(2*i*3.141/(numTris));
+		sinarr[i] = sin(2*i*PI/(numTris) + PI/2);
+		cosarr[i] = cos(2*i*PI/(numTris) + PI/2);
 	}
 }
 
@@ -63,64 +63,44 @@ Flame::~Flame()
 
 void Flame::render(Camera *c)
 {
-	glColor4f(1,1,1,1);
-
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
-	
-//	glEnable(GL_ALPHA_TEST);
-//	glAlphaFunc(GL_GREATER, 0.5);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// Front
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.5);
+	
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, t->texid);
-/*	glBegin(GL_QUADS);
-		glTexCoord2f(texXStart + 0, 1.0f); glVertex3f(-length, 0, width);
-		glTexCoord2f(texXStart + 0, 0.0f); glVertex3f(-length, 0, -width);
-		glTexCoord2f(texXStart + 0.5f, 0.0f); glVertex3f(length, 0, -width);
-		glTexCoord2f(texXStart + 0.5f, 1.0f); glVertex3f(length, 0, width);
-	glEnd();*/
 
-/*	glBegin(GL_TRIANGLES);
+	glBegin(GL_TRIANGLES);
+	glColor4f(1,1,1,1);
 	for (int i = 0; i < numTris; i++) {
-		glTexCoord2f(texXStart + 0, 1.0f);
-		glVertex3f(width*sinarr[i], width*cosarr[i], 0);
-		glTexCoord2f(texXStart + 0.4, 1.0f);
-		glVertex3f(width*sinarr[i+1], width*cosarr[i+1], 0);
-		glTexCoord2f(texXStart + 0.2, 0.0f);
-		glVertex3f(0, 0, -length);
+		glTexCoord2f( texXStart, 0.9f);
+		glVertex3f(transx+width*sinarr[i], transy+width*cosarr[i], transz-length/9);
+		glTexCoord2f( texXStart + texXRange, 0.9f);
+		glVertex3f(transx+width*sinarr[i+1], transy+width*cosarr[i+1], transz-length/9);
+		glTexCoord2f( texXStart + texXRange, 0.8f);
+		glVertex3f(transx, transy, transz-length/9);
 	}
 	glEnd();
-*/
-/*	glBegin(GL_QUADS);
-	for (int i = 0; i < numTris; i++) {
-		glTexCoord2f(texXStart + 0, 1.0f);
-		glVertex3f(width*sinarr[i], width*cosarr[i], 0);
-		glTexCoord2f(texXStart + 0.3, 1.0f);
-		glVertex3f(width*sinarr[i+1], width*cosarr[i+1], 0);
-		glTexCoord2f(texXStart + 0.3, 0.0f);
-		glVertex3f(tipwidth*sinarr[i+1], tipwidth*cosarr[i+1], -length);
-		glTexCoord2f(texXStart + 0, 0.0f);
-		glVertex3f(tipwidth*sinarr[i], tipwidth*cosarr[i], -length);
-	}
-	glEnd();*/
+
 	glBegin(GL_QUADS);
 	for (int i = 0; i < numTris; i++) {
-		glTexCoord2f( texXStart + texXRange * ((float)i)/numTris, 1.0f);
+		glColor4f(1,1,1,1);
+		glTexCoord2f( texXStart, 1.0f);
 		glVertex3f(transx+width*sinarr[i], transy+width*cosarr[i], transz);
-		glTexCoord2f( texXStart + texXRange * ((float)i+1)/numTris, 1.0f);
+		glColor4f(1,1,1,1);
+		glTexCoord2f( texXStart + texXRange, 1.0f);
 		glVertex3f(transx+width*sinarr[i+1], transy+width*cosarr[i+1], transz);
-		glTexCoord2f( texXStart + texXRange * ((float)i+1)/numTris, 0.0f);
+		glColor4f(1,1,1,.7);
+		glTexCoord2f( texXStart + texXRange, 0.0f);
 		glVertex3f(transx+tipwidth*sinarr[i+1], transy+tipwidth*cosarr[i+1], transz-length);
-		glTexCoord2f( texXStart + texXRange * ((float)i)/numTris, 0.0f);
+		glColor4f(1,1,1,.7);
+		glTexCoord2f( texXStart, 0.0f);
 		glVertex3f(transx+tipwidth*sinarr[i], transy+tipwidth*cosarr[i], transz-length);
 	}
 	glEnd();
 
-
-	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);

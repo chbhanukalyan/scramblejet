@@ -20,6 +20,8 @@
 #ifndef		__TYPES_H__
 #define		__TYPES_H__
 
+#define		PI	(3.14159)
+
 class Vec2D {
 	public:
 		float x, y;
