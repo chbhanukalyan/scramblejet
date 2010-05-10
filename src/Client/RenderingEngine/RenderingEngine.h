@@ -22,9 +22,11 @@
 
 #include "Renderable.h"
 #include "../Objects/StaticModel.h"
+#include "../Objects/SkyBox.h"
 #include "Terrain.h"
 #include "../Panel/Panel.h"
 #include "ModelIDs.h"
+#include "../../Map/Map.h"
 
 class RenderingEngine {
 	private:
@@ -33,9 +35,14 @@ class RenderingEngine {
 		int hres;
 		int vres;
 
+		bool disableFog;
+
 		Renderable *renderList;
 		Terrain *terrain;
+		SkyBox *skybox;
 		Panel *panel;
+
+		void renderFog(void);
 
 	public:
 		RenderingEngine(void);
@@ -45,7 +52,7 @@ class RenderingEngine {
 
 		StaticModel *modelList[MAX_MODELID];
 
-		int Initialize(CamPos *initCamPos);
+		int Initialize(Map *map);
 		void render(CamPos *followCam, long curTicks);
 		void Destroy(void);
 

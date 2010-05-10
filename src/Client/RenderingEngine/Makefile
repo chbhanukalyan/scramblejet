@@ -20,6 +20,7 @@ include ../../cmds.mk
 OUTPUT = re.a
 
 OBJECTS	=			\
+					DebugGL.o		\
 					RenderingEngine.o	\
 					Texture.o		\
 					TextObject.o	\

@@ -21,10 +21,10 @@
 #include <stdlib.h>
 
 #include "Terrain.h"
+#include "DebugGL.h"
 
-Terrain::Terrain(const char *nm)
+Terrain::Terrain(void)
 {
-	strncpy(fn, nm, 256);
 	imgWidth = imgHeight = 0;
 }
 
@@ -32,8 +32,10 @@ Terrain::~Terrain()
 {
 }
 
-int Terrain::load(void)
+int Terrain::load(const char *name)
 {
+	strncpy(fn, name, 256);
+
 	int err = -1;
 	struct _TgaHeader {
 		unsigned char id;
