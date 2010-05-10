@@ -52,22 +52,7 @@ void Camera::dumpCurPos(void)
 
 void Camera::Initialize(CamPos *p)
 {
-	if (p) {
-		copyCamPos(p);
-	} else {
-		distance = 1;
-		height = 0;
-		angle = 0;
-
-		pointx = 0;
-		pointy = 0;
-		pointz = 0;
-
-		upx = 0;
-		upy = 10000;
-		upz = 0;
-
-	}
+	copyCamPos(p);
 	
 	camx = distance * sin(angle);
 	camy = height;
@@ -79,17 +64,17 @@ void Camera::Initialize(CamPos *p)
 
 void Camera::Update(CamPos *p)
 {
-	copyCamPos(p);
-	
-	camx = pointx + distance * sin(angle);
-	camy = pointy + height;
-	camz = pointz + distance * cos(angle);
+	if (p) {
+		copyCamPos(p);
+		
+		camx = pointx + distance * sin(angle);
+		camy = pointy + height;
+		camz = pointz + distance * cos(angle);
 
-	dirty = true;
-	Update();
+		dirty = true;
+		Update();
+	}
 }
-
-
 
 void Camera::Rotate(float a)
 {
