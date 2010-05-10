@@ -21,7 +21,10 @@
 #define		__PANEL_PANEL_H__
 
 #include <cassert>
+#include <sys/time.h>
 
+#include "../RenderingEngine/TTFFont.h"
+#include "../RenderingEngine/TextObject.h"
 #include "../RenderingEngine/Camera.h"
 #include "../Objects/IndObj.h"
 #include "RadarMap.h"
@@ -33,6 +36,15 @@ class Panel {
 		RadarMap *vertRadarMap;
 
 		IndObj *objList;
+
+		TTFFont *font;
+
+		/* FPS calculation */
+		TextObject *fps;
+		int renderCount;
+		struct timeval lasttmval;
+
+		void RenderTextObject(TextObject *tob, float x, float y, float w, float h);
 
 	public:
 		Panel(void);

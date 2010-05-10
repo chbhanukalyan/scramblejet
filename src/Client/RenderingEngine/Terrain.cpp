@@ -122,6 +122,9 @@ int Terrain::unload(void)
 
 void Terrain::render(Camera *c)
 {
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 	glCallList(displayList);
+	glDisable(GL_CULL_FACE);
 }
 
