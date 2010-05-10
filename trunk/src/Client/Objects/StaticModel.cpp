@@ -94,7 +94,7 @@ void StaticModel::render(Camera *c)
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glEnable(GL_NORMALIZE);
 
-	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
 
 	// scale the whole asset to fit into our view frustum 
 	tmp = scene_max.x-scene_min.x;
