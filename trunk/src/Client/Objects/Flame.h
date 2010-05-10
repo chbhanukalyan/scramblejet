@@ -20,6 +20,7 @@
 #ifndef		__OBJECTS_FLAME_H__
 #define		__OBJECTS_FLAME_H__
 
+#include "../../types.h"
 #include "../RenderingEngine/Renderable.h"
 #include "../RenderingEngine/Texture.h"
 
