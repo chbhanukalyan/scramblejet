@@ -22,7 +22,9 @@
 #include <math.h>
 
 #include "Player.h"
+#include "Missile.h"
 #include "../../funcids.h"
+#include "../GamingEngine/GamingEngine.h"
 
 Player::Player(ObjInfo *o, const char *name)
 {
@@ -45,10 +47,30 @@ Player::Player(ObjInfo *o, const char *name)
 	yaw = asinf(dir[0]/cosf(pitch));
 	roll = 0;
 	turning = 0;
+
+	num_missiles = 160;
 }
 
 Player::~Player()
 {
+}
+
+void Player::launchMissile(void)
+{
+	if (num_missiles <= 0)
+		return;
+
+	num_missiles--;
+
+	Missile *m = new Missile(32);
+	memcpy(m->loc, loc, sizeof(loc));
+	memcpy(m->dir, loc, sizeof(dir));
+	m->vel = vel;
+	m->pitch = pitch;
+	m->yaw = yaw;
+
+	GamingEngine::g_GamingEngine->addMissile(m);
+
 }
 
 void Player::handleEvent(int funcid, int count) {
@@ -78,7 +100,10 @@ void Player::handleEvent(int funcid, int count) {
 			loc[1] -= 0.01 * count;
 			break;
 		}
-		case FUNCID_FIRE1: break;
+		case FUNCID_FIRE1: {
+			launchMissile();
+			break;
+		}
 		case FUNCID_FIRE2: break;
 
 		case FUNCID_ROTXP: {

@@ -35,6 +35,8 @@ class Player : public SentientObject {
 
 		float pitch, yaw, roll;
 
+		int num_missiles;
+
 		int turning;
 
 		inline void setSpeed(float s) {
@@ -46,6 +48,8 @@ class Player : public SentientObject {
 			if (a > maxanglerot) a = maxanglerot;
 			if (a < minanglerot) a = minanglerot;
 		}
+
+		void launchMissile(void);
 
 	public:
 		int id;

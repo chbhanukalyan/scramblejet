@@ -20,14 +20,12 @@
 #ifndef		__GE_SENTIENTOBJECT_H__
 #define		__GE_SENTIENTOBJECT_H__
 
-class SentientObject {
+#include "MovableObject.h"
+
+class SentientObject : public virtual MovableObject {
 	public:
-		SentientObject *next;
-
+		SentientObject *sentNext;
 		virtual void handleEvent(int funcid, int count) = 0;
-		virtual int serializeState(void *buf) = 0;
-
-		virtual void doTick(void) = 0;
 
 };
 
