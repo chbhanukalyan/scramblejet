@@ -17,28 +17,40 @@
  */
 
 
-#ifndef		__RE_STATICMODEL_H__
-#define		__RE_STATICMODEL_H__
+#ifndef		__OBJ_MISSILE_H__
+#define		__OBJ_MISSILE_H__
 
-#include "../RenderingEngine/Renderable.h"
+#include "IndObj.h"
+#include "StaticModel.h"
+#include "../../protocol.h"
+#include "../GamingClient/EventMap.h"
+#include "Flame.h"
 
-class StaticModel : public Renderable {
+class Missile : public StaticModel, public IndObj {
 	private:
-		char fn[256];
+		float locx, locy, locz;
+		float pitch, yaw, roll;
 
-		GLint list;
-		float scalefactor;
+		Flame *flame;
 
 	public:
-		StaticModel(const char *id);
-		~StaticModel();
+		int id;
 
-		int load(const char *fn);
-		int unload(void);
+		Missile(int id);
+		~Missile();
+
+		void load(void *gc);
+		void followCam(CamPos *cp);
 
 		void render(Camera *c);
+		void getPos(Vec3D *v) {
+			v->x = locx;
+			v->y = locy;
+			v->z = locz;
+		}
+		void update(struct updateObj *upObj);
 
 };
 
-#endif	/*	__RE_STATICMODEL_H__	*/
+#endif	/*	__OBJ_MISSILE_H__	*/
 

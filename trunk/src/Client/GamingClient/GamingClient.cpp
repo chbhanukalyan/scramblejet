@@ -28,6 +28,9 @@
 #include <cassert>
 
 #include "../../protocol.h"
+#include "../Game/Game.h"
+#include "../Objects/Player.h"
+#include "../Objects/Missile.h"
 
 GamingClient::GamingClient(void)
 {
@@ -93,7 +96,7 @@ int GamingClient::initialize(const char *evmapfn, int timerInt)
 	return 0;
 }
 
-void GamingClient::handleEvents(Player **playerList)
+void GamingClient::handleEvents(void)
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -117,11 +120,25 @@ void GamingClient::handleEvents(Player **playerList)
 		}
 	}
 
-	handleNetworkEvents(playerList);
+	handleNetworkEvents();
 
 }
 
-void GamingClient::handleNetworkEvents(Player **playerList)
+void GamingClient::updateObject(struct updateObj *updt)
+{
+	Game *game = Game::g_game;
+
+	if (updt->updateFieldID < 16) {
+		/* Normal plane */
+		if (game->playerList[updt->updateFieldID])
+			game->playerList[updt->updateFieldID]->update(updt);
+	} else {
+		/* Missile Launched */
+		game->updateMissile(updt);
+	}
+}
+
+void GamingClient::handleNetworkEvents(void)
 {
 	/* Recieve Network Packets */
 	char buf[MAX_PACKET_SIZE];
@@ -151,9 +168,7 @@ void GamingClient::handleNetworkEvents(Player **playerList)
 					/* TODO call update objects HERE */
 					for (int i = 0; i < sup->num_updtobjs; i++) {
 						struct updateObj *updt = (struct updateObj*)b;
-//						printf("sup->num_updtobjs = %d updtfid = %d siz=%d\n", sup->num_updtobjs, updt->updateFieldID, updt->size);
-						if (playerList[updt->updateFieldID])
-							playerList[updt->updateFieldID]->update(updt);
+						updateObject(updt);
 						b += updt->size;
 					}
 				}
