@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../types.h"
 #include "StaticModel.h"
 
 // assimp include files.
@@ -25,10 +26,7 @@
 
 
 // the global Assimp scene object
-const struct aiScene* scene = NULL;
-struct aiVector3D scene_min, scene_max, scene_center;
-int loadasset (const char* path);
-void recursive_render (const struct aiScene *sc, const struct aiNode* nd);
+static void recursive_render (struct aiScene *scene, struct aiScene *sc, const struct aiNode* nd);
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
 
@@ -36,18 +34,39 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd);
 StaticModel::StaticModel(const char *id)
 	: Renderable(id)
 {
+	pscene_min = new aiVector3D;
+	pscene_max = new aiVector3D;
+	pscene_center = new aiVector3D;
 }
 
 StaticModel::~StaticModel()
 {
+	delete (aiVector3D*)pscene_min;
+	delete (aiVector3D*)pscene_max;
+	delete (aiVector3D*)pscene_center;
 }
+
+static void get_bounding_box (struct aiScene* scene, struct aiVector3D* min, struct aiVector3D* max);
 
 int StaticModel::load(const char *fn)
 {
-	if (0 != loadasset(fn)) {
+	struct aiScene* scene = NULL;
+
+	// we are taking one of the postprocessing presets to avoid
+	// writing 20 single postprocessing flags here.
+	scene = (struct aiScene*)aiImportFile(fn,aiProcessPreset_TargetRealtime_Quality);
+	if (scene == NULL) {
 		fprintf(stderr, "Unable to load model:%s\n", fn);
 		return -1;
 	}
+
+	if (scene) {
+		get_bounding_box(scene, (aiVector3D*)pscene_min, (aiVector3D*)pscene_max);
+		((aiVector3D*)pscene_center)->x = (((aiVector3D*)pscene_min)->x + ((aiVector3D*)pscene_max)->x) / 2.0f;
+		((aiVector3D*)pscene_center)->y = (((aiVector3D*)pscene_min)->y + ((aiVector3D*)pscene_max)->y) / 2.0f;
+		((aiVector3D*)pscene_center)->z = (((aiVector3D*)pscene_min)->z + ((aiVector3D*)pscene_max)->z) / 2.0f;
+	}
+
 	strncpy(this->fn, fn, 255);
 
 	glDisable(GL_TEXTURE_2D);
@@ -63,11 +82,12 @@ int StaticModel::load(const char *fn)
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 
 	list = glGenLists(1);
+	printf("MODEL IS LIST NO: %d\n", list),
 	glNewList(list, GL_COMPILE);
 		// now begin at the root node of the imported data and traverse
 		// the scenegraph by multiplying subsequent local transforms
 		// together on GL's matrix stack.
-	recursive_render(scene, scene->mRootNode);
+	recursive_render(scene, scene, scene->mRootNode);
 	glEndList();
 
 
@@ -81,9 +101,9 @@ int StaticModel::load(const char *fn)
 
 void StaticModel::render(Camera *c)
 {
-	float tmp;
+//	float tmp;
 
-//	glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
 	glEnable(GL_LIGHTING);
@@ -97,14 +117,14 @@ void StaticModel::render(Camera *c)
 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
 
 	// scale the whole asset to fit into our view frustum 
-	tmp = scene_max.x-scene_min.x;
-	tmp = aisgl_max(scene_max.y - scene_min.y,tmp);
-	tmp = aisgl_max(scene_max.z - scene_min.z,tmp);
-	tmp = 1.f / tmp;
+//	tmp = ((aiVector3D*)pscene_max)->x-((aiVector3D*)pscene_min)->x;
+//	tmp = aisgl_max(((aiVector3D*)pscene_max)->y - ((aiVector3D*)pscene_min)->y,tmp);
+//	tmp = aisgl_max(((aiVector3D*)pscene_max)->z - ((aiVector3D*)pscene_min)->z,tmp);
+//	tmp = 1.f / tmp;
 //	glScalef(tmp, tmp, tmp);
 
         // center the model
-	glTranslatef( -scene_center.x, -scene_center.y, -scene_center.z );
+	glTranslatef( -((aiVector3D*)pscene_center)->x, -((aiVector3D*)pscene_center)->y, -((aiVector3D*)pscene_center)->z );
 
 	glCallList(list);
 	
@@ -119,7 +139,7 @@ void StaticModel::render(Camera *c)
 
 
 // ----------------------------------------------------------------------------
-void get_bounding_box_for_node (const struct aiNode* nd, 
+static void get_bounding_box_for_node (struct aiScene* scene, const struct aiNode* nd, 
 	struct aiVector3D* min, 
 	struct aiVector3D* max, 
 	struct aiMatrix4x4* trafo
@@ -148,25 +168,25 @@ void get_bounding_box_for_node (const struct aiNode* nd,
 	}
 
 	for (n = 0; n < nd->mNumChildren; ++n) {
-		get_bounding_box_for_node(nd->mChildren[n],min,max,trafo);
+		get_bounding_box_for_node(scene, nd->mChildren[n],min,max,trafo);
 	}
 	*trafo = prev;
 }
 
 // ----------------------------------------------------------------------------
-void get_bounding_box (struct aiVector3D* min, struct aiVector3D* max)
+static void get_bounding_box (struct aiScene* scene, struct aiVector3D* min, struct aiVector3D* max)
 {
 	struct aiMatrix4x4 trafo;
 	aiIdentityMatrix4(&trafo);
 
 	min->x = min->y = min->z =  1e10f;
 	max->x = max->y = max->z = -1e10f;
-	get_bounding_box_for_node(scene->mRootNode,min,max,&trafo);
+	get_bounding_box_for_node(scene, scene->mRootNode,min,max,&trafo);
 }
 
 // ----------------------------------------------------------------------------
 
-void color4_to_float4(const struct aiColor4D *c, float f[4])
+static void color4_to_float4(const struct aiColor4D *c, float f[4])
 {
 	f[0] = c->r;
 	f[1] = c->g;
@@ -174,7 +194,7 @@ void color4_to_float4(const struct aiColor4D *c, float f[4])
 	f[3] = c->a;
 }
 
-void set_float4(float f[4], float a, float b, float c, float d)
+static void set_float4(float f[4], float a, float b, float c, float d)
 {
 	f[0] = a;
 	f[1] = b;
@@ -183,7 +203,7 @@ void set_float4(float f[4], float a, float b, float c, float d)
 }
 
 // ----------------------------------------------------------------------------
-void apply_material(const struct aiMaterial *mtl)
+static void apply_material(const struct aiMaterial *mtl)
 {
 	float c[4];
 
@@ -247,13 +267,13 @@ void apply_material(const struct aiMaterial *mtl)
 // ----------------------------------------------------------------------------
 
 // Can't send color down as a pointer to aiColor4D because AI colors are ABGR.
-void Color4f(const struct aiColor4D *color)
+static void Color4f(const struct aiColor4D *color)
 {
 	glColor4f(color->r, color->g, color->b, color->a);
 }
 
 // ----------------------------------------------------------------------------
-void recursive_render (const struct aiScene *sc, const struct aiNode* nd)
+static void recursive_render (struct aiScene* scene, struct aiScene *sc, const struct aiNode* nd)
 {
 	int i;
 	unsigned int n = 0, t;
@@ -311,26 +331,9 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd)
 
 	// draw all children
 	for (n = 0; n < nd->mNumChildren; ++n) {
-		recursive_render(sc, nd->mChildren[n]);
+		recursive_render(scene, sc, nd->mChildren[n]);
 	}
 
 	glPopMatrix();
-}
-
-// ----------------------------------------------------------------------------
-int loadasset (const char* path)
-{
-	// we are taking one of the postprocessing presets to avoid
-	// writing 20 single postprocessing flags here.
-	scene = aiImportFile(path,aiProcessPreset_TargetRealtime_Quality);
-
-	if (scene) {
-		get_bounding_box(&scene_min,&scene_max);
-		scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
-		scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
-		scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
-		return 0;
-	}
-	return 1;
 }
 

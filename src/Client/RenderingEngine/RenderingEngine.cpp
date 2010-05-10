@@ -23,6 +23,7 @@ RenderingEngine::RenderingEngine(void)
 	camera = new Camera;
 	renderList = NULL;
 	terrain = new Terrain("terrains/default.hmap");
+	memset(modelList, 0, sizeof(modelList));
 }
 
 RenderingEngine::~RenderingEngine()
@@ -39,12 +40,20 @@ int RenderingEngine::Initialize(CamPos *campos)
 
 	terrain->load();
 
-	/* Load list of models */
-
-
 	camera->dumpCurPos();
 
 	return 0;
+}
+
+void RenderingEngine::loadModels(void)
+{
+	/* Load list of models */
+	for (int i = 0; i < MAX_MODELID; i++) {
+		if (getModeFileFromID(i)) {
+			modelList[i] = new StaticModel(getModeFileFromID(i));
+			modelList[i]->load(getModeFileFromID(i));
+		}
+	}
 }
 
 void RenderingEngine::render(CamPos *cp, long curTicks)
@@ -63,9 +72,9 @@ void RenderingEngine::render(CamPos *cp, long curTicks)
 
 	glEnable(GL_DEPTH_TEST);
 
-	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
+//	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	/* Just clear the depth buffer, color is overwritten anyway */
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT );
 
 	int fog = 0;
 	if (fog) {

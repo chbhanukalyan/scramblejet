@@ -63,16 +63,7 @@ class Game {
 		void stopGame(void);
 
 		void addNewPlayer(void) {}
-		void updateMissile(struct updateObj *updt) {
-			int id = updt->updateFieldID;
-			if (missileList[id] == NULL) {
-				Missile *m = new Missile(id);
-				missileList[id] = m;
-				re->addObject(m);
-				panel->addObject(m);
-			}
-			missileList[id]->update(updt);
-		}
+		void updateMissile(struct updateObj *updt);
 
 };
 

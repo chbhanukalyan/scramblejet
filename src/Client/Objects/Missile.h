@@ -26,20 +26,21 @@
 #include "../GamingClient/EventMap.h"
 #include "Flame.h"
 
-class Missile : public StaticModel, public IndObj {
+class Missile : public Renderable, public IndObj {
 	private:
 		float locx, locy, locz;
 		float pitch, yaw, roll;
 
 		Flame *flame;
 
+		StaticModel *basemodel;
+
 	public:
 		int id;
 
-		Missile(int id);
+		Missile(int id, StaticModel *model);
 		~Missile();
 
-		void load(void *gc);
 		void followCam(CamPos *cp);
 
 		void render(Camera *c);
