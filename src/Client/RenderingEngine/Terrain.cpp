@@ -90,8 +90,9 @@ int Terrain::load(void)
 			Vec3D a,b;
 			float c1, c2;
 
-			getVertex(i, j, &a, &c1);
-			getVertex(i+1, j, &b, &c2);
+			/* Changed order enables backface culling */
+			getVertex(i+1, j, &a, &c1);
+			getVertex(i, j, &b, &c2);
 
 			glColor3f(c1, c1, c1);
 			glVertex3f(a.x, a.y, a.z);
@@ -123,7 +124,7 @@ int Terrain::unload(void)
 void Terrain::render(Camera *c)
 {
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
+	glCullFace(GL_BACK);
 	glCallList(displayList);
 	glDisable(GL_CULL_FACE);
 }
