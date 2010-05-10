@@ -11,6 +11,9 @@
 	<skybox>
 		<dir>skybox/dry/</dir>
 	</skybox>
+	<terrain>
+		<file>terrains/default.hmap</file>
+	</terrain>
 	<object>
 		<type>player</type>
 		<id>0</id>
