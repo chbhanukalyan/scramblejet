@@ -151,7 +151,7 @@ void GamingClient::handleNetworkEvents(Player **playerList)
 					/* TODO call update objects HERE */
 					for (int i = 0; i < sup->num_updtobjs; i++) {
 						struct updateObj *updt = (struct updateObj*)b;
-						printf("sup->num_updtobjs = %d updtfid = %d siz=%d\n", sup->num_updtobjs, updt->updateFieldID, updt->size);
+//						printf("sup->num_updtobjs = %d updtfid = %d siz=%d\n", sup->num_updtobjs, updt->updateFieldID, updt->size);
 						if (playerList[updt->updateFieldID])
 							playerList[updt->updateFieldID]->update(updt);
 						b += updt->size;
@@ -281,7 +281,6 @@ int GamingClient::sendEventList(void)
 
 int GamingClient::sendPacket(void *buf, int len)
 {
-	fprintf(stderr, "Client socket Send(%d bytes)\n", len);
 	if (send(commSocket, buf, len, 0) != len) {
 		fprintf(stderr, "Client socket Send(%d bytes) failed: %s\n",
 				len, strerror(errno));
