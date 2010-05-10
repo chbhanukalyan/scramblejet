@@ -276,13 +276,21 @@ int EventMap::serializeEvMap(unsigned char *buf, int maxlen)
 	int i, count = 0;
 	struct cliEvObj *evo = (struct cliEvObj*) buf;
 	for (i = 1; i < MAX_NUM_FUNCS; i++) {
-		if (IS_FUNC_NONLOCAL(i) && funcArr[i].inprogress) {
-			evo->funcid = i;
-			evo->count = timestamp - funcArr[i].timestamp + 1;
-			funcArr[i].timestamp = timestamp;
-			count++;
-			evo++;
-			printf("FuncID %d in progress\n", i);
+		if (IS_FUNC_NONLOCAL(i)) {
+			if (!IS_FUNC_SINGLE_EVENT(i) && funcArr[i].inprogress) {
+				evo->funcid = i;
+				evo->count = timestamp - funcArr[i].timestamp + 1;
+				funcArr[i].timestamp = timestamp;
+				count++;
+				evo++;
+				printf("FuncID %d in progress\n", i);
+			} else if (IS_FUNC_SINGLE_EVENT(i) && funcArr[i].happened) {
+				evo->funcid = i;
+				evo->count = funcArr[i].happened;
+				count++;
+				evo++;
+				funcArr[i].happened = 0;
+			}
 		}
 	}
 	return count * sizeof(struct cliEvObj);

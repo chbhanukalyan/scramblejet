@@ -33,6 +33,9 @@ struct function {
 	/* For Callback */
 	EventCallbackFunc *cbs;
 	int timestamp;
+	/* This is used for single events which need to be picked up */
+	bool reset;
+	int happened;
 };
 
 class EventMap {
@@ -67,6 +70,7 @@ class EventMap {
 		inline void keyUp(int key) {
 			int func = ev2funcid[key];
 			funcArr[func].inprogress--;
+			funcArr[func].reset = 0;
 		}
 		inline void keyDown(int key) {
 			int func = ev2funcid[key];
@@ -76,6 +80,12 @@ class EventMap {
 			funcArr[func].inprogress++;
 			if (funcArr[func].cbs) 
 				(*funcArr[func].cbs)();
+			/* Reset makes sure that the user actually releases the
+			 * key before counting another */
+			if (funcArr[func].reset == 0) {
+				funcArr[func].happened++;
+				funcArr[func].reset = 1;
+			}
 		}
 
 		/* Serializes list of network events to a buffer */
