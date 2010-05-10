@@ -352,7 +352,7 @@ int EventMap::loadKeymap(const char *evmapfn)
 			goto closef;
 		}
 		
-		fprintf(stderr, "Mapping keyevent:%d to function:%d\n", syskeyid, funcid);
+//		fprintf(stderr, "Mapping keyevent:%d to function:%d\n", syskeyid, funcid);
 		registerEvent(syskeyid, funcid);
 	}
 
