@@ -30,7 +30,7 @@
 #include "Game/Game.h"
 #include "RenderingEngine/RenderingEngine.h"
 #include "GamingClient/GamingClient.h"
-#include "Menu/Menu.h"
+//#include "Menu/Menu.h"
 #include "../Map/MapLoader.h"
 
 int hres = 640, vres=480;
