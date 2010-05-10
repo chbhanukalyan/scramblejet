@@ -83,6 +83,9 @@ void StaticModel::render(Camera *c)
 {
 	float tmp;
 
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);    // Uses default lighting parameters
 
@@ -109,6 +112,9 @@ void StaticModel::render(Camera *c)
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_NORMALIZE);
+
+	glDisable(GL_CULL_FACE);
+
 }
 
 
