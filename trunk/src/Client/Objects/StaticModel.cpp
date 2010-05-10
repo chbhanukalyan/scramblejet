@@ -37,6 +37,8 @@ StaticModel::StaticModel(const char *id)
 	pscene_min = new aiVector3D;
 	pscene_max = new aiVector3D;
 	pscene_center = new aiVector3D;
+
+	lightson = true;
 }
 
 StaticModel::~StaticModel()
@@ -71,12 +73,14 @@ int StaticModel::load(const char *fn)
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);    // Uses default lighting parameters
+	if (lightson) {
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);    // Uses default lighting parameters
+		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	}
 
 	glEnable(GL_DEPTH_TEST);
 
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glEnable(GL_NORMALIZE);
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
@@ -84,6 +88,7 @@ int StaticModel::load(const char *fn)
 	list = glGenLists(1);
 	printf("MODEL IS LIST NO: %d\n", list),
 	glNewList(list, GL_COMPILE);
+
 		// now begin at the root node of the imported data and traverse
 		// the scenegraph by multiplying subsequent local transforms
 		// together on GL's matrix stack.
@@ -106,12 +111,14 @@ void StaticModel::render(Camera *c)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);    // Uses default lighting parameters
+	if (lightson) {
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);    // Uses default lighting parameters
+		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	}
 
 	glEnable(GL_DEPTH_TEST);
 
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glEnable(GL_NORMALIZE);
 
 	glColorMaterial(GL_FRONT, GL_DIFFUSE);

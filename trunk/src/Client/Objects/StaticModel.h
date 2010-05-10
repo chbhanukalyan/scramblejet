@@ -28,9 +28,11 @@ class StaticModel : public Renderable {
 
 		GLint list;
 
-		void * pscene_min, *pscene_max, *pscene_center;
+		void *pscene_min, *pscene_max, *pscene_center;
 
 	public:
+		bool lightson;
+
 		StaticModel(const char *id);
 		~StaticModel();
 

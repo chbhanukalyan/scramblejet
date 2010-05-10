@@ -17,27 +17,22 @@
  */
 
 
-#ifndef		__RE_RENDERABLE_H__
-#define		__RE_RENDERABLE_H__
+#ifndef				__RE_DEBUGGL_H__
+#define				__RE_DEBUGGL_H__
 
-#include <string.h>
+#include <math.h>
 
-#include "DebugGL.h"
-#include "Camera.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
 
-class Renderable {
-	public:
-		char id[16];
-		Renderable *next;
+#include <stdio.h>
 
-	public:
-		Renderable(const char *id) {
-			strncpy(this->id, id, 15);
-			this->id[15] = '\0';
-			next = NULL;
-		}
-		virtual void render(Camera *c) = 0;
+#include "../../Map/CamPos.h"
+
+class DebugGL {
+ public:
+	static void dump_gl_state(const char *);
+
 };
 
-#endif	/*	__RE_RENDERABLE_H__	*/
-
+#endif				/*      __RE_DEBUGGL_H__       */

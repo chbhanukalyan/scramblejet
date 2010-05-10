@@ -41,10 +41,10 @@ class Terrain {
 		}
 
 	public:
-		Terrain(const char *name);
+		Terrain(void);
 		~Terrain();
 
-		int load(void);
+		int load(const char *name);
 		int unload(void);
 
 		void render(Camera *c);

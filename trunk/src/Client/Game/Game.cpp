@@ -47,7 +47,7 @@ int Game::initGame(void)
 
 	map = loadMap(mapfn);
 
-	re->Initialize(&map->initCamPos);
+	re->Initialize(map);
 
 	panel = new Panel;
 	re->addPanel(panel);
@@ -62,11 +62,6 @@ int Game::initGame(void)
 		playerList[p->id] = p;
 		o = o->next;
 	}
-
-	skybox = new SkyBox;
-	skybox->load(map->skyboxfn);
-	skybox->setSize(map->sizex, map->sizey, map->sizez);
-	re->addObject(skybox);
 
 	return 0;
 }

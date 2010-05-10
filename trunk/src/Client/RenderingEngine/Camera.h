@@ -63,6 +63,18 @@ class Camera {
 	void dumpCurPos(void);
 
 	void Update(CamPos *p);
+	inline void setView(void) {
+		// Set the projection matrix
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(45, 640/480.0, 0.005, 5000.0f);
+
+		// Reset the model view matrix
+		glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
+		glLoadIdentity();   // Reset The Modelview Matrix
+	//	glOrtho(-5000, 5000, -5000, 5000, -5000, 5000);
+	}
+
 	inline void Update(void) {
 		gluLookAt(camx, camy, camz, pointx, pointy, pointz, upx,
 				  upy, upz);

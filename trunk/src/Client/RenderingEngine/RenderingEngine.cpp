@@ -22,23 +22,29 @@ RenderingEngine::RenderingEngine(void)
 {
 	camera = new Camera;
 	renderList = NULL;
-	terrain = new Terrain("terrains/default.hmap");
+	terrain = new Terrain;
+	skybox = new SkyBox;
 	memset(modelList, 0, sizeof(modelList));
+
+	disableFog = true;
 }
 
 RenderingEngine::~RenderingEngine()
 {
+	delete skybox;
 	delete terrain;
 	delete camera;
 }
 
-int RenderingEngine::Initialize(CamPos *campos)
+int RenderingEngine::Initialize(Map *map)
 {
 	hres = 640;
 	vres = 480;
-	camera->Initialize(campos);
+	camera->Initialize(&map->initCamPos);
 
-	terrain->load();
+	terrain->load(map->terrainfn);
+	skybox->load(map->skyboxfn);
+	skybox->setSize(map->sizex, map->sizey, map->sizez);
 
 	camera->dumpCurPos();
 
@@ -56,45 +62,38 @@ void RenderingEngine::loadModels(void)
 	}
 }
 
-void RenderingEngine::render(CamPos *cp, long curTicks)
+void RenderingEngine::renderFog(void)
 {
-	// Set the projection matrix
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-	gluPerspective(45, 640/480.0, 0.005, 5000.0f);
-
-	// Reset the model view matrix
-    glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
-    glLoadIdentity();   // Reset The Modelview Matrix
-//	glOrtho(-5000, 5000, -5000, 5000, -5000, 5000);
-
-	camera->Update(cp);
-
-	glEnable(GL_DEPTH_TEST);
-
-//	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
-	/* Just clear the depth buffer, color is overwritten anyway */
-	glClear(GL_DEPTH_BUFFER_BIT );
-
-	int fog = 0;
-	if (fog) {
+	if (disableFog)
+		return;
+	
+	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
 	glEnable(GL_FOG);
 	{
 		GLfloat fogColor[4] = {1, 1, 1, 1};
-//		GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1.0};
 
-//		int	fogMode = GL_EXP;
-//		glFogi (GL_FOG_MODE, fogMode);
 		glFogi(GL_FOG_MODE, GL_LINEAR);
 		glFogfv (GL_FOG_COLOR, fogColor);
-//		glFogf (GL_FOG_DENSITY, 0.35);
 //		glHint (GL_FOG_HINT, GL_NICEST);
 		glHint (GL_FOG_HINT, GL_DONT_CARE);
 		glFogf (GL_FOG_START, 300.0);
 		glFogf (GL_FOG_END, 1000.0);
 	}
-	glClearColor(0.5, 0.5, 0.5, 1.0);  /* fog color */
-	}
+}
+
+void RenderingEngine::render(CamPos *cp, long curTicks)
+{
+	camera->setView();
+
+	camera->Update(cp);
+
+	glEnable(GL_DEPTH_TEST);
+	/* Just clear the depth buffer, color is overwritten anyway */
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	skybox->render(camera);
+
+	renderFog();
 
 	terrain->render(camera);
 
