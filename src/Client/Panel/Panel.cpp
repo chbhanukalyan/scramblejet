@@ -110,7 +110,7 @@ void Panel::render(long curtick, Camera *c)
 	horizRadarMap->render(curtick, c, objList);
 
 	/* Render the FPS value */
-	RenderTextObject(fps, 550, 850, 25, 25);
+	RenderTextObject(fps, 750, 950, 25, 25);
 
 	glPopMatrix();
 }
