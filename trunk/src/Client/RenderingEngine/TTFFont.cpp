@@ -81,12 +81,12 @@ int TTFFont::createTexture(GLuint texid, const char *str, SDL_Color *color, floa
 	*texy = ((float)txtSDLSurface->h + 1.0) / h;
 
 	intermediary = SDL_CreateRGBSurface(0, w, h, 32,
-		    0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
 
-    SDL_BlitSurface(txtSDLSurface, 0, intermediary, 0);
+	SDL_BlitSurface(txtSDLSurface, 0, intermediary, 0);
 
 	/* Tell GL about our new texture */
-    Texture::CreateTexFromSurf(intermediary, texid);
+	Texture::CreateTexFromSurf(intermediary, texid);
 
 	SDL_FreeSurface(txtSDLSurface);
 	SDL_FreeSurface(intermediary);

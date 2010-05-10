@@ -27,9 +27,9 @@ OBJECTS	=			main.o		\
 LIBS	=			\
 					Game/game.a						\
 					Objects/objs.a					\
+					Panel/panel.a						\
 					RenderingEngine/re.a			\
 					GamingClient/gc.a				\
-					Panel/panel.a						\
 					../Map/map.a						\
 					../../vendor/assimp/bin/gcc/libassimp.so	\
 
