@@ -17,43 +17,21 @@
  */
 
 
-#ifndef		__OBJ_PLAYER_H__
-#define		__OBJ_PLAYER_H__
+#ifndef		__RE_MODELIDS_H__
+#define		__RE_MODELIDS_H__
 
-#include "IndObj.h"
-#include "../../Map/ObjInfo.h"
-#include "StaticModel.h"
-#include "../../protocol.h"
-#include "../GamingClient/EventMap.h"
-#include "Flame.h"
+enum {
+	MODELID_INVALID		=	-1,
 
-class Player : public Renderable, public IndObj {
-	private:
-		float locx, locy, locz;
-		float dirx, diry, dirz;
-		float pitch, yaw, roll;
+	/* Function IDs <= 127 are local events */
+	MODELID_F16_FIGHTERJET	=	0,
+	MODELID_MISSILE			=	1,
 
-		Flame *flame;
-
-		StaticModel *basemodel;
-
-	public:
-		int id;
-
-		Player(ObjInfo *, StaticModel *model);
-		~Player();
-
-		void followCam(CamPos *cp);
-
-		void render(Camera *c);
-		void getPos(Vec3D *v) {
-			v->x = locx;
-			v->y = locy;
-			v->z = locz;
-		}
-		void update(struct updateObj *upObj);
-
+	MAX_MODELID			=	256
 };
 
-#endif	/*	__OBJ_PLAYER_H__	*/
+extern const char* getModeFileFromID(int id);
+
+
+#endif	/*	__RE_MODELIDS_H__	*/
 

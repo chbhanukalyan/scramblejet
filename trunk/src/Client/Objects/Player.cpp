@@ -20,8 +20,8 @@
 #include "Player.h"
 #include "../GamingClient/GamingClient.h"
 
-Player::Player(ObjInfo *oi)
-	:StaticModel("Player"), IndObj("Player")
+Player::Player(ObjInfo *oi, StaticModel *model)
+	:Renderable("Player"), IndObj("Player")
 {
 	id = oi->id;
 	locx = oi->locx;
@@ -34,17 +34,15 @@ Player::Player(ObjInfo *oi)
 
 	pitch = yaw = roll = 0;
 
-	StaticModel::load(oi->modelfn);
+	basemodel = model;
 	flame = new Flame(0.019, 0.016, -1.45);
 	flame->load("textures/flame.tga");
 }
 
 Player::~Player()
 {
-}
-
-void Player::load(void *gcptr)
-{
+	basemodel = NULL;
+	delete flame;
 }
 
 void Player::followCam(CamPos *cp)
@@ -62,7 +60,6 @@ void Player::followCam(CamPos *cp)
 	/* Follow only horizontal movements */
 	cp->angle = 3.141 + yaw;
 }
-
 void Player::render(Camera *c)
 {
 	/* 1 radian = 57.296 degrees */
@@ -81,7 +78,7 @@ void Player::render(Camera *c)
 	glRotatef(RADIAN2DEG(roll), 0, 0, 1);
 	glPushMatrix();
 
-	StaticModel::render(c);
+	basemodel->render(c);
 	
 	flame->render(c);
 	

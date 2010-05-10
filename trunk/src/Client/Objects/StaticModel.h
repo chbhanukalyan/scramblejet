@@ -27,7 +27,8 @@ class StaticModel : public Renderable {
 		char fn[256];
 
 		GLint list;
-		float scalefactor;
+
+		void * pscene_min, *pscene_max, *pscene_center;
 
 	public:
 		StaticModel(const char *id);

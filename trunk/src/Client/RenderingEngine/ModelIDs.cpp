@@ -1,59 +1,41 @@
 /*
  * ScRamble - 3D Flight Racer
  * Copyright (C) 2010  Bhanu Chetlapalli
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
+#include <signal.h>
 
-#ifndef		__OBJ_PLAYER_H__
-#define		__OBJ_PLAYER_H__
+#include <unistd.h>
+#include <errno.h>
 
-#include "IndObj.h"
-#include "../../Map/ObjInfo.h"
-#include "StaticModel.h"
-#include "../../protocol.h"
-#include "../GamingClient/EventMap.h"
-#include "Flame.h"
+#include "ModelIDs.h"
 
-class Player : public Renderable, public IndObj {
-	private:
-		float locx, locy, locz;
-		float dirx, diry, dirz;
-		float pitch, yaw, roll;
-
-		Flame *flame;
-
-		StaticModel *basemodel;
-
-	public:
-		int id;
-
-		Player(ObjInfo *, StaticModel *model);
-		~Player();
-
-		void followCam(CamPos *cp);
-
-		void render(Camera *c);
-		void getPos(Vec3D *v) {
-			v->x = locx;
-			v->y = locy;
-			v->z = locz;
-		}
-		void update(struct updateObj *upObj);
-
+static const char *strModelMap[MAX_MODELID] = {
+	"staticmodels/F-16.dae",
+	"staticmodels/missile.dae",
 };
 
-#endif	/*	__OBJ_PLAYER_H__	*/
+const char * getModeFileFromID(int id)
+{
+	return strModelMap[id];
+}
 

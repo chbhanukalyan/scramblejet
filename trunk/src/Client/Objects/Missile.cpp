@@ -20,8 +20,8 @@
 #include "Missile.h"
 #include "../GamingClient/GamingClient.h"
 
-Missile::Missile(int id)
-	:StaticModel("Missile"), IndObj("Missile")
+Missile::Missile(int id, StaticModel *model)
+	:Renderable("Missile"), IndObj("Missile")
 {
 	this->id = id;
 	assert(id >= 32);
@@ -29,18 +29,14 @@ Missile::Missile(int id)
 
 	pitch = yaw = roll = 0;
 
-	StaticModel::load("staticmodels/F-16.dae");
-//	StaticModel::load("models/missile.dae");
+	basemodel = model;
 	flame = new Flame(0.019, 0.016, -1.45);
 	flame->load("textures/flame.tga");
 }
 
 Missile::~Missile()
 {
-}
-
-void Missile::load(void *gcptr)
-{
+	delete flame;
 }
 
 void Missile::followCam(CamPos *cp)
@@ -81,9 +77,7 @@ void Missile::render(Camera *c)
 	glRotatef(RADIAN2DEG(roll), 0, 0, 1);
 	glPushMatrix();
 
-#if 1
-	StaticModel::render(c);
-#endif
+	basemodel->render(c);
 	
 	flame->render(c);
 	

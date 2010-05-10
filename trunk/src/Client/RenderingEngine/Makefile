@@ -19,12 +19,14 @@ include ../../cmds.mk
 
 OUTPUT = re.a
 
-OBJECTS	=			RenderingEngine.o	\
+OBJECTS	=			\
+					RenderingEngine.o	\
 					Texture.o		\
 					TextObject.o	\
 					TTFFont.o		\
 					Camera.o		\
 					Terrain.o		\
+					ModelIDs.o		\
 
 
 $(OUTPUT): $(OBJECTS)

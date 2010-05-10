@@ -52,12 +52,13 @@ int Game::initGame(void)
 	panel = new Panel;
 	re->addPanel(panel);
 
+	re->loadModels();
+
 	ObjInfo *o = map->objList;
 	while (o) {
-		Player *p = new Player(o);
+		Player *p = new Player(o, re->modelList[MODELID_F16_FIGHTERJET]);
 		re->addObject(p);
 		panel->addObject(p);
-		p->load((void*)gc);
 		playerList[p->id] = p;
 		o = o->next;
 	}
@@ -86,4 +87,14 @@ void Game::stopGame(void)
 {
 }
 
+void Game::updateMissile(struct updateObj *updt) {
+	int id = updt->updateFieldID;
+	if (missileList[id] == NULL) {
+		Missile *m = new Missile(id, re->modelList[MODELID_F16_FIGHTERJET]);
+		missileList[id] = m;
+		re->addObject(m);
+		panel->addObject(m);
+	}
+	missileList[id]->update(updt);
+}
 

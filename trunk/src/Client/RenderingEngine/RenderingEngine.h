@@ -21,8 +21,10 @@
 #define		__RE_RENDERINGENGINE_H__
 
 #include "Renderable.h"
+#include "../Objects/StaticModel.h"
 #include "Terrain.h"
 #include "../Panel/Panel.h"
+#include "ModelIDs.h"
 
 class RenderingEngine {
 	private:
@@ -38,6 +40,10 @@ class RenderingEngine {
 	public:
 		RenderingEngine(void);
 		~RenderingEngine();
+
+		void loadModels(void);
+
+		StaticModel *modelList[MAX_MODELID];
 
 		int Initialize(CamPos *initCamPos);
 		void render(CamPos *followCam, long curTicks);
