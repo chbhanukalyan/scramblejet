@@ -17,10 +17,17 @@
  */
 
 
-#ifndef		__F_H__
-#define		__F_H__
+#ifndef		__CLASS_H__
+#define		__CLASS_H__
 
-#include ".h"
+class Class {
+	private:
 
-#endif	/*	__F_H__	*/
+	public:
+		Class(void);
+		~Class();
+
+};
+
+#endif	/*	__CLASS_H__	*/
 
