@@ -112,6 +112,8 @@ void GamingEngine::addPlayer(int id, const char *name)
 {
 	ObjInfo *o = map->getObj(OBJTYPE_PLAYER, id);
 	playerList[id] = new Player(o, name);
+	if (id != o->id)
+		playerList[id]->id = id;
 	addSentObject(playerList[id]);
 }
 
