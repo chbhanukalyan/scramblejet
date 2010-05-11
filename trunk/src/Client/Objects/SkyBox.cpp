@@ -107,16 +107,15 @@ void SkyBox::render(Camera *c)
 //		glTexCoord2f(1.0f, 0.0f); glVertex3f(c->pointx + width, c->pointy - height, c->pointz + depth);
 //		glTexCoord2f(1.0f, 1.0f); glVertex3f(c->pointx + width, c->pointy - height, c->pointz - depth);
 //	glEnd();
-#if 0
+
 	// TOP
 	glBindTexture(GL_TEXTURE_2D, t[SKYBOX_FACE_Y_PLUS]->texid);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(c->pointx - width, c->pointy + height,	c->pointz - depth);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(c->pointx - width, c->pointy + height,	c->pointz + depth);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(c->pointx + width, c->pointy + height, c->pointz + depth);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(c->pointx + width, c->pointy + height, c->pointz - depth);
+		glTexCoord2f(1.0f, 1.0f); glVertex3f(c->pointx + width, c->pointy + height, c->pointz + depth);
+		glTexCoord2f(0.0f, 1.0f); glVertex3f(c->pointx - width, c->pointy + height,	c->pointz + depth);
 	glEnd();
-#endif
 
 	// LEFT
 	glBindTexture(GL_TEXTURE_2D, t[SKYBOX_FACE_X_MINUS]->texid);

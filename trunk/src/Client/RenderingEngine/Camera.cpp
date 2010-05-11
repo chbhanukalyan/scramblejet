@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#include <cassert>
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -38,15 +38,17 @@ void Camera::copyCamPos(CamPos *p)
 	upz = p->upz;
 	height = p->height;
 	angle = p->angle;
+	vertangle = p->vertangle;
 	distance = p->distance;
 }
 
 void Camera::dumpCurPos(void)
 {
 	fprintf(stderr, "Camera Cur Pos: POINT(%.2f,%.2f,%.2f) UP(%.2f,%.2f,%.2f) "
-			"Height(%.2f) ANGLE(%.2f) DIST(%.2f) "
+			"Height(%.2f) ANGLE(%.2f) VERTANGLE(%.2f) DIST(%.2f) "
 			"CAM(calculated:%.2f,%.2f,%.2f)\n",
-			pointx, pointy, pointz, upx, upy, upz, height, angle, distance,
+			pointx, pointy, pointz, upx, upy, upz,
+			height, angle, vertangle, distance,
 			camx, camy, camz);
 }
 
@@ -54,9 +56,9 @@ void Camera::Initialize(CamPos *p)
 {
 	copyCamPos(p);
 	
-	camx = distance * sin(angle);
-	camy = height;
-	camz = distance * cos(angle);
+	camx = distance * sin(angle) * cos(vertangle);
+	camy = height + distance * sin(vertangle);
+	camz = distance * cos(angle) * cos(vertangle);
 
 	Move();
 	dirty = true;
@@ -67,9 +69,10 @@ void Camera::Update(CamPos *p)
 	if (p) {
 		copyCamPos(p);
 		
-		camx = pointx + distance * sin(angle);
-		camy = pointy + height;
-		camz = pointz + distance * cos(angle);
+		camx = pointx + distance * sin(angle) * cos(vertangle);
+		camy = pointy + height + distance * sin(vertangle);
+		camz = pointz + distance * cos(angle) * cos(vertangle);
+
 
 		dirty = true;
 		Update();
@@ -78,6 +81,7 @@ void Camera::Update(CamPos *p)
 
 void Camera::Rotate(float a)
 {
+	assert(0);
 	angle = a;
 	camx = distance * sin(angle);
 	camz = distance * cos(angle);

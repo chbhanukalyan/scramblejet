@@ -20,7 +20,7 @@
 #ifndef		__PROTOCOL_H__
 #define		__PROTOCOL_H__
 
-#define	MAX_PACKET_SIZE		512
+#define	MAX_PACKET_SIZE		1500
 
 /* Server-Client Protocol
  * ======================
