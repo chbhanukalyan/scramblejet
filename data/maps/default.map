@@ -6,6 +6,7 @@
 		<up>0,10000,0</up>
 		<distance>1</distance>
 		<angle>0</angle>
+		<vertangle>0</vertangle>
 		<height>0</height>
 	</camera>
 	<skybox>
@@ -13,6 +14,7 @@
 	</skybox>
 	<terrain>
 		<file>terrains/default.hmap</file>
+		<texture>textures/grass.tga</texture>
 	</terrain>
 	<object>
 		<type>player</type>
@@ -30,6 +32,175 @@
 	<object>
 		<type>player</type>
 		<id>1</id>
+		<location>1,0,0</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>2</id>
+		<location>0,0,1</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>3</id>
+		<location>0,0,2</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>4</id>
+		<location>2,0,0</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>5</id>
+		<location>0,0,-2</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>6</id>
+		<location>-4,0,0</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>7</id>
+		<location>3,1,-3</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>8</id>
+		<location>5,-1,4</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>9</id>
+		<location>1,4,4</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>10</id>
+		<location>-5,2,8</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>11</id>
+		<location>5,-3,7</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>12</id>
+		<location>2,0,7</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>13</id>
+		<location>-2,0.6,-6</location>
+		<direction>0,0,1</direction>
+		<model>staticmodels/F-16.dae</model>
+		<initialvelocity>0</initialvelocity>
+		<accel>0.01</accel>
+		<maxspeed>1</maxspeed>
+		<minspeed>0</minspeed>
+		<minanglerot>0.01</minanglerot>
+		<maxanglerot>0.02</maxanglerot>
+	</object>
+	<object>
+		<type>player</type>
+		<id>14</id>
 		<location>5,.3,5</location>
 		<direction>0,0,1</direction>
 		<model>staticmodels/F-16.dae</model>

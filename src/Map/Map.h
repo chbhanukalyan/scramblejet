@@ -29,6 +29,7 @@ class Map {
 		char name[32];
 		char skyboxfn[256];
 		char terrainfn[256];
+		char terraintexture[256];
 
 		float sizex, sizey, sizez;
 		CamPos initCamPos;
