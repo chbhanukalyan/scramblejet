@@ -148,6 +148,12 @@ static void readCameraPos(xmlNode *node, Map *map)
 
 }
 
+static void readTerrain(xmlNode *node, Map *map)
+{
+	node = xmlFirstElementChild(node);
+	readStr(node, "file", map->terrainfn);
+}
+
 static void readSkyBox(xmlNode *node, Map *map)
 {
 	node = xmlFirstElementChild(node);
@@ -169,9 +175,13 @@ static void readMap(xmlNode *node, Map *map)
 	node = xmlNextElementSibling(node);
 	readCameraPos(node, map);
 
-	/* Camera Position */
+	/* Skybox Position */
 	node = xmlNextElementSibling(node);
 	readSkyBox(node, map);
+
+	/* Terrain Position */
+	node = xmlNextElementSibling(node);
+	readTerrain(node, map);
 
 	/* Read List of Objects */
 	while (node) {
