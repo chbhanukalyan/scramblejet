@@ -32,6 +32,7 @@ struct CamPos {
 	float distance;
 	float height;
 	float angle;
+	float vertangle;
 };
 
 #endif	/*	__MAP_CAMPOS_H__	*/

@@ -144,6 +144,8 @@ static void readCameraPos(xmlNode *node, Map *map)
 	node = xmlNextElementSibling(node);
 	readFloat(node, "angle", &c->angle);
 	node = xmlNextElementSibling(node);
+	readFloat(node, "vertangle", &c->vertangle);
+	node = xmlNextElementSibling(node);
 	readFloat(node, "height", &c->height);
 
 }

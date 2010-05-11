@@ -69,6 +69,7 @@ void Player::followCam(CamPos *cp)
 	cp->height = 0.4;
 	/* Follow only horizontal movements */
 	cp->angle = 3.141 + yaw;
+	cp->vertangle = pitch;
 }
 void Player::render(Camera *c)
 {

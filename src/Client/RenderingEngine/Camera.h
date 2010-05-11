@@ -46,8 +46,7 @@ class Camera {
 	float distance;
 	float height;
 	float angle;
-	float initx;
-	float initz;
+	float vertangle;
 
 	float yfactor;
 

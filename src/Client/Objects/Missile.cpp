@@ -41,12 +41,12 @@ Missile::Missile(int id, StaticModel *model)
 		sinArr[i] = sin(2*i*PI/(numSections) + PI/2);
 		cosArr[i] = cos(2*i*PI/(numSections) + PI/2);
 	}
-	barrelLength = 0.5;
-	coneLength = 0.01f;
-	width = 0.015f;
+	barrelLength = 0.3;
+	coneLength = 0.06f;
+	width = 0.010f;
 
 	flame->transx = flame->transy = flame->transz = 0;
-	flame->width = 0.015;
+	flame->width = 0.010;
 	flame->tipwidth = 0.005;
 }
 
@@ -118,8 +118,10 @@ void Missile::render(Camera *c)
 	}
 	glEnd();
 	/* Fins */
-	int finwidth = width;
-	glColor3f(.7,.71,.71);
+	int finwidth = 3*width;
+	glBegin(GL_TRIANGLES);
+//	glColor3f(.7,.71,.71);
+	glColor3f(1,0,0);
 	for (int i = 0; i < numSections; i+=numSections/4) {
 		glTexCoord2f(0, 1.0f);
 		glVertex3f(width*sinArr[i], width*cosArr[i], barrelLength/5);
