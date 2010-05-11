@@ -42,7 +42,7 @@ int RenderingEngine::Initialize(Map *map)
 	vres = 480;
 	camera->Initialize(&map->initCamPos);
 
-	terrain->load(map->terrainfn);
+	terrain->load(map->terrainfn, map->terraintexture);
 	skybox->load(map->skyboxfn);
 	skybox->setSize(map->sizex, map->sizey, map->sizez);
 

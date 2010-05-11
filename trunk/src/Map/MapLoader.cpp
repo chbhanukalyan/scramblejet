@@ -154,6 +154,8 @@ static void readTerrain(xmlNode *node, Map *map)
 {
 	node = xmlFirstElementChild(node);
 	readStr(node, "file", map->terrainfn);
+	node = xmlNextElementSibling(node);
+	readStr(node, "texture", map->terraintexture);
 }
 
 static void readSkyBox(xmlNode *node, Map *map)

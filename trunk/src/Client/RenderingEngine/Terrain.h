@@ -22,6 +22,7 @@
 
 #include "../../types.h"
 #include "Camera.h"
+#include "Texture.h"
 
 class Terrain {
 	private:
@@ -31,20 +32,33 @@ class Terrain {
 		int imgWidth;
 		int imgHeight;
 
+		int texRepeatX, texXf;
+		int texRepeatY, texYf;
+
 		GLint displayList;
 
-		void getVertex(int i, int j, Vec3D *v, float *c) {
+		void getVertex(int i, int j, Vec3D *v, Vec2D *tex) {
 			v->x = 8.0 * (i - imgWidth/2);
+			if ((i/texXf) % 2 == 1)
+				tex->x = (i % texXf) * texRepeatX / (float)imgWidth;
+			else
+				tex->x = (texXf - i % texXf) * texRepeatX / (float)imgWidth;
 			v->y = data[i * imgHeight + j] - 200.0;
 			v->z = 8.0 * (j - imgHeight/2);
-			*c = ((float)data[i * imgHeight + j]) / 256.0;
+			if ((j/texYf) % 2 == 1)
+				tex->y = (j % texYf) * texRepeatY / (float)imgHeight;
+			else
+				tex->y = (texYf - j % texYf) * texRepeatY / (float)imgHeight;
+//			*c = ((float)data[i * imgHeight + j]) / 256.0;
 		}
+
+		Texture *t;
 
 	public:
 		Terrain(void);
 		~Terrain();
 
-		int load(const char *name);
+		int load(const char *name, const char *texName);
 		int unload(void);
 
 		void render(Camera *c);

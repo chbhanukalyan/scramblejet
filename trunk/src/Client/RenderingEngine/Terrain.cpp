@@ -32,7 +32,7 @@ Terrain::~Terrain()
 {
 }
 
-int Terrain::load(const char *name)
+int Terrain::load(const char *name, const char *texName)
 {
 	strncpy(fn, name, 256);
 
@@ -53,6 +53,9 @@ int Terrain::load(const char *name)
 
 	} tgaHdr;
 
+	t = new Texture(texName);
+	t->Load();
+
 	FILE *fp = fopen(fn, "rb");
 	if (fp == NULL) {
 		fprintf(stderr, "Unable to open terrain map file: %s\n", fn);
@@ -68,6 +71,10 @@ int Terrain::load(const char *name)
 
 	imgWidth = tgaHdr.imgWidth;
 	imgHeight = tgaHdr.imgHeight;
+
+	texRepeatX = texRepeatX = 8;
+	texXf = imgWidth / texRepeatX;
+	texYf = imgWidth / texRepeatX;
 
 	data = (unsigned char *)malloc(imgWidth * imgHeight);
 	if (data == NULL) {
@@ -85,21 +92,34 @@ int Terrain::load(const char *name)
 	displayList = glGenLists(1);
 	glNewList(displayList, GL_COMPILE);
 	glColor3f(1,1,1);
-	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, t->texid);
+
 	for (int i = 0 ; i < imgWidth - 1; i++) {
-		glBegin(GL_TRIANGLE_STRIP);
+		glBegin(GL_QUADS);
 		for (int j = 0 ; j < imgHeight - 1; j++) {
-			Vec3D a,b;
-			float c1, c2;
+			Vec3D a,b,c,d;
+//			float c1, c2, c3, c4;
+			Vec2D ta, tb, tc, td;
 
 			/* Changed order enables backface culling */
-			getVertex(i+1, j, &a, &c1);
-			getVertex(i, j, &b, &c2);
+			getVertex(i, j, &a, &ta);
+			getVertex(i, j+1, &b, &tb);
+			getVertex(i+1, j+1, &c, &tc);
+			getVertex(i+1, j, &d, &td);
 
-			glColor3f(c1, c1, c1);
+//			glColor3f(c1, c1, c1);
+
+			glTexCoord2f(ta.x, ta.y);
 			glVertex3f(a.x, a.y, a.z);
-			glColor3f(c2, c2, c2);
+//			glColor3f(c2, c2, c2);
+			glTexCoord2f(tb.x, tb.y);
 			glVertex3f(b.x, b.y, b.z);
+			glTexCoord2f(tc.x, tc.y);
+			glVertex3f(c.x, c.y, c.z);
+			glTexCoord2f(td.x, td.y);
+			glVertex3f(d.x, d.y, d.z);
+
 		}
 		glEnd();
 	}
@@ -127,7 +147,14 @@ void Terrain::render(Camera *c)
 {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, t->texid);
+
 	glCallList(displayList);
+
+	glDisable(GL_TEXTURE_2D);
+
 	glDisable(GL_CULL_FACE);
 }
 

@@ -171,6 +171,6 @@ void Missile::update(struct updateObj *upObj)
 	pitch = vals[3];
 	yaw = vals[4];
 	roll = vals[5];
-	printf("NEW Missile(%d) Vals = %f, %f, %f, %f %f %f\n", id, vals[0], vals[1], vals[2], roll, pitch, yaw);
+//	printf("NEW Missile(%d) Vals = %f, %f, %f, %f %f %f\n", id, vals[0], vals[1], vals[2], roll, pitch, yaw);
 }
 
