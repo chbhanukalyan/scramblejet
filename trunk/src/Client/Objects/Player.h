@@ -40,6 +40,7 @@ class Player : public Renderable, public IndObj {
 	public:
 		int id;
 
+		Player(int id, StaticModel *model);
 		Player(ObjInfo *, StaticModel *model);
 		~Player();
 

@@ -54,14 +54,10 @@ int Game::initGame(void)
 
 	re->loadModels();
 
-	ObjInfo *o = map->objList;
-	while (o) {
-		Player *p = new Player(o, re->modelList[MODELID_F16_FIGHTERJET]);
-		re->addObject(p);
-		panel->addObject(p);
-		playerList[p->id] = p;
-		o = o->next;
-	}
+	Player *p = new Player(localPlayerID, re->modelList[MODELID_F16_FIGHTERJET]);
+	re->addObject(p);
+	panel->addObject(p);
+	playerList[p->id] = p;
 
 	return 0;
 }
@@ -72,7 +68,8 @@ void Game::startGame(void)
 
 void Game::runGameLoop(void)
 {
-	CamPos cp;
+	static CamPos cp;
+
 	gc->handleEvents();
 	playerList[localPlayerID]->followCam(&cp);
 	re->render(&cp, gc->curTicks);
@@ -85,11 +82,31 @@ void Game::stopGame(void)
 void Game::updateMissile(struct updateObj *updt) {
 	int id = updt->updateFieldID;
 	if (missileList[id] == NULL) {
-		Missile *m = new Missile(id, re->modelList[MODELID_F16_FIGHTERJET]);
+		Missile *m = new Missile(id, re->modelList[MODELID_MISSILE]);
 		missileList[id] = m;
 		re->addObject(m);
 		panel->addObject(m);
 	}
 	missileList[id]->update(updt);
+}
+
+void Game::updatePlayer(struct updateObj *updt) {
+	int id = updt->updateFieldID;
+	if (playerList[id] == NULL) {
+		printf("New PLAYER JOINED\n");
+		Player *p = new Player(id, re->modelList[MODELID_F16_FIGHTERJET]);
+		playerList[id] = p;
+		re->addObject(p);
+		panel->addObject(p);
+	}
+	playerList[id]->update(updt);
+}
+
+void Game::updateObject(struct updateObj *updt) {
+	if (updt->updateFieldID < 16) {
+		updatePlayer(updt);
+	} else {
+		updateMissile(updt);
+	}
 }
 

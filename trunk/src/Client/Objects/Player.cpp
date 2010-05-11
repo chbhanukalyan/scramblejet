@@ -20,6 +20,16 @@
 #include "Player.h"
 #include "../GamingClient/GamingClient.h"
 
+Player::Player(int id, StaticModel *model)
+	:Renderable("Player"), IndObj("Player")
+{
+	this->id = id;
+
+	basemodel = model;
+	flame = new Flame(0.019, 0.016, -1.45);
+	flame->load("textures/flame.tga");
+}
+
 Player::Player(ObjInfo *oi, StaticModel *model)
 	:Renderable("Player"), IndObj("Player")
 {

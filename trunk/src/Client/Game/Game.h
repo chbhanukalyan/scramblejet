@@ -62,7 +62,8 @@ class Game {
 		void runGameLoop(void);
 		void stopGame(void);
 
-		void addNewPlayer(void) {}
+		void updateObject(struct updateObj *updt);
+		void updatePlayer(struct updateObj *updt);
 		void updateMissile(struct updateObj *updt);
 
 };

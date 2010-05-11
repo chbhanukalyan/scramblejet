@@ -30,7 +30,6 @@ Missile::Missile(int id, StaticModel *model)
 	pitch = yaw = roll = 0;
 
 	basemodel = model;
-//	basemodel = NULL;
 	flame = new Flame(0.019, 0.016, -1.45);
 	flame->load("textures/flame.tga");
 }
@@ -79,12 +78,8 @@ void Missile::render(Camera *c)
 	glRotatef(RADIAN2DEG(roll), 0, 0, 1);
 	glPushMatrix();
 
-	if (basemodel == NULL) {
-		basemodel = new StaticModel("myb");
-		basemodel->load("staticmodels/missile.dae");
-	}
-//	basemodel->render(c);
-	
+	basemodel->render(c);
+
 	flame->render(c);
 	
 	glPopMatrix();

@@ -60,7 +60,6 @@ class GamingClient {
 		int recvPacket(void *buf, int *len);
 
 		void handleNetworkEvents(void);
-		void updateObject(struct updateObj *updt);
 
 		int updateInterval;
 		int networkUpdateCounter;

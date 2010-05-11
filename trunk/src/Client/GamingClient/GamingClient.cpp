@@ -124,20 +124,6 @@ void GamingClient::handleEvents(void)
 
 }
 
-void GamingClient::updateObject(struct updateObj *updt)
-{
-	Game *game = Game::g_game;
-
-	if (updt->updateFieldID < 16) {
-		/* Normal plane */
-		if (game->playerList[updt->updateFieldID])
-			game->playerList[updt->updateFieldID]->update(updt);
-	} else {
-		/* Missile Launched */
-		game->updateMissile(updt);
-	}
-}
-
 void GamingClient::handleNetworkEvents(void)
 {
 	/* Recieve Network Packets */
@@ -168,7 +154,7 @@ void GamingClient::handleNetworkEvents(void)
 					/* TODO call update objects HERE */
 					for (int i = 0; i < sup->num_updtobjs; i++) {
 						struct updateObj *updt = (struct updateObj*)b;
-						updateObject(updt);
+						Game::g_game->updateObject(updt);
 						b += updt->size;
 					}
 				}
