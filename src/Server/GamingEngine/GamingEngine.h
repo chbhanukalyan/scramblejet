@@ -21,6 +21,8 @@
 #define		__GE_GAMINGENGINE_H__
 
 #define	MAX_CLIENT_ID			32
+#define	MIN_MISSILE_ID			32
+#define	MAX_MISSILE_ID			256
 #define	INVALID_CLIENT_ID		(-1)
 #define	DEFAULT_WAIT_BEFORE_START_USEC	(20*1000)
 
@@ -41,6 +43,7 @@ class GamingEngine {
 		static GamingEngine *g_GamingEngine;
 
 		Player *playerList[MAX_CLIENT_ID];
+		Missile *missileList[MAX_MISSILE_ID];
 
 		GamingEngine(Map *map);
 		~GamingEngine();

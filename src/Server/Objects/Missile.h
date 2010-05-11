@@ -48,7 +48,7 @@ class Missile : public MovableObject {
 	public:
 		int id;
 
-		Missile(int id);
+		Missile(void);
 		~Missile();
 
 		int serializeState(void *buf);

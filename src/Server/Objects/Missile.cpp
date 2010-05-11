@@ -24,11 +24,11 @@
 #include "Missile.h"
 #include "../../funcids.h"
 
-Missile::Missile(int id)
+Missile::Missile(void)
 {
-	this->id = id;
-	maxspeed = 1;
-	minspeed = .5;
+	this->id = -1;
+	maxspeed = .01;
+	minspeed = .005;
 	maxanglerot = 0.1;
 	minanglerot = 0.1;
 }
@@ -60,8 +60,7 @@ int Missile::serializeState(void *buf) {
 
 void Missile::doTick(void) {
 	if (vel < maxspeed)
-		vel += 0.05;
-	vel = 0;
+		vel += 0.005;
 
 	/* Change angles to direction vector */
 	dir[0] = cosf(pitch) * sinf(yaw);
