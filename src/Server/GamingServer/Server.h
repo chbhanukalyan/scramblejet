@@ -23,8 +23,10 @@
 #include <arpa/inet.h>
 
 #include "../GamingEngine/GamingEngine.h"
+#include "../AI/AIModule.h"
 
 struct ClientInfo {
+	bool aiClient;
 	char IP[16];
 	int port;
 	char playerName[16];
@@ -32,6 +34,9 @@ struct ClientInfo {
 	long lastresp;
 
 	struct sockaddr_in sendst;
+	ClientInfo(bool ai = false) {
+		aiClient = ai;
+	}
 };
 
 typedef int ClientID;
@@ -54,17 +59,20 @@ class Server {
 
 		ClientID getFreeClientID(void);
 
+		AIModule *aiModule;
+		ClientID aiClientJoin(void);
+
 	public:
 		Server(GamingEngine *ge);
 		~Server();
 
-		int initialize(const char *serverIP, int port = 6501);
+		int initialize(const char *serverIP, int port, int numAICs = 0);
 		int handleIncomingPackets(const char *mapName, long waitTime);
 
 		void stop(void);
 
 		/* Network Information */
-		int broadcastUpdatePacket(void *buf, int len, int count_objs);
+		int broadcastUpdates(void *buf, int len, int count_objs);
 
 	private:
 		int commSocket;

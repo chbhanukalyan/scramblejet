@@ -35,13 +35,14 @@ Server::Server(GamingEngine *ge)
 	commSocket = -1;
 	memset(&cliinfo, 0, sizeof(cliinfo));
 	this->ge = ge;
+	aiModule = NULL;
 }
 
 Server::~Server()
 {
 }
 
-int Server::initialize(const char *serverIP, int port)
+int Server::initialize(const char *serverIP, int port, int numAICs)
 {
 	int err = -1;
 
@@ -67,6 +68,14 @@ int Server::initialize(const char *serverIP, int port)
 	if (bind(commSocket, (struct sockaddr*)&st, sizeof(st)) < 0) {
 		fprintf(stderr, "Server socket bind failed: %s\n", strerror(errno));
 		goto out;
+	}
+
+	if (numAICs) {
+		aiModule = new AIModule;
+		for (int i = 0; i < numAICs; i++) {
+			ClientID cid = aiClientJoin();
+			aiModule->startNewClient(cid);
+		}
 	}
 
 	err = 0;
@@ -116,7 +125,7 @@ int Server::handleIncomingPackets(const char *mapName, long waitTime)
 	if (curloopnum % checkCliStatusEverySecs == 0) {
 		/* Check for dead clients */
 		for (int i = 0; i < MAX_CLIENT_ID; i++) {
-			if (cliinfo[i] && 
+			if (cliinfo[i] && !cliinfo[i]->aiClient &&
 				(cliinfo[i]->lastresp + maxUnresploop < curloopnum)) {
 				if (cliinfo[i]->lastresp + maxUnresploop + maxPingWaitloopTime < curloopnum) {
 					/* Even pings were unhelpful... kill it */
@@ -248,7 +257,7 @@ int Server::getEventList(ClientID cid, unsigned char *buf, int len)
 	return 0;
 }
 
-int Server::broadcastUpdatePacket(void *buf, int len, int count)
+int Server::broadcastUpdates(void *buf, int len, int count)
 {
 	int i;
 	struct srvUpdatePacket *sup = (struct srvUpdatePacket*)buf;
@@ -257,9 +266,13 @@ int Server::broadcastUpdatePacket(void *buf, int len, int count)
 	sup->phdr.type = PKTTYPE_SRV2CLI_OBJUPDTLIST;
 	sup->num_updtobjs = count;
 	for (i = 0 ; i < MAX_CLIENT_ID; i++) {
-		if (cliinfo[i])
+		if (cliinfo[i] && !cliinfo[i]->aiClient)
 			sendPacket(i, buf, len);
 	}
+
+	aiModule->run((unsigned char *)buf + sizeof(struct protocolHeader)
+			+ sizeof(int), count, ge->playerList);
+
 	return 0;
 }
 
@@ -294,5 +307,22 @@ ClientID Server::getFreeClientID(void)
 			return i;
 
 	return INVALID_CLIENT_ID;
+}
+
+/* AI Client special handling */
+ClientID Server::aiClientJoin(void)
+{
+	ClientInfo *ci = new ClientInfo(true);
+	memset(&ci->sendst, 0, sizeof(struct sockaddr_in));
+
+	ClientID cid = getFreeClientID();
+	snprintf(ci->playerName, 16, "AI Client:%d", cid);
+
+	ge->addPlayer(cid, ci->playerName);
+
+	cliinfo[cid] = ci;
+	
+	fprintf(stderr, "AI Client(%s) id(%d) connected\n", ci->playerName, cid);
+	return cid;
 }
 

@@ -16,44 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include "../Map/MapLoader.h"
-#include "GamingServer/Server.h"
-#include "GamingEngine/GamingEngine.h"
 
-int main(int argc, char **argv)
-{
-	GamingEngine *ge = NULL;
-	Server *srv = NULL;
-	Map *map = NULL;
-	const char *mapname = "maps/default.map";
+#ifndef		__AI_AIMODULE_H__
+#define		__AI_AIMODULE_H__
 
-	if (argc > 2) {
-		fprintf(stderr, "Usage: %s map\n", argv[0]);
-		return -1;
-	}
-	if (argc == 2) {
-		mapname = argv[1];
-	}
+#include <string.h>
+#include "../Objects/Player.h"
+#include "../../types.h"
 
-	chdir("../../data");
+#define	MAX_AI_CLIENTS		32
 
-	map = loadMap(mapname);
-	if (map == NULL) {
-		fprintf(stderr, "Unable to load Map: %s\n", mapname);
-		return -1;
-	}
+struct AIClient {
+	int id;
+	Vec3D pos;
+	float pitch;
+	float yaw;
+	float roll;
 
-	ge = new GamingEngine(map);
-	srv = new Server(ge);
+	int accel;
+};
 
-	srv->initialize("0.0.0.0", 6501, 7);
-	
-	ge->startGame(srv);
+class AIModule {
+	private:
+		AIClient *aic[MAX_AI_CLIENTS];
 
-	srv->stop();
+	public:
+		AIModule(void);
+		~AIModule();
 
-	return 0;
-}
+		void startNewClient(int id);
+
+		void run(unsigned char *buf, int count, Player **playerList);
+
+};
+
+#endif	/*	__AI_AIMODULE_H__	*/
 

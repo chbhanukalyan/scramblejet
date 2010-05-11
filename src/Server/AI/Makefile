@@ -15,47 +15,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include ../cmds.mk
+include ../../cmds.mk
 
-OUTPUT = scRambleSrv
+OUTPUT = ai.a
 
-LDFLAGS := $(LDFLAGS) -lm -lxml2
-
-OBJECTS	=			main.o		\
+OBJECTS	=			\
+				AIModule.o	\
 
 LIBS	=			\
-					GamingEngine/ge.a			\
-					../Map/map.a				\
-					Objects/objs.a				\
-					GamingServer/gs.a			\
-					AI/ai.a						\
 
-$(OUTPUT): $(OBJECTS) GE GS OBJ MAP AID
-	$(LD) -o $(OUTPUT) $(LDFLAGS) $(OBJECTS) $(LIBS)
+
+$(OUTPUT): $(OBJECTS)
+	$(AR) rcs $(OUTPUT) $(OBJECTS)
 	
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-OBJ:
-	make -C Objects
-
-GE:
-	make -C GamingEngine
-
-GS:
-	make -C GamingServer
-
-AID:
-	make -C AI
-
-MAP:
-	make -C ../Map
-
 clean:
-	make -C GamingEngine clean
-	make -C GamingServer clean
-	make -C Objects clean
-	make -C ../Map clean
-	make -C AI clean
 	-rm -f $(OBJECTS) $(OUTPUT)
 

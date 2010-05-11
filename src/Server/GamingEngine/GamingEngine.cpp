@@ -95,7 +95,7 @@ int GamingEngine::startGame(void *serv)
 			mov = mov->moveNext;
 			count++;
 		}
-		server->broadcastUpdatePacket(buf, len, count);
+		server->broadcastUpdates(buf, len, count);
 
 		gettimeofday(&stoptm, NULL);
 		wait_time = timer_loop_time - (stoptm.tv_usec - starttm.tv_usec);
