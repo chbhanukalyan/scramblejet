@@ -156,8 +156,14 @@ void GamingEngine::removeSentObject(SentientObject *seo)
 
 void GamingEngine::addMissile(Missile *m)
 {
-
-	fprintf(stderr, "Launching Missile\n");
+	for (int i = MIN_MISSILE_ID; i < MAX_MISSILE_ID; i++) {
+		if (missileList[i] == NULL) {
+			missileList[i] = m;
+			m->id = i;
+			break;
+		}
+	}
+	fprintf(stderr, "Launching Missile: %d\n", m->id);
 	addMovableObject(m);
 }
 

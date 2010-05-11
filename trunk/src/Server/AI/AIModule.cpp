@@ -36,6 +36,8 @@ void AIModule::run(unsigned char *buf, int count, Player **playerList)
 	int i;
 	for (i = 0; i < count; i++) {
 		struct updateObj *ob = (struct updateObj *)buf;
+		if (ob->updateFieldID >= 32)	/* missile */
+			continue;
 		if (aic[ob->updateFieldID]) {
 			AIClient *ac = aic[ob->updateFieldID];
 			float *f = (float*)ob->vals;
@@ -52,7 +54,10 @@ void AIModule::run(unsigned char *buf, int count, Player **playerList)
 
 	for (i = 0; i < MAX_AI_CLIENTS; i++) {
 		if (aic[i]) {
-			playerList[i]->handleEvent(FUNCID_ROTYP, 2);
+			if (i%2==1)
+				playerList[i]->handleEvent(FUNCID_ROTYP, 2);
+			else
+				playerList[i]->handleEvent(FUNCID_ROTYM, 2);
 			if (rand() % 100 > 95) {
 				if (rand() % 10 > 5) {
 					playerList[i]->handleEvent(FUNCID_ROTXP, 1);

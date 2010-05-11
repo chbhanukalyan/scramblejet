@@ -62,7 +62,7 @@ void Player::launchMissile(void)
 
 	num_missiles--;
 
-	Missile *m = new Missile(32);
+	Missile *m = new Missile;
 	memcpy(m->loc, loc, sizeof(loc));
 	memcpy(m->dir, loc, sizeof(dir));
 	m->vel = vel;
@@ -74,7 +74,7 @@ void Player::launchMissile(void)
 }
 
 void Player::handleEvent(int funcid, int count) {
-	fprintf(stderr, "Player(%s) got an event:%d count:%d\n", playerName, funcid, count);
+//	fprintf(stderr, "Player(%s) got an event:%d count:%d\n", playerName, funcid, count);
 	switch(funcid) {
 		case FUNCID_ACCELERATE: {
 			setSpeed(vel + 0.01 * count);
