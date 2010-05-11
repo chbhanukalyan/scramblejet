@@ -28,6 +28,7 @@ class Map {
 		char fn[256];
 		char name[32];
 		char skyboxfn[256];
+		char terrainfn[256];
 
 		float sizex, sizey, sizez;
 		CamPos initCamPos;
@@ -45,7 +46,8 @@ class Map {
 					return t;
 				t = t->next;
 			}
-			return NULL;
+			fprintf(stderr, "Returning default client object info for ID=%d\n", id);
+			return objList;
 		}
 
 		void insertObjInfo(ObjInfo *o);
