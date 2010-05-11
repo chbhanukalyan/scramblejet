@@ -35,6 +35,13 @@ class Missile : public Renderable, public IndObj {
 
 		StaticModel *basemodel;
 
+		/* Hand coded Model */
+		int numSections;
+		float *sinArr, *cosArr;
+		float barrelLength;
+		float coneLength;
+		float width;
+
 	public:
 		int id;
 

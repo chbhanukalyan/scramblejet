@@ -32,6 +32,22 @@ Missile::Missile(int id, StaticModel *model)
 	basemodel = model;
 	flame = new Flame(0.019, 0.016, -1.45);
 	flame->load("textures/flame.tga");
+
+	numSections = 12;
+	sinArr = new float[numSections+1];
+	cosArr = new float[numSections+1];
+
+	for (int i = 0; i <= numSections; i++) {
+		sinArr[i] = sin(2*i*PI/(numSections) + PI/2);
+		cosArr[i] = cos(2*i*PI/(numSections) + PI/2);
+	}
+	barrelLength = 0.5;
+	coneLength = 0.01f;
+	width = 0.015f;
+
+	flame->transx = flame->transy = flame->transz = 0;
+	flame->width = 0.015;
+	flame->tipwidth = 0.005;
 }
 
 Missile::~Missile()
@@ -58,14 +74,11 @@ void Missile::followCam(CamPos *cp)
 
 void Missile::render(Camera *c)
 {
-	glColor3f(1,1,1);
 	/* 1 radian = 57.296 degrees */
 #define	RADIAN2DEG(x)	((x) * 57.29578f)
 	glPushMatrix();
 	glTranslatef(locx, locy, locz);
-	glPushMatrix();
 
-	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 	
 	/* Rotate Around Y-AXIS */
@@ -75,15 +88,72 @@ void Missile::render(Camera *c)
 	glRotatef(RADIAN2DEG(pitch), 1, 0, 0);
 
 	glPushMatrix();
-	glRotatef(RADIAN2DEG(roll), 0, 0, 1);
-	glPushMatrix();
 
-	basemodel->render(c);
+	/* Body */
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+	glColor3f(.7,.71,.71);
+	for (int i = 0; i < numSections; i++) {
+		glTexCoord2f(0, 1.0f);
+		glVertex3f(width*sinArr[i], width*cosArr[i], 0);
+		glTexCoord2f(1, 1.0f);
+		glVertex3f(width*sinArr[i+1], width*cosArr[i+1], 0);
+		glTexCoord2f(1, 0.0f);
+		glVertex3f(width*sinArr[i+1], width*cosArr[i+1], barrelLength);
+		glTexCoord2f(0, 0.0f);
+		glVertex3f(width*sinArr[i], width*cosArr[i], barrelLength);
+	}
+	glEnd();
+	/* Cone */
+	glBegin(GL_TRIANGLES);
+	glColor3f(1,.5,.5);
+	for (int i = 0; i < numSections; i++) {
+		glTexCoord2f(0, 1.0f);
+		glVertex3f(width*sinArr[i], width*cosArr[i], barrelLength);
+		glTexCoord2f(1, 1.0f);
+		glVertex3f(width*sinArr[i+1], width*cosArr[i+1], barrelLength);
+		glTexCoord2f(1, 0.0f);
+		glVertex3f(0, 0, barrelLength + coneLength);
+	}
+	glEnd();
+	/* Fins */
+	int finwidth = width;
+	glColor3f(.7,.71,.71);
+	for (int i = 0; i < numSections; i+=numSections/4) {
+		glTexCoord2f(0, 1.0f);
+		glVertex3f(width*sinArr[i], width*cosArr[i], barrelLength/5);
+		glTexCoord2f(1, 1.0f);
+		glVertex3f(width*sinArr[i], width*cosArr[i], 0.0);
+		glTexCoord2f(1, 0.0f);
+		glVertex3f((width + finwidth)*sinArr[i], (width +finwidth)*cosArr[i], -0.005);
+	}
+	glEnd();
+
+	glEnable(GL_BLEND);
+	/* Smoke Trail */
+	glBegin(GL_QUADS);
+	for (int i = 0; i < numSections; i++) {
+		glColor4f(0,.0,.0,1);
+		glTexCoord2f(0, 1.0f);
+		glVertex3f(width*sinArr[i], width*cosArr[i], 0);
+		glColor4f(0,.0,.0,1);
+		glTexCoord2f(1, 1.0f);
+		glVertex3f(width*sinArr[i+1], width*cosArr[i+1], 0);
+		glTexCoord2f(1, 0.0f);
+		glColor4f(.4,.41,.41,0);
+		glVertex3f(3*width*sinArr[i+1], 3*width*cosArr[i+1], -10*barrelLength);
+		glTexCoord2f(0, 0.0f);
+		glColor4f(.4,.41,.41,0);
+		glVertex3f(3*width*sinArr[i], 3*width*cosArr[i], -10*barrelLength);
+	}
+	glEnd();
+
+
+	glDisable(GL_TEXTURE_2D);
 
 	flame->render(c);
 	
-	glPopMatrix();
-	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
 }
@@ -99,6 +169,6 @@ void Missile::update(struct updateObj *upObj)
 	pitch = vals[3];
 	yaw = vals[4];
 	roll = vals[5];
-//	printf("NEW Missile Vals = %f, %f, %f, %f %f %f\n", vals[0], vals[1], vals[2], roll, pitch, yaw);
+	printf("NEW Missile(%d) Vals = %f, %f, %f, %f %f %f\n", id, vals[0], vals[1], vals[2], roll, pitch, yaw);
 }
 
