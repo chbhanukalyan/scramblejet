@@ -131,7 +131,7 @@ void StaticModel::render(Camera *c)
 //	glScalef(tmp, tmp, tmp);
 
         // center the model
-	glTranslatef( -((aiVector3D*)pscene_center)->x, -((aiVector3D*)pscene_center)->y, -((aiVector3D*)pscene_center)->z );
+//	glTranslatef( -((aiVector3D*)pscene_center)->x, -((aiVector3D*)pscene_center)->y, -((aiVector3D*)pscene_center)->z );
 
 	glCallList(list);
 	

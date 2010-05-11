@@ -65,7 +65,7 @@ void Player::followCam(CamPos *cp)
 	cp->upy = 10000;
 	cp->upz = 0;
 
-	cp->distance = 2;
+	cp->distance = 2.5;
 	cp->height = 0.4;
 	/* Follow only horizontal movements */
 	cp->angle = 3.141 + yaw;

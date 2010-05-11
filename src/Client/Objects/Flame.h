@@ -28,7 +28,6 @@ class Flame : public Renderable {
 	private:
 		Texture *t;
 		float size;
-		float width, tipwidth, length;
 		bool redflame;
 		float texXStart;
 		float texXRange;
@@ -36,11 +35,12 @@ class Flame : public Renderable {
 		float *sinarr, *cosarr;
 		int numTris;
 
-		float transx, transy, transz;
-
 	public:
 		Flame(float, float, float);
 		~Flame();
+
+		float transx, transy, transz;
+		float width, tipwidth, length;
 
 		inline void setLength(float l)
 		{
